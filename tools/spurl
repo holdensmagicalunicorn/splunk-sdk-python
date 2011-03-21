@@ -1,0 +1,2 @@
+#!/bin/bash
+python spurl.py $* | python splunk/data.py
