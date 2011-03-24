@@ -36,7 +36,7 @@ from util import record
 # }
 #
 
-_debug = False # UNDONE
+debug = False # UNDONE
 
 def _connect(scheme, host, port, timeout = None):
     kwargs = {}
@@ -66,8 +66,16 @@ def _spliturl(url):
     host, port = urllib.splitnport(host, 80)
     return scheme, host, port, path
 
+def delete(url, headers = [], timeout = None, **kwargs):
+    if kwargs: url = url + '?' + urllib.urlencode(kwargs)
+    message = {
+        'method': "DELETE",
+        'headers': headers,
+    }
+    return request(url, message, timeout)
+
 def get(url, headers = [], timeout = None, **kwargs):
-    if kwargs: url = url + "?" + urllib.urlencode(kwargs)
+    if kwargs: url = url + '?' + urllib.urlencode(kwargs)
     return request(url, { "headers": headers }, timeout)
 
 # UNDONE: The following doesn't support file upload
@@ -94,7 +102,7 @@ def request(url, message, timeout = None):
     } # defaults
     for k, v in message["headers"]: head[k] = v
     method = message.get("method", "GET")
-    if _debug: _print_request(method, url, head, body)
+    if debug: _print_request(method, url, head, body)
     connection = _connect(scheme, host, port, timeout)
     try:
         connection.request(method, path, body, head)
@@ -108,6 +116,6 @@ def request(url, message, timeout = None):
         "headers": response.getheaders(),
         "body": response.read() 
     })
-    if _debug: _print_response(response)
+    if debug: _print_response(response)
     return response
 

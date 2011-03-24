@@ -12,14 +12,41 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+# UNDONE: Flatten server onto Service (info, users, roles, caps)
+# UNDONE: Editing of entities
+# UNDONE: Async operations
 # UNDONE: APIs need to take a port in addition to hostname
 # UNDONE: Review exception types
-# UNDONE: Async requests (open, close, jobs, search .. get, post, ..)
 # UNDONE: Handle paging on collections
 # UNDONE: Parse results more incrimentally (sax?) .. at least for collection
 #   results we can define an iterator and yield collection members more 
 #   incrimentally.
 # UNDONE: Review all response handlers for consistent use of data utilities
+# UNDONE: Paramaterize Collection with <get, item, ctor, dtor> functions
+# UNDONE: Make collections more data driven
+# UNDONE: Figure out how to delay allocation of "service" sub-objects (colls)
+# UNDONE: Consider moving all current code into splunk.client
+# UNDONE: Consider "Service" (or Session) instead of Connection
+
+#
+# Service
+#   info : dict
+#   users : Collection
+#   roles : list
+#   capabilities : list
+#   commands : Collection
+#   applications : Collection
+#   indexes : Collection
+#   inputs : Collection
+#   jobs : Collection*
+#
+# UNDONE:
+#   Service.restart
+#   Index.submit(data) aka publish?
+#   alerts
+#   licenses : CollectionRO
+#   fields?
+#
 
 import urllib
 from xml.etree import ElementTree
@@ -37,16 +64,21 @@ _path = record({
 
 # Resource path suffixes
 _suffix = record({
-    'admin_capabilities': "admin/capabilities",
-    'apps_local': "apps/local",
-    'admin_directory': "admin/directory",
+    'app': "apps/local/%s",
+    'apps': "apps/local",
+    'capabilities': "admin/capabilities",
+    'directory': "admin/directory",
+    'index': "data/indexes/%s",
+    'indexes': "data/indexes",
+    'roles': "admin/roles",
     'saved_eventtypes': "saved/eventtypes",
     'search_commands': "search/commands",
     'search_fields': "search/fields",
     'search_job': "search/jobs/%s",
     'search_job_control': "search/jobs/%s/control",
     'search_jobs': "search/jobs",
-    'search_parser': "search/parser"
+    'search_parser': "search/parser",
+    'users': "admin/users",
 })
 
 # Ensure that this is a syntactically valid Splunk namespace.
@@ -102,8 +134,14 @@ class Connection:
         self.username = username
         self.password = password
         self.namespace = namespace
+        self.applications = Applications(self)
+        self.indexes = Indexes(self)
+        self.inputs = Inputs(self)
+        self.licenses = Licenses(self)
+        self.objects = Objects(self)
+        self.roles = Roles(self)
+        self.users = Users(self)
 
-    # Idempotent
     def close(self):
         self.token = None
         return self
@@ -118,10 +156,14 @@ class Connection:
         self.token = "Splunk " + login(self.host, self.username, self.password)
         return self
 
-    # Idempotent
-    def open(self):
+    def open(self): # Idempotent
         self.login()
         return self
+
+    def _checked_delete(self, path, **kwargs):
+        response = self.delete(path, **kwargs)
+        _check_response(response)
+        return response
 
     def _checked_get(self, path, **kwargs):
         response = self.get(path, **kwargs)
@@ -137,6 +179,10 @@ class Connection:
     def _headers(self):
         return [("Authorization", self.token)]
 
+    def delete(self, path, timeout = None, **kwargs):
+        url = _mkurl(self.host, path)
+        return http.delete(url, self._headers(), timeout, **kwargs)
+
     def get(self, path, timeout = None, **kwargs):
         url = _mkurl(self.host, path)
         return http.get(url, self._headers(), timeout, **kwargs)
@@ -145,31 +191,17 @@ class Connection:
         url = _mkurl(self.host, path)
         return http.post(url, self._headers(), timeout, **kwargs)
 
-    def put(self, path):
-        pass # UNDONE
-
-    def apps(self, **kwargs):
-        """Returns a list of installed applications."""
-        path = _mkpath(_suffix.apps_local, self.namespace)
-        response = self._checked_get(path, **kwargs)
-        return _parse_apps(response.body)
-
     def capabilities(self, **kwargs):
-        path = _mkpath(_suffix.admin_capabilities)
+        path = _mkpath(_suffix.capabilities)
         response = self._checked_get(path, **kwargs)
-        return data.load(response.body, "%s/%s" % (xname.entry, xname.content))
+        xpath = "%s/%s" % (xname.entry, xname.content)
+        return data.load(response.body, xpath).capabilities
 
     def commands(self, **kwargs):
         """Returns a list of search commands."""
         path = _mkpath(_suffix.search_commands, self.namespace)
         response = self._checked_get(path, **kwargs)
         return _parse_commands(response.body)
-
-    def directory(self, **kwargs):
-        """Returns a directory listing of objects visible to the user."""
-        path = _mkpath(_suffix.admin_directory, self.namespace)
-        response = self._checked_get(path, **kwargs)
-        return _parse_directory(response.body)
 
     def eventtypes(self, **kwargs):
         """Returns a list of eventtypes."""
@@ -182,6 +214,10 @@ class Connection:
         path = _mkpath(_suffix.search_fields, self.namespace)
         response = self._checked_get(path, **kwargs)
         return _parse_fields(response.body)
+
+    def info(self):
+        response = self._checked_get("/services/server/info")
+        return _parse_content(response.body)
 
     def job(self, id, **kwargs):
         """Returns detail on the given job id."""
@@ -213,6 +249,9 @@ class Connection:
             message = messages[0].get("$text", message)
         raise SyntaxError(message)
 
+    def restart(self):
+        pass # UNDONE
+
     def search(self, query, **kwargs):
         """Execute the given search query."""
         kwargs["search"] = query
@@ -235,6 +274,170 @@ class Connection:
 def connect(host, username, password, namespace = None):
     """Create and open a connection to the given host"""
     return Connection(host, username, password, namespace).open()
+
+class Collection: # Abstract
+    def __init__(self, cn):
+        self._cn = cn
+        self._items = None
+
+    def __call__(self, name = None):
+        return self.keys() if name is None else self[name]
+
+    def __getitem__(self, key):
+        self.ensure()
+        return self._items.__getitem__(key)
+        
+    def __iter__(self):
+        self.ensure()
+        return self._items.__iter__()
+
+    def __len__(self):
+        self.ensure()
+        return self._items.__len__()
+
+    def create(self, **kwargs):
+        raise # Abstract
+
+    def delete(self, **kwargs):
+        raise # Abstract
+
+    def ensure(self):
+        if self._items is None: self.refresh()
+
+    def get(self, name, default = None):
+        self.ensure()
+        return self._items.get(key, default)
+
+    def has_key(self):
+        self.ensure()
+        return self._items.has_key()
+
+    def items(self):
+        self.ensure()
+        return self._items.items()
+
+    def iteritems(self):
+        self.ensure()
+        return self._items.iteritems()
+
+    def iterkeys(self):
+        self.ensure()
+        return self._items.iterkeys()
+
+    def itervalues(self):
+        self.ensure()
+        return self._items.itervalues()
+
+    def keys(self):
+        self.ensure()
+        return self._items.keys()
+
+    def refresh(self):
+        raise # Abstract
+
+    def values(self):
+        self.ensure()
+        return self._items.values()
+
+class Applications(Collection):
+    def create(self, name, **kwargs):
+        path = _mkpath(_suffix.apps, self._cn.namespace)
+        self._cn._checked_post(path, name=name, **kwargs)
+        self.refresh()
+
+    def delete(self, name):
+        path = _mkpath(_suffix.app % name, self._cn.namespace)
+        self._cn._checked_delete(path)
+        self.refresh()
+
+    def refresh(self):
+        path = _mkpath(_suffix.apps, self._cn.namespace)
+        response = self._cn._checked_get(path, count=-1)
+        self._items = _parse_apps(response.body)
+
+class Indexes(Collection):
+    def create(self, name, **kwargs):
+        path = _mkpath(_suffix.indexes, self._cn.namespace)
+        self._cn._checked_post(path, name=name, **kwargs)
+        self.refresh()
+
+    # UNDONE: See http://jira.splunk.com:8080/browse/SPL-35023 for how to 
+    # implement!
+    def clear(self, name):
+        """Clear the named index."""
+        raise
+
+    # It's not possible to delete an index
+    def delete(self, name):
+        raise # UNDONE: IllegalOperationError?
+
+    def refresh(self):
+        path = _mkpath(_suffix.indexes, self._cn.namespace)
+        response = self._cn._checked_get(path, count=-1)
+        self._items = _parse_indexes(response.body)
+
+class Inputs(Collection):
+    def create(self): raise
+
+    def delete(self): raise
+
+    # data/inputs/monitor
+    # UNDONE: data/inputs/oneshot ?
+    # UNDONE: data/inputs/script
+    # UNDONE: data/inputs/tcp/raw
+    # UNDONE: data/inputs/tcp/cooked
+    # UNDONE: data/inputs/tcp/ssl
+    # UNDONE: data/inputs/udp
+    # UNDONE: data/inputs/win-event-log-collections
+    # UNDONE: data/inputs/win-wmi-collections
+    def refresh(self):
+        path = _mkpath("data/inputs/monitor")
+        response = self._cn._checked_get(path, count=-1)
+        self._items = _parse_entries(response.body)
+
+class Licenses(Collection):
+    def create(self): raise # UNDONE
+
+    def delete(self): raise # UNDONE
+
+    def refresh(self):
+        path = _mkpath("licenser/licenses")
+        response = self._cn._checked_get(path, count=-1)
+        self._items = _parse_entries(response.body)
+
+class Objects(Collection):
+    def create(self): raise # UNDONE
+
+    def delete(self): raise # UNDONE
+
+    def refresh(self):
+        path = _mkpath(_suffix.directory);
+        response = self._cn._checked_get(path, count=-1)
+        self._items = _parse_entries(response.body)
+
+class Roles(Collection):
+    def create(self): pass # UNDONE
+
+    def delete(self): pass # UNDONE
+
+    def refresh(self):
+        path = _mkpath(_suffix.roles);
+        response = self._cn._checked_get(path, count=-1)
+        self._items = _parse_entries(response.body)
+    
+class Users(Collection):
+    def create(self): pass # UNDONE
+
+    def delete(self): pass # UNDONE
+
+    def refresh(self):
+        path = _mkpath(_suffix.users);
+        response = self._cn._checked_get(path, count=-1)
+        self._items = _parse_entries(response.body)
+    
+#
+# Jobs collection
+#
 
 # Convert the given job response message to a job state value
 def _jobstate(message):
@@ -298,126 +501,27 @@ class Job:
     def finalize(self):
         self._control("finalize")
 
-class Server(Record):
-    def __init__(self, cn):
-        self._cn = cn
-        self.refresh();
-
-    def _get(self):
-        response = self._cn.get("/services/server/info")
-        info = _parse_content(response.body)
-
-        self['build'] = info.build
-        self['cpu'] = info.cpu_arch
-        self['guid'] = info.guid
-        #self['master_guid'] = info.master_guid
-        self['mode'] = info.mode
-        self['name'] = info.serverName
-        self['version'] = info.version
-
-        self['license'] = record({
-            'isfree': info.isFree,
-            'istrial': info.isTrial,
-            'keys': info.licenseKeys,
-            'signature': info.licenseSignature,
-            'state': info.licenseState,
-        })
-
-        self['os'] = record({
-            'build': info.os_build,
-            'name': info.os_name,
-            'version': info.os_version,
-        })
-
-    def _getcapabilities(self):
-        response = self._cn.get("/services/admin/capabilities")
-        body = data.load(response.body)
-        return body.entry.content.capabilities
-
-    # Returns the entry element from the response body of a GET request to 
-    # the givne path.
-    def _getentry(self, path):
-        response = self._cn.get(path, count=-1)
-        body = data.load(response.body)
-        return body.entry if isinstance(body.entry, list) else [body.entry]
-
-    # UNDONE: Naming of role members
-    def _getroles(self):
-        items = self._getentry("/services/admin/roles")
-        roles = {}
-        for item in items:
-            name = item.title
-            data = item.content
-            roles[name] = record({
-                'name': name,
-                'capabilities': data.capabilities,
-                'defaultapp': data.defaultApp,
-                'imported_capabilities': data.imported_capabilities,
-                'improted_roles': data.imported_roles,
-                'imported_rtSrchJobsQuota': data.imported_rtSrchJobsQuota,
-                'imported_srchDiskQuota': data.imported_srchDiskQuota,
-                'imported_srchFilter': data.imported_srchFilter,
-                'imported_srchIndexesAllowed': data.imported_srchIndexesAllowed,
-                'imported_srchIndexesDefault': data.imported_srchIndexesDefault,
-                'imported_srchJobsQuota': data.imported_srchJobsQuota,
-                'imported_srchTimeWin': data.imported_srchTimeWin,
-                'rtSrchJobsQuota': data.rtSrchJobsQuota,
-                'srchDiskQuota': data.srchDiskQuota,
-                'srchFilter': data.srchFilter,
-                'srchIndexesAllowed': data.srchIndexesAllowed,
-                'srchIndexesDefault': data.srchIndexesDefault,
-                'srchJobsQuota': data.srchJobsQuota,
-                'srchTimeWin': data.srchTimeWin,
-            })
-        return roles
-
-    def _getusers(self):
-        items = self._getentry("/services/admin/users")
-        users = {}
-        for item in items:
-            name = item.title
-            data = item.content
-            users[name] = record({
-                'name': name,
-                'email': data.email,
-                'password': data.password,
-                'realname': data.realname,
-                'roles': data.roles,
-                'defaultapp': data.defaultApp,
-            })
-        return users
-    
-    def capabilities(self):
-        if self._capabilities == None: 
-            self._capabilities = self._getcapabilities()
-        return self._capabilities
-
-    def refresh(self): 
-        self._capabilities = None
-        self._roles = None
-        self._users = None
-        self._get()
-
-    def roles(self):
-        if self._roles == None: 
-            self._roles = self._getroles()
-        return self._roles
-
-    def restart(self):
-        pass # UNDONE
-
-    def users(self):
-        if self._users == None:
-            self._users = self._getusers()
-        return self._users
-
 #
 # Response handlers
 #
 
 def _parse_apps(body):
-    entries = XML(body).findall(xname.entry)
-    return map(entries, selector({'name': xname.title}))
+    return _parse_entries(body)
+
+def _parse_indexes(body):
+    return _parse_entries(body)
+
+# Parse a generic atom feed into a dict
+def _parse_entries(body):
+    entries = data.load(body, xname.entry)
+    result = {}
+    for entry in entries:
+        name = entry.title
+        value = entry.content
+        value['name'] = name
+        #del value['type']
+        result[name] = value
+    return result
 
 def _parse_commands(body):
     entries = XML(body).findall(xname.entry)
@@ -427,22 +531,6 @@ def _parse_content(body):
     content = XML(body).find("./*/%s" % xname.content)
     return data.load_element(content)
     
-def _parse_directory(body):
-    def _findtype(entry): # ElementTree has poor XPath support
-        pattern = "%s/%s/%s" % (xname.content, xname.dict, xname.key)
-        for element in entry.findall(pattern):
-            if element.get("name") == "eai:type":
-                return element.text
-        return ""
-    entries = XML(body).findall(xname.entry)
-    return map(entries, selector({'name': xname.title, 'type': _findtype}))
-
-# /response/messages/msg*
-def _parse_messages(body):
-    # We expect to see /response/messages/msg*
-    msgs = XML(body).findall("messages/msg")
-    return map(msgs, _load_leaf)
-
 def _parse_eventtypes(body):
     entries = XML(body).findall(xname.entry)
     return map(entries, _parse_eventtype)
@@ -457,6 +545,12 @@ def _parse_eventtype(entry):
 def _parse_fields(body):
     entries = XML(body).findall(xname.entry)
     return map(entries, selector({'name': xname.title, 'id': xname.id}))
+
+# /response/messages/msg*
+def _parse_messages(body):
+    # We expect to see /response/messages/msg*
+    msgs = XML(body).findall("messages/msg")
+    return map(msgs, _load_leaf)
 
 # Load the contents of the given element into a dict. This routine assumes 
 # that the contents are either a string, a <list> or a <dict> element, so this

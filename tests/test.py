@@ -27,7 +27,7 @@ sys.path.insert(0, path.dirname(path.dirname(path.abspath(__file__))))
 import splunk
 
 # UNDONE: Unify command line processing
-from cmdline import default, error, loadif, merge, record
+from tools.cmdline import error, loadif, merge, record
 
 ATOM = "http://www.w3.org/2005/Atom"
 AUTHOR = "{%s}author" % ATOM
@@ -36,8 +36,8 @@ FEED = "{%s}feed" % ATOM
 ID = "{%s}id" % ATOM
 TITLE = "{%s}title" % ATOM
 
-host = default.host
-host = default.port
+host = "localhost"
+port = 8089
 username = ""
 password = ""
 namespace = None
@@ -68,36 +68,31 @@ class ProtocolTestCase(unittest.TestCase):
             self.assertTrue(root.find(TITLE) is not None)
             self.assertTrue(root.findall(ENTRY) is not None)
 
-class ServerTestCase(unittest.TestCase):
+class ServiceTestCase(unittest.TestCase):
     def setUp(self):
         self.cn = connect()
 
     def tearDown(self):
         self.cn.close()
 
-    def test_server(self):
-        server = self.cn.server()
-        self.assertTrue(server.has_key("build"))
-        self.assertTrue(server.has_key("cpu"))
-        self.assertTrue(server.has_key("guid"))
-        self.assertTrue(server.has_key("license"))
-        self.assertTrue(server.has_key("mode"))
-        self.assertTrue(server.has_key("name"))
-        self.assertTrue(server.has_key("os"))
-        self.assertTrue(server.has_key("version"))
+    def test_info(self):
+        info = self.cn.info()
+        keys = [
+            "build", "cpu_arch", "guid", "isFree", "isTrial", "licenseKeys",
+            "licenseSignature", "licenseState", "master_guid", "mode", 
+            "os_build", "os_name", "os_version", "serverName", "version" ]
+        for key in keys: self.assertTrue(info.has_key(key))
 
     def test_users(self):
-        server = self.cn.server()
-        users = server.users()
-        roles = server.roles()
+        users = self.cn.users
+        roles = self.cn.roles
         for user in users.values():
             for role in user.roles:
                 self.assertTrue(role in roles.keys())
 
     def test_roles(self):
-        server = self.cn.server()
-        roles = server.roles()
-        capabilities = server.capabilities()
+        roles = self.cn.roles
+        capabilities = self.cn.capabilities()
         for role in roles.values():
             for capability in role.capabilities:
                 self.assertTrue(capability in capabilities)
@@ -134,8 +129,8 @@ def parse(argv):
 def main(argv):
     kwargs = getopts(argv).kwargs
     global host, port, username, password, namespace
-    host = kwargs.get("host", default.host)
-    port = kwargs.get("port", default.port)
+    host = kwargs.get("host", host)
+    port = kwargs.get("port", port)
     username = kwargs.get("username", "")
     password = kwargs.get("password", "")
     namespace = kwargs.get("namespace", None)

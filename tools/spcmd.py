@@ -21,10 +21,10 @@
 # set the default output_mode for a session by simply setting a local variable
 # 'output_mode' to a legal output_mode value.
 
+# UNDONE: Banner!
 # UNDONE: Attempt to re-login on a 401 (Unauthorized) in case session expired
 # UNDONE: usage() is not defined (!) 
 # UNDONE: Implement command completion 
-# UNDONE: Implement -i to force interactive mode even if non-option args exist
 
 """An interactive command shell for Splunk.""" 
 

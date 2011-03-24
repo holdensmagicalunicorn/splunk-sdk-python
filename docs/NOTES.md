@@ -382,12 +382,6 @@ call.
   </ns0:entry>
 </ns0:feed>
 
-# FEEDBACK
-* Somewhat unusual convention used for creating resources (eg: _new)
-* /services/search/parser response does not use namespaces
-* How to read the current priority of a given job?
-* /user/admin/users vs. /user/authentication/users
-
 # UNDONE
 * Search model
 
@@ -409,3 +403,10 @@ call.
 ## splunk/api.py
 * Splunk search state machine
 
+# FEEDBACK
+* Somewhat unusual convention used for creating resources (eg: _new)
+* /services/search/parser response does not use namespaces
+* How to read the current priority of a given job?
+* /user/admin/users vs. /user/authentication/users
+* DELETE /services/data/indexes/<index-name> => 404
+* How do I get a list of inputs by index? (instead of pivoted by input kind)
