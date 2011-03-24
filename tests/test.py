@@ -83,6 +83,18 @@ class ServiceTestCase(unittest.TestCase):
             "os_build", "os_name", "os_version", "serverName", "version" ]
         for key in keys: self.assertTrue(info.has_key(key))
 
+    def test_collections(self):
+        # Simply invoke and make sure they are there and dont throw
+        self.cn.applications()
+        self.cn.eventtypes()
+        self.cn.indexes()
+        self.cn.inputs()
+        self.cn.jobs()
+        self.cn.licenses()
+        self.cn.objects()
+        self.cn.roles()
+        self.cn.users()
+
     def test_users(self):
         users = self.cn.users
         roles = self.cn.roles

@@ -12,41 +12,30 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# UNDONE: Flatten server onto Service (info, users, roles, caps)
+#
 # UNDONE: Editing of entities
 # UNDONE: Async operations
 # UNDONE: APIs need to take a port in addition to hostname
 # UNDONE: Review exception types
-# UNDONE: Handle paging on collections
 # UNDONE: Parse results more incrimentally (sax?) .. at least for collection
 #   results we can define an iterator and yield collection members more 
 #   incrimentally.
 # UNDONE: Review all response handlers for consistent use of data utilities
-# UNDONE: Paramaterize Collection with <get, item, ctor, dtor> functions
-# UNDONE: Make collections more data driven
-# UNDONE: Figure out how to delay allocation of "service" sub-objects (colls)
 # UNDONE: Consider moving all current code into splunk.client
 # UNDONE: Consider "Service" (or Session) instead of Connection
+# UNDONE: Method to publish data to index (Index.submit(...) or Index.publish)
+# UNDONE: Service.restart
+# UNDONE: Alerts, figure out how the endpoint(s) work
+#
+# UNDONE: Collections
+#   * Handle paging (?)
+#   * Make collections more data driven, <get, item, ctor, dtor> params
+#   * Figure out how to delay allocation of "service" sub-objects (colls)
+#   * Standardize binding to list-like collections
+#   * ReadOnlyCollection (eg: Licenses)
+#
 
-#
-# Service
-#   info : dict
-#   users : Collection
-#   roles : list
-#   capabilities : list
-#   commands : Collection
-#   applications : Collection
-#   indexes : Collection
-#   inputs : Collection
-#   jobs : Collection*
-#
-# UNDONE:
-#   Service.restart
-#   Index.submit(data) aka publish?
-#   alerts
-#   licenses : CollectionRO
-#   fields?
-#
+from pprint import pprint # UNDONE
 
 import urllib
 from xml.etree import ElementTree
@@ -135,8 +124,10 @@ class Connection:
         self.password = password
         self.namespace = namespace
         self.applications = Applications(self)
+        self.eventtypes = Eventtypes(self)
         self.indexes = Indexes(self)
         self.inputs = Inputs(self)
+        self.jobs = Jobs(self)
         self.licenses = Licenses(self)
         self.objects = Objects(self)
         self.roles = Roles(self)
@@ -191,82 +182,46 @@ class Connection:
         url = _mkurl(self.host, path)
         return http.post(url, self._headers(), timeout, **kwargs)
 
-    def capabilities(self, **kwargs):
+    # List
+    def commands(self):
+        path = _mkpath(_suffix.search_commands, self.namespace)
+        response = self._checked_get(path, count=-1)
+        return _parse_titles(response.body)
+
+    # List
+    def capabilities(self):
         path = _mkpath(_suffix.capabilities)
-        response = self._checked_get(path, **kwargs)
+        response = self._checked_get(path)
         xpath = "%s/%s" % (xname.entry, xname.content)
         return data.load(response.body, xpath).capabilities
 
-    def commands(self, **kwargs):
-        """Returns a list of search commands."""
-        path = _mkpath(_suffix.search_commands, self.namespace)
-        response = self._checked_get(path, **kwargs)
-        return _parse_commands(response.body)
-
-    def eventtypes(self, **kwargs):
-        """Returns a list of eventtypes."""
-        path = _mkpath(_suffix.saved_eventtypes, self.namespace)
-        response = self._checked_get(path, **kwargs)
-        return _parse_eventtypes(response.body)
-
+    # List
     def fields(self, **kwargs):
         """Returns a list of search fields."""
         path = _mkpath(_suffix.search_fields, self.namespace)
         response = self._checked_get(path, **kwargs)
-        return _parse_fields(response.body)
+        return _parse_titles(response.body)
 
     def info(self):
         response = self._checked_get("/services/server/info")
         return _parse_content(response.body)
-
-    def job(self, id, **kwargs):
-        """Returns detail on the given job id."""
-        path = _mkpath(_suffix.search_job % id, self.namespace)
-        response = self._checked_get(path, **kwargs)
-        return data.load(response.body, xname.content)
-
-    def jobids(self, **kwargs):
-        """Returns ids of all search jobs."""
-        return [job.sid for job in self.jobs(**kwargs)]
-
-    # UNDONE: The following should return job ids, or job objects
-    def jobs(self, id = None, **kwargs):
-        """Returns detail on the given job id, or detail on all active search
-           jobs if no id is provided."""
-        if id is not None: return self.job(id)
-        path = _mkpath(_suffix.search_jobs, self.namespace)
-        response = self._checked_get(path, **kwargs)
-        return data.load(response.body, "%s/%s" % (xname.entry, xname.content))
 
     def parse(self, query):
         path = _mkpath(_suffix.search_parser)
         response = self.get(path, q=query)
         if response.status == 200:
             return data.load(response.body)
+        message = "Syntax Error"
         messages = _parse_messages(response.body) # Grab error messages
-        message = "Syntax error"
-        if len(messages) > 0: 
-            message = messages[0].get("$text", message)
+        if len(messages) > 0: message = messages[0].get("$text", message)
         raise SyntaxError(message)
 
     def restart(self):
         pass # UNDONE
 
     def search(self, query, **kwargs):
-        """Execute the given search query."""
-        kwargs["search"] = query
-        path = _mkpath(_suffix.search_jobs, self.namespace)
-        response = self.post(path, **kwargs)
-        if response.status == 200: # oneshot
-            return response.body
-        if response.status == 201: # Created
-            return XML(response.body).findtext("sid").strip()
-        raise HTTPError(response.status, response.reason)
-
-    def server(self):
-        if self._server == None:
-            self._server = Server(self)
-        return self._server
+        """Issue an immediate search."""
+        pass # UNDONE
 
     def status(self):
         return "closed" if self.token is None else "open"
@@ -353,7 +308,17 @@ class Applications(Collection):
     def refresh(self):
         path = _mkpath(_suffix.apps, self._cn.namespace)
         response = self._cn._checked_get(path, count=-1)
-        self._items = _parse_apps(response.body)
+        self._items = _parse_entries(response.body)
+
+class Eventtypes(Collection):
+    def create(self): pass # UNDONE
+
+    def delete(self): pass # UNDONE
+
+    def refresh(self):
+        path = _mkpath(_suffix.saved_eventtypes, self._cn.namespace)
+        response = self._cn._checked_get(path, count=-1)
+        self._items = _parse_entries(response.body)
 
 class Indexes(Collection):
     def create(self, name, **kwargs):
@@ -365,7 +330,7 @@ class Indexes(Collection):
     # implement!
     def clear(self, name):
         """Clear the named index."""
-        raise
+        raise # UNDONE
 
     # It's not possible to delete an index
     def delete(self, name):
@@ -374,12 +339,12 @@ class Indexes(Collection):
     def refresh(self):
         path = _mkpath(_suffix.indexes, self._cn.namespace)
         response = self._cn._checked_get(path, count=-1)
-        self._items = _parse_indexes(response.body)
+        self._items = _parse_entries(response.body)
 
 class Inputs(Collection):
-    def create(self): raise
+    def create(self): raise # UNDONE
 
-    def delete(self): raise
+    def delete(self): raise # UNDONE
 
     # data/inputs/monitor
     # UNDONE: data/inputs/oneshot ?
@@ -394,6 +359,26 @@ class Inputs(Collection):
         path = _mkpath("data/inputs/monitor")
         response = self._cn._checked_get(path, count=-1)
         self._items = _parse_entries(response.body)
+
+class Jobs(Collection):
+    # UNDONE: Finish implementation
+    #def create(self, query = None, **kwargs):
+    #    kwargs['exec_mode'] = "normal"
+    #    if query is not None: kwargs['search'] = query
+    #    path = _mkpath(_suffix.search_jobs, self.namespace)
+    #    response = self.post(path, **kwargs)
+    #    if response.status == 200: # oneshot
+    #        return response.body
+    #    if response.status == 201: # Created
+    #        return XML(response.body).findtext("sid").strip()
+    #    raise HTTPError(response.status, response.reason)
+
+    def delete(self): raise # UNDONE
+
+    def refresh(self):
+        path = _mkpath(_suffix.search_jobs, self._cn.namespace)
+        response = self._cn._checked_get(path, count=0)
+        self._items = _parse_jobs(response.body)
 
 class Licenses(Collection):
     def create(self): raise # UNDONE
@@ -505,12 +490,6 @@ class Job:
 # Response handlers
 #
 
-def _parse_apps(body):
-    return _parse_entries(body)
-
-def _parse_indexes(body):
-    return _parse_entries(body)
-
 # Parse a generic atom feed into a dict
 def _parse_entries(body):
     entries = data.load(body, xname.entry)
@@ -519,33 +498,32 @@ def _parse_entries(body):
         name = entry.title
         value = entry.content
         value['name'] = name
-        #del value['type']
+        del value['type']
         result[name] = value
     return result
 
-def _parse_commands(body):
+# Basically the same as _parse_entries, but the job key is the sid which
+# is not in the title  element
+def _parse_jobs(body):
+    entries = data.load(body, xname.entry)
+    result = {}
+    for entry in entries:
+        value = entry.content
+        name = value.sid
+        value['name'] = name
+        del value['type']
+        result[name] = value
+    return result
+
+# Exteract title element of each entry into a list
+def _parse_titles(body):
     entries = XML(body).findall(xname.entry)
-    return map(entries, selector({'name': xname.title}))
+    return [ entry.findtext(xname.title) for entry in entries ]
 
 def _parse_content(body):
     content = XML(body).find("./*/%s" % xname.content)
     return data.load_element(content)
     
-def _parse_eventtypes(body):
-    entries = XML(body).findall(xname.entry)
-    return map(entries, _parse_eventtype)
-
-# Construct result record by merging entry title with contents (dict)
-def _parse_eventtype(entry):
-    dict = entry.find(xname.content).find(xname.dict)
-    result = _load_dict(dict)
-    result["name"] = entry.find(xname.title).text
-    return result
-
-def _parse_fields(body):
-    entries = XML(body).findall(xname.entry)
-    return map(entries, selector({'name': xname.title, 'id': xname.id}))
-
 # /response/messages/msg*
 def _parse_messages(body):
     # We expect to see /response/messages/msg*
