@@ -62,9 +62,10 @@ _suffix = record({
     'roles': "admin/roles",
     'saved_eventtypes': "saved/eventtypes",
     'search_commands': "search/commands",
+    'search_control': "search/jobs/%s/control",
+    'search_export': "search/jobs/export",
     'search_fields': "search/fields",
     'search_job': "search/jobs/%s",
-    'search_job_control': "search/jobs/%s/control",
     'search_jobs': "search/jobs",
     'search_parser': "search/parser",
     'users': "admin/users",
@@ -219,9 +220,12 @@ class Connection:
     def restart(self):
         pass # UNDONE
 
-    def search(self, query, **kwargs):
-        """Issue an immediate search."""
-        pass # UNDONE
+    def search(self, query = None, **kwargs):
+        """Execute an immediate search."""
+        path = _mkpath(_suffix.search_export, self.namespace)
+        if query is not None: kwargs['search'] = "search %s" % query 
+        response = self.post(path, **kwargs)
+        return response.body
 
     def status(self):
         return "closed" if self.token is None else "open"
@@ -446,7 +450,7 @@ class Job:
         self.updated = None
 
     def _control(self, action):
-        path = _mkpath(_suffix.search_job_control % self.id, self._cn.namespace)
+        path = _mkpath(_suffix.search_control % self.id, self._cn.namespace)
         return self._post(path, action=action)
 
     # Retrieve the status of the current job

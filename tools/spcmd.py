@@ -25,6 +25,7 @@
 # UNDONE: Attempt to re-login on a 401 (Unauthorized) in case session expired
 # UNDONE: usage() is not defined (!) 
 # UNDONE: Implement command completion 
+# UNDONE: Ambient args for other methods
 
 """An interactive command shell for Splunk.""" 
 
@@ -112,9 +113,8 @@ class Session(InteractiveInterpreter):
         }
         InteractiveInterpreter.__init__(self, locals)
 
-    # Load the given file into the interpreter
     def load(self, filename):
-        self.runcode("exec open('%s')" % filename)
+        exec open(filename).read() in self.locals, self.locals
 
     # Run the interactive interpreter
     def run(self):
