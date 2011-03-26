@@ -162,6 +162,9 @@ transforms.conf
 ## Search
 
 # Synchronous, "oneshot"
+# NOTE: exec_mode=oneshot will block until results are ready and then will
+# return in response body. A post to /services/search/jobs/export will
+# begin streaming results (including preview) immediately
 search(query, ...) => stream
 
 # Async search
@@ -410,3 +413,5 @@ call.
 * /user/admin/users vs. /user/authentication/users
 * DELETE /services/data/indexes/<index-name> => 404
 * How do I get a list of inputs by index? (instead of pivoted by input kind)
+* DELETE /services/apps/local/{name} => 500 if app 'name' does not exist 
+* POST /services/authentication/capabilities name=<name> => 404 (verify)

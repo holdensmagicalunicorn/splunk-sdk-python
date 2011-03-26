@@ -14,6 +14,9 @@
 
 """A simple http client library."""
 
+# UNDONE: Make sure timeout arg works!
+# UNDONE: Consider moving timeout arg into kwargs
+
 import httplib
 import urllib
 

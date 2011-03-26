@@ -60,7 +60,7 @@ _suffix = record({
     'index': "data/indexes/%s",
     'indexes': "data/indexes",
     'roles': "admin/roles",
-    'saved_eventtypes': "saved/eventtypes",
+    'eventtypes': "saved/eventtypes",
     'search_commands': "search/commands",
     'search_control': "search/jobs/%s/control",
     'search_export': "search/jobs/export",
@@ -320,7 +320,7 @@ class Eventtypes(Collection):
     def delete(self): pass # UNDONE
 
     def refresh(self):
-        path = _mkpath(_suffix.saved_eventtypes, self._cn.namespace)
+        path = _mkpath(_suffix.eventtypes, self._cn.namespace)
         response = self._cn._checked_get(path, count=-1)
         self._items = _parse_entries(response.body)
 
