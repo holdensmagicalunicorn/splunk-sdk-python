@@ -399,19 +399,23 @@ call.
 
 ## splunk/data.py
 * Investigate use of ElementTree.iterparse, et al
-* Unify with response handlers in api.py
 * Nametable
 * Schema "rules"
 
 ## splunk/api.py
 * Splunk search state machine
 
-# FEEDBACK
-* Somewhat unusual convention used for creating resources (eg: _new)
-* /services/search/parser response does not use namespaces
+# QUESTIONS
 * How to read the current priority of a given job?
-* /user/admin/users vs. /user/authentication/users
-* DELETE /services/data/indexes/<index-name> => 404
-* How do I get a list of inputs by index? (instead of pivoted by input kind)
-* DELETE /services/apps/local/{name} => 500 if app 'name' does not exist 
+
+# FEEDBACK
+* No way to delete an index: DELETE /services/data/indexes/{name} => 404
+* No way to get a listing of all inputs, or all inputs/index
 * POST /services/authentication/capabilities name=<name> => 404 (verify)
+    Is there really no way to dynamically create/delete capabilities?
+
+# BUGS
+* /services/search/parser response does not use namespaces
+* DELETE /services/apps/local/{name} => 500 if app 'name' does not exist 
+* POST /services/configs/inputs name=foo => 500 (Internal Server Error)
+# DELETE /services/configs/inputs/SSL => 500 (Internal Server Error)

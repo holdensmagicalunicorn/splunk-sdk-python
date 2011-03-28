@@ -13,6 +13,10 @@
 # under the License.
 
 # UNDONE: Figure out how to support methods on collection items
+# UNDONE: Support for _reload endpoints
+# UNDONE: Support for _new endpoints
+# UNDONE: Figure out which endpoints use .../settings for metadata, eg:
+#   server/settings
 
 """Low-level bindings to the Splunk REST API."""
 
@@ -45,14 +49,20 @@ class Context:
     def _headers(self):
         return [("Authorization", self.token)]
 
-    def bind(self, path, method = "GET"):
+    def bind(self, path, method = "get"):
         fn = {
             'get': self.get,
             'delete': self.delete,
-            'post': self.post }.get(method.lower(), None) 
+            'post': self.post 
+        }.get(method.lower(), None) 
         if fn is None: raise ValueError, "Unknown method '%s'" % method
         path = self.fullpath(path)
-        return lambda **kwargs: fn(path, **kwargs)
+        if path.find('{') == -1:
+            return lambda **kwargs: fn(path, **kwargs)
+        # UNDONE: Need some better error checking on the path format string,
+        # eg: check that all replacements are positional and that the number 
+        # of given args matches the number of expected replacements.
+        return lambda *args, **kwargs: fn(path.format(*args), **kwargs)
 
     def delete(self, path, **kwargs):
         return http.delete(self.url(path), self._headers(), **kwargs)
@@ -112,133 +122,34 @@ class Resource:
     """An abstract resource protocol."""
     pass
 
+class Entity(Resource):
+    """Implements the protocol for interacting with 'entity' resources."""
+    def __init__(self, path, cx):
+        self.get = lambda **kwargs: cx.get(path, **kwargs)
+
+#class Method(Resource):
+#    """Implements the protocol for interacting with method-like resources. """
+#    def __init__(self, path, cx, method = "get"):
+#        fn = {
+#            'get': cx.get,
+#            'post': cx.post }.get(method.lower(), None) 
+#        if fn is None: raise ValueError, "Unknown method '%s'" % method
+#        self.invoke = lambda **kwargs: fn(path, **kwargs)
+#
+#    def __call__(self, **kwargs):
+#        return self.invoke(**kwargs)
+
 class Collection(Resource):
     """Implements the protocol for interacting with a collection resource."""
-    def __init__(self, path, cx, verbs = ["get", "item", "create", "delete"]):
-        itempath = "%s/%%s" % path
+    def __init__(self, path, cx, verbs = "get,item,create,delete"):
+        verbs = verbs.split(',')
+        itempath = "%s/{0}" % path
         if "get" in verbs:
-            self.get = lambda **kwargs: cx.get(path, **kwargs)
+            self.get = cx.bind(path, "get")
         if "item" in verbs:
-            self.item = lambda key, **kwargs: cx.get(itempath % key, **kwargs)
+            self.item = cx.bind(itempath, "get")
         if "create" in verbs:
-            self.create = lambda **kwargs: cx.post(path, **kwargs)
+            self.create = cx.bind(path, "post")
         if "delete" in verbs:
-            self.delete = lambda key, **kwargs: cx.delete(itempath % key)
-
-#
-# Endpoints
-#
-
-# alerts
-
-# create: ['name']
-apps = Endpoint("apps/local", Collection)
-
-# apps/appinstall
-# apps/apptemplates
-
-# authentication/auth-tokens
-# authentication/changepassword
-# authentication/current-context
-# authentication/httpauth-tokens
-# authentication/providers
-# authentication/providers/{name}
-# authorization/checkCapability
-
-commands = Endpoint("data/commands", Collection)
-
-# UNDONE: create => 404 .. figure out why?
-capabilities = Endpoint(
-    "authorization/capabilities", Collection, ["get", "create", "delete"])
-
-# configs
-
-# deployment/...
-
-# create: ['name', 'search']
-eventtypes = Endpoint("saved/eventtypes", Collection)
-
-# NOTE: No delete!
-indexes = Endpoint("data/indexes", Collection, ["get", "item", "create"])
-
-# data/inputs
-
-# data/props/extractions[/{name}]?
-# data/props/fieldaliases
-# data/props/lookups
-# data/props/sourcetype-rename
-# data/transforms/extractions[/{name}]?
-# data/transforms/lookups[/{name}]?
-
-# licenser/groups[/{name}]?
-# licenser/licenses[/{hash}]?
-# licenser/localslave
-# licenser/localslave/license
-# licenser/messages
-# licenser/pools[/{name}]?
-# licenser/slaves[/{guid}]?
-# licenser/stacks[/{name}]?
-# masterlm
-
-# data/outputs..
-
-# messages
-
-objects = Endpoint("/services/admin/directory", Collection, ["get", "item"])
-
-# properties[/{file_name}[/{stanza_name}[/{key_name}]?]?]?
-
-# receivers/simple
-# receivers/stream
-
-roles = Endpoint("authorization/roles", Collection)
-
-# saved/searches/{name}
-# saved/searches/{name}/acknowledge
-# saved/searches/{name}/dispatch
-# saved/searches/{name}/history
-# saved/searches/{name}/scheduled_times
-# saved/searches/{name}/suppress
-
-# scheduled
-# scheduled/views
-
-# search/distributed
-# search/distributed/config
-# search/distributed/config/distributedSearch
-# search/distributed/peers
-
-# search/fields
-# search/fields/{name}
-# search/fields/{name}/tags
-
-# search/jobs/export
-
-# search/jobs
-# search/jobs/{sid}
-# search/jobs/{sid}/control
-# search/jobs/{sid}/events
-# search/jobs/{sid}/results
-# search/jobs/{sid}/results_preview
-# search/jobs/{sid}/search.log
-# search/jobs/{sid}/summary
-# search/jobs/{sid}/timeline
-
-# search/parser
-
-# search/tags[/{name}]?
-
-# search/timeparser
-
-# search/typeahead
-
-# server
-# server/control
-# server/control/restart
-
-# server/info
-# server/logger
-# server/settings
-
-users = Endpoint("authentication/users", Collection)
+            self.delete = cx.bind(itempath, "delete")
 
