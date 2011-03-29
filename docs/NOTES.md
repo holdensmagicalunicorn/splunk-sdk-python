@@ -405,6 +405,27 @@ call.
 ## splunk/api.py
 * Splunk search state machine
 
+# METADATA
+
+collection => get;create?
+    * Also implies a relationship between collection and its members
+entity => get;edit?;delete?
+method => get|post
+
+* No reliable way to query the signature of an endpoint
+    GET <path> = 200 => get
+        /link[@rel='create'] => item, create
+            <path>/_new = 200 && eai:attributes... => args
+        ** How do we determine if an endpoint supports DELETE?
+
+? How do I determine if an endpoint is a read-only collection? ie: doesnt
+  support create, but does support item - aka how do I distinguish between
+  an entity and a read-only collection
+? How do I determine the collection key
+? How do I determine if a collection supports delete
+? How can I discover the sig of a member of a collection if the collection
+  is empty (could solve by supporting some form of wildcarding on the path)
+
 # QUESTIONS
 * How to read the current priority of a given job?
 
@@ -416,6 +437,7 @@ call.
 
 # BUGS
 * /services/search/parser response does not use namespaces
+* GET /services/authentication/auth-tokens/_new => 500
 * DELETE /services/apps/local/{name} => 500 if app 'name' does not exist 
 * POST /services/configs/inputs name=foo => 500 (Internal Server Error)
 # DELETE /services/configs/inputs/SSL => 500 (Internal Server Error)
