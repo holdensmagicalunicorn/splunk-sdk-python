@@ -120,7 +120,11 @@ class Session(InteractiveInterpreter):
     def run(self):
         print "%s connected to %s" % (self.cn.username, self.cn.host)
         while True:
-            input = raw_input("> ")
+            try:
+                input = raw_input("> ")
+            except EOFError:
+                print "\n\nThanks for using Splunk>.\n"
+                return
 
             if input is None: 
                 return
@@ -133,7 +137,7 @@ class Session(InteractiveInterpreter):
                 while True:
                     co = compile_command(input)
                     if co is not None: break
-                    input = input + ' ' + raw_input(". ") # Keep trying
+                    input = input + '\n' + raw_input(". ") # Keep trying
             except SyntaxError, e:
                 self.showsyntaxerror()
                 continue
