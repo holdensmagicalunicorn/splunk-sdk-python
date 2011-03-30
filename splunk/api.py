@@ -497,6 +497,7 @@ class Job:
 # Parse a generic atom feed into a dict
 def _parse_entries(body):
     entries = data.load(body, xname.entry)
+    if not isinstance(entries, list): entries = [entries] # Normalize schema
     result = {}
     for entry in entries:
         name = entry.title
@@ -510,6 +511,7 @@ def _parse_entries(body):
 # is not in the title  element
 def _parse_jobs(body):
     entries = data.load(body, xname.entry)
+    if not isinstance(entries, list): entries = [entries] # Normalize schema
     result = {}
     for entry in entries:
         value = entry.content
