@@ -1,0 +1,181 @@
+# The following file is in CSV format and enumerates Splunk endpoints and
+# their corresponding "signature". The signature consists of the set of verbs
+# and their required arguments (if any). The signature does not contain 
+# optional args because that list is quite long in some cases and this file 
+# is intended to capture the minimum info required to interact with a given 
+# endpoint. 
+
+# CONSIDER: Rename delete => remove (the term actually used in ATOM responses)
+# UNDONE: Required params for the 'edit' verb
+# UNDONE: Some entities have a "disable" rel link, figure it out!
+# UNDONE: Does authentication/httpauth-tokens suport create? what is the key?
+# UNDONE: alerts/..., figure out how it works!
+# UNDONE: configs/deploymentclient, sig?
+# UNDONE: configs/inputs, what is the key?
+# UNDONE: configs/wmi, sig?
+# UNDONE: data/commands, does it really have no create?
+# UNDONE: data/inputs/oneshot, does it have members? if so, whats their sig?
+# UNDONE: data/inputs/tcp/cooked/{name}, sig?
+# UNDONE: data/inputs/tcp/raw/{name}, sig?
+# UNDONE: data/outputs/tcp/group/{name}, sig?
+# UNDONE: data/outputs/tcp/server/{name}, sig?
+# UNDONE: data/outputs/tcp/syslog/{name}, sig?
+# UNDONE: data/props/extractions/{name}, does not support delete?
+# UNDONE: data/props/fieldaliases/{name}, sig?
+# UNDONE: data/props/lookups/{name}, sig?
+# UNDONE: data/props/sourcetype-rename/{name}, sig?
+# UNDONE: data/transforms/extractions/{name}, does not support delete?
+# UNDONE: data/transforms/lookups/{name}, does not support delete?
+# UNDONE: data/user-prefs, what is this?
+# UNDONE: deployment/client, sig?
+# UNDONE: deployment/serverclass/{name}, sig?
+# UNDONE: deployment/serverclass_status/{name}, sig?
+# UNDONE: licenser/messages, sig?
+
+alerts, get
+alerts/fired_alerts, get
+alerts/fired_alerts/-, get
+apps/appinstall, get;create?name
+apps/local, get;create?name
+apps/local/{name}, get;edit;delete
+#apps/remote, None
+authentication/auth-tokens, get;create
+authentication/auth-tokens/{?}
+authentication/changepassword, get;create?name&password
+authentication/changepassword/{name}, get;edit;delete
+authentication/current-context, get
+authentication/current-context/context, get
+authentication/httpauth-tokens, get
+authentication/httpauth-tokens/{key}, get;delete
+authentication/providers, get;
+authentication/providers/LDAP, get;create?groupBaseDN&groupMemberAttribute&groupNameAttribute&host&name&realNameAttribute&userBaseDN&userNameAttribute
+authentication/providers/LDAP/{name}, get;delete
+authentication/providers/Scripted, get;create?name&scriptPath
+authentication/providers/Scripted/{name}, get;delete
+authentication/providers/Splunk, get;
+authentication/providers/Splunk/{name}, get;edit
+authentication/providers/services, get;
+authentication/providers/services/{name}, get;
+authentication/roles, get;create?name
+authentication/roles/{name}, get;edit;delete
+authentication/users, get;creaate:name&password
+authentication/users/{name}:, get;edit;delete
+authorization/capabilities, get
+authorization/roles, get;create?name
+authorization/roles/{name}, get;edit;delete
+configs/deploymentclient, get
+configs/inputs, get
+configs/inputs/{?}, get
+configs/wmi, get
+data/commands, get
+data/commands/{name}, get
+data/indexes, get;create?name
+data/indexes/{name}, get;edit
+data/inputs/monitor, get;create?name
+data/inputs/monitor/{name}, get;edit;delete
+data/inputs/monitor/{name}/members, get;create?name
+data/inputs/monitor/{name}/members/{name}, get;edit;delete
+data/inputs/oneshot, get;create?name
+data/inputs/script, get;create?name&interval
+data/inputs/script/restart, post:script
+data/inputs/tcp/cooked, get;create?name
+data/inputs/tcp/cooked/{name}, get
+data/inputs/tcp/raw, get;create?name
+data/inputs/tcp/raw/{name}, get
+data/inputs/tcp/ssl, get;edit
+data/inputs/udp, get;create?name
+data/lookup-table-files, get;create?name&eai:data
+data/lookup-table-files/{name}, get;edit;delete
+data/outputs/tcp/default, get;create:name 
+data/outputs/tcp/default/{name}, get;edit;delete
+data/outputs/tcp/group, get;create?name&servers
+data/outputs/tcp/group/{name}, get
+data/outputs/tcp/server, get;create?name
+data/outputs/tcp/server/{name}, get
+data/outputs/tcp/syslog, get;create?name
+data/outputs/tcp/syslog/{name}, get
+data/props/extractions, get;create?name&stanza&type&value
+data/props/extractions/{name}, get;edit
+data/props/fieldaliases, get;create?name&stanza
+data/props/fieldaliases/{name}, get
+data/props/lookups, get;create?name&overwrite&stanza&transform
+data/props/lookups/{name}, get
+data/props/sourcetype-rename, get;create?name&value
+data/props/sourcetype-rename/{name}, get
+data/transforms/extractions, get;create?name&REGEX&SOURCE_KEY
+data/transforms/extractions/{name}, get;edit
+data/transforms/lookups, get;create?name
+data/transforms/lookups/{name}, get;edit
+#data/ui/...
+#data/user-prefs/...
+deployment/client, get
+deployment/server, get;edit
+deployment/server/default, get;edit
+deployment/serverclass, get;create?name
+deployment/serverclass/{name}, get
+deployment/serverclass_status, get;create?name
+deployment/serverclass_status/{name}, get
+deployment/tenants, get;edit
+deployment/tenants/default, get;edit
+licenser/groups/Enterprise, get;edit
+licenser/groups/Forwarder, get;edit
+licenser/groups/Free, get;edit
+licenser/licenses, get;create?name
+licenser/licenses/{name}, get
+licenser/localslave, get;edit
+licenser/localslave/license, get;edit
+licenser/messages, get
+licenser/pools, get;create?name&quota&stack_id
+licenser/pools/{name}, get;edit;delete
+licenser/slaves, get
+licenser/slaves/{guid}, get
+licenser/stacks/enterprise, get
+licenser/stacks/forwarder, get
+licenser/stacks/free, get
+#masterlm
+messages: get;create?name&value
+messages/{name}, get;delete
+#properties/{file}/{stanza}/{key}
+
+##
+## UNDONE: The following need to be verified
+##
+
+receivers/simple, None
+receivers/stream, None
+saved/eventtypes, "collection"
+saved/searches, "list:*,create?name&search"
+saved/searches/{0}/acknowledge, None
+saved/searches/{0}/dispatch, None
+saved/searches/{0}/history, None
+saved/searches/{0}/scheduled_times, None
+saved/searches/{0}/suppress, None
+scheduled/views, "list:get"
+#search/distributed
+#search/distributed/config
+#search/distributed/config/distributedSearch
+#search/distributed/peers
+search/fields, get,create?
+search/fields/{key}, get;delete?
+search/fields/{key}/tags, None
+search/jobs/export, "post?search, # UNDONE: args
+search/jobs, "list:*"
+search/jobs/{0}/control, None
+search/jobs/{0}/events, None
+search/jobs/{0}/results, None
+search/jobs/{0}/results_preview, None
+search/jobs/{0}/search.log, None
+search/jobs/{0}/summary, None
+search/jobs/{0}/timeline, None
+search/parser, "get?search"
+search/tags, "list:get,item"
+search/timeparser, "post?time"
+search/timeparser, "post?q"
+server/control/restart, "get"
+server/info, "get"
+server/logger, "list:get,item"
+server/settings, "get"
+
+/services/admin/auth/login, None
+/services/admin/directory, get;create?
+/services/admin/directory{key}, get;delete?
