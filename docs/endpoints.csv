@@ -2,8 +2,8 @@
 # their corresponding "signature". The signature consists of the set of verbs
 # and their required arguments (if any). The signature does not contain 
 # optional args because that list is quite long in some cases and this file 
-# is intended to capture the minimum info required to interact with a given 
-# endpoint. 
+# is intended to capture the minimum information required to interact with 
+# a given endpoint. 
 
 # CONSIDER: Rename delete => remove (the term actually used in ATOM responses)
 # UNDONE: Required params for the 'edit' verb
@@ -31,7 +31,19 @@
 # UNDONE: deployment/serverclass/{name}, sig?
 # UNDONE: deployment/serverclass_status/{name}, sig?
 # UNDONE: licenser/messages, sig?
+# UNDONE: receivers/simple, what is it?
+# UNDONE: receivers/stream, what is it?
+# UNDONE: saved/searches/{name}/..., sigs?
+# UNDONE: scheduled/views, sig?
+# UNDONE: search/fields/{name}/tags, does this really exist?
+# UNDONE: search/jobs/{sid}/..., sigs?
+# UNDONE: search/tags, what args to create?
+# UNDONE: search/timeparser, sig?
+# UNDONE: search/typeahead, sig?
 
+/services/admin/auth/login, post?username&password
+/services/admin/directory, get
+/services/admin/directory{name}, get;edit?* # args depend on object
 alerts, get
 alerts/fired_alerts, get
 alerts/fired_alerts/-, get
@@ -136,46 +148,44 @@ licenser/stacks/free, get
 messages: get;create?name&value
 messages/{name}, get;delete
 #properties/{file}/{stanza}/{key}
-
-##
-## UNDONE: The following need to be verified
-##
-
-receivers/simple, None
-receivers/stream, None
-saved/eventtypes, "collection"
-saved/searches, "list:*,create?name&search"
-saved/searches/{0}/acknowledge, None
-saved/searches/{0}/dispatch, None
-saved/searches/{0}/history, None
-saved/searches/{0}/scheduled_times, None
-saved/searches/{0}/suppress, None
-scheduled/views, "list:get"
+#receivers/simple, None
+#receivers/stream, None
+saved/eventtypes, get;create?name&search
+saved/eventtypes/{name}, get;edit
+saved/searches, get;create?name&search
+saved/searches/{name}, get;edit
+saved/searches/{name}/acknowledge, None
+saved/searches/{name}/disable, None
+saved/searches/{name}/dispatch, None
+saved/searches/{name}/history, None
+saved/searches/{name}/notify, None
+saved/searches/{name}/scheduled_times, None
+saved/searches/{name}/suppress, None
+scheduled/views, get
+search/commands, get
+search/commands/{name}, get
 #search/distributed
 #search/distributed/config
 #search/distributed/config/distributedSearch
 #search/distributed/peers
-search/fields, get,create?
-search/fields/{key}, get;delete?
-search/fields/{key}/tags, None
-search/jobs/export, "post?search, # UNDONE: args
-search/jobs, "list:*"
-search/jobs/{0}/control, None
-search/jobs/{0}/events, None
-search/jobs/{0}/results, None
-search/jobs/{0}/results_preview, None
-search/jobs/{0}/search.log, None
-search/jobs/{0}/summary, None
-search/jobs/{0}/timeline, None
-search/parser, "get?search"
-search/tags, "list:get,item"
-search/timeparser, "post?time"
-search/timeparser, "post?q"
-server/control/restart, "get"
-server/info, "get"
-server/logger, "list:get,item"
-server/settings, "get"
-
-/services/admin/auth/login, None
-/services/admin/directory, get;create?
-/services/admin/directory{key}, get;delete?
+search/fields, get
+search/fields/{name}, get
+search/jobs/export, post?search
+search/jobs, get;post?search=>sid
+search/jobs/{sid}/control, None
+search/jobs/{sid}/events, None
+search/jobs/{sid}/results, None
+search/jobs/{sid}/results_preview, None
+search/jobs/{sid}/search.log, None
+search/jobs/{sid}/timeline, None
+search/jobs/{sid}/summary, None
+search/parser, get?search
+search/tags, get;create?None
+search/tags/{name}, get
+search/timeparser, None
+search/typeahead, None
+server/control/restart, get
+server/info, get
+server/logger, get
+server/logger/{name}, get;edit
+server/settings, get;edit
