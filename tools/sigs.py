@@ -29,7 +29,7 @@ except ImportError:
 import splunk.binding as binding
 import splunk.data as data
 
-from cmdline import default, error, loadif, merge, record
+from tools.cmdline import default, error, loadif, merge, record
 
 # UNDONE: Should be able to share the following (aka move to cmdline.py)
 def getopts(argv):

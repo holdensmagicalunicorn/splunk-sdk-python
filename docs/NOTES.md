@@ -434,6 +434,9 @@ method => get|post
 * No way to get a listing of all inputs, or all inputs/index
 * POST /services/authentication/capabilities name=<name> => 404 (verify)
     Is there really no way to dynamically create/delete capabilities?
+* search/tags and search/fields/{name}/tags use an 'older' collection
+  protocol, would be nice to unify all collection protocols in a future
+  version of the API
 
 # BUGS
 * /services/search/parser response does not use namespaces

@@ -5,6 +5,8 @@
 # is intended to capture the minimum information required to interact with 
 # a given endpoint. 
 
+# UNDONE: How to add a search field?
+
 # CONSIDER: Rename delete => remove (the term actually used in ATOM responses)
 # UNDONE: Required params for the 'edit' verb
 # UNDONE: Some entities have a "disable" rel link, figure it out!
@@ -35,7 +37,6 @@
 # UNDONE: receivers/stream, what is it?
 # UNDONE: saved/searches/{name}/..., sigs?
 # UNDONE: scheduled/views, sig?
-# UNDONE: search/fields/{name}/tags, does this really exist?
 # UNDONE: search/jobs/{sid}/..., sigs?
 # UNDONE: search/tags, what args to create?
 # UNDONE: search/timeparser, sig?
@@ -70,7 +71,7 @@ authentication/providers/services, get;
 authentication/providers/services/{name}, get;
 authentication/roles, get;create?name
 authentication/roles/{name}, get;edit;delete
-authentication/users, get;creaate:name&password
+authentication/users, get;create:name&password
 authentication/users/{name}:, get;edit;delete
 authorization/capabilities, get
 authorization/roles, get;create?name
@@ -170,6 +171,7 @@ search/commands/{name}, get
 #search/distributed/peers
 search/fields, get
 search/fields/{name}, get
+search/fields/{name}/tags, get;post?value&(add|delete)
 search/jobs/export, post?search
 search/jobs, get;post?search=>sid
 search/jobs/{sid}/control, None
@@ -180,7 +182,7 @@ search/jobs/{sid}/search.log, None
 search/jobs/{sid}/timeline, None
 search/jobs/{sid}/summary, None
 search/parser, get?search
-search/tags, get;create?None
+search/tags, get;post?add|delete
 search/tags/{name}, get
 search/timeparser, None
 search/typeahead, None
