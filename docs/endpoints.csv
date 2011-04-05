@@ -6,9 +6,8 @@
 # a given endpoint. 
 
 # UNDONE: How to add a search field?
-# UNDONE: Where do I find user IDs?
 # UNDONE: Required params for the 'edit' verb
-# UNDONE: Some entities have a "disable" rel link, figure it out!
+# UNDONE: Some entities have a "disable" rel link, 
 # UNDONE: Does authentication/httpauth-tokens suport create? what is the key?
 #
 # UNDONE: alerts/..., sigs?

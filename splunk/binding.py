@@ -12,11 +12,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# UNDONE: Figure out how to support methods on collection items
 # UNDONE: Support for _reload endpoints
 # UNDONE: Support for _new endpoints
-# UNDONE: Figure out which endpoints use .../settings for metadata, eg:
-#   server/settings
 
 """Low-level bindings to the Splunk REST API."""
 

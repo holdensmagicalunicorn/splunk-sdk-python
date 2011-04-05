@@ -1,23 +1,3 @@
-# TODO
-* Client
-** Collections
-*** Collection binding
-*** Collection reader (paging)
-** Entities
-*** Entity binding, including editing
-** Serach results readers
-*** XML
-*** JSON
-*** CSV
-*** RAW?
-* Binding - finish cleanup
-* Examples - Hello Splunk! 
-* Examples - spdump (command-line explorer)
-* Examples - port sample app to "script mode"
-* Examples - PLsplunk.spcmd
-* Support for scripted inputs
-* Support for custom search commands
-
 # Outline
 
 System
