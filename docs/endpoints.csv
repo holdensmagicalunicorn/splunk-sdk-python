@@ -6,12 +6,12 @@
 # a given endpoint. 
 
 # UNDONE: How to add a search field?
-
-# CONSIDER: Rename delete => remove (the term actually used in ATOM responses)
+# UNDONE: Where do I find user IDs?
 # UNDONE: Required params for the 'edit' verb
 # UNDONE: Some entities have a "disable" rel link, figure it out!
 # UNDONE: Does authentication/httpauth-tokens suport create? what is the key?
-# UNDONE: alerts/..., figure out how it works!
+#
+# UNDONE: alerts/..., sigs?
 # UNDONE: configs/deploymentclient, sig?
 # UNDONE: configs/inputs, what is the key?
 # UNDONE: configs/wmi, sig?
@@ -163,8 +163,8 @@ saved/searches/{name}/notify, None
 saved/searches/{name}/scheduled_times, None
 saved/searches/{name}/suppress, None
 scheduled/views, get
-search/commands, get
-search/commands/{name}, get
+#search/commands, get               # deprecated
+#search/commands/{name}, get        # deprecated
 #search/distributed
 #search/distributed/config
 #search/distributed/config/distributedSearch
