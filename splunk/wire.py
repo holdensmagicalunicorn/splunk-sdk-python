@@ -14,12 +14,6 @@
 
 from util import record
 
-default = record({
-    'host': "localhost",
-    'port': "8089",
-    'scheme': "https",
-})
-
 # XML Namespaces
 namespace = record({
     'atom': "http://www.w3.org/2005/Atom",

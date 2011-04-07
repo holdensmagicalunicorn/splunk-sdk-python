@@ -297,7 +297,6 @@ def write_messages(cx, out):
 # Write out all info related to the Splunk service
 def write_service(cx, out):
     content = load_entity(cx, 'server/info').content
-    out.writeln(cx.host)
     out.indent(1)
     out.writeln("serverName: %s" % content.serverName)
     out.writeln("version: %s" % content.version)
@@ -406,11 +405,7 @@ def dump(cx):
 
 def main():
     opts = getopts(sys.argv[1:])
-    host = opts.kwargs.get("host", default.host)
-    port = opts.kwargs.get("port", default.port)
-    username = opts.kwargs.get("username", "")
-    password = opts.kwargs.get("password", "")
-    dump(binding.connect("%s:%s" % (host, port), username, password))
+    dump(binding.connect(**opts.kwargs))
 
 if __name__ == "__main__":
    main() 

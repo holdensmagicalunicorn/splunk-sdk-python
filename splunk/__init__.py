@@ -14,4 +14,6 @@
 
 """The Splunk framework and tools."""
 
-from splunk.api import connect, Connection, login
+from splunk.binding import *
+
+import api # UNDONE: Temporary fix for units

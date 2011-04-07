@@ -1,2 +1,3 @@
 run:
-	python test.py
+	python test_binding.py
+	python test_client.py

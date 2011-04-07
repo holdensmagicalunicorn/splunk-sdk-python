@@ -15,7 +15,6 @@
 # UNDONE: Test splunk namespace against baseline
 # UNDONE: Test splunk.data loader
 
-import getopt
 from os import path
 import sys
 import unittest
@@ -25,9 +24,7 @@ from xml.etree.ElementTree import XML
 sys.path.insert(0, path.dirname(path.dirname(path.abspath(__file__))))
 
 import splunk
-
-# UNDONE: Unify command line processing
-from tools.cmdline import error, loadif, merge, record
+import tools.cmdopts as cmdopts
 
 ATOM = "http://www.w3.org/2005/Atom"
 AUTHOR = "{%s}author" % ATOM
@@ -36,15 +33,7 @@ FEED = "{%s}feed" % ATOM
 ID = "{%s}id" % ATOM
 TITLE = "{%s}title" % ATOM
 
-host = "localhost"
-port = 8089
-username = ""
-password = ""
-namespace = None
-
-def connect():
-    global host, port, username, password, namespace
-    return splunk.connect("%s:%s" % (host, port), username, password, namespace)
+opts = None # Command line options
 
 class PackageTestCase(unittest.TestCase):
     def test_names(self):
@@ -52,7 +41,8 @@ class PackageTestCase(unittest.TestCase):
 
 class ProtocolTestCase(unittest.TestCase):
     def setUp(self):
-        self.cn = connect()
+        global opts
+        self.cn = splunk.api.connect(**opts.kwargs)
 
     def tearDown(self):
         self.cn.close()
@@ -70,7 +60,8 @@ class ProtocolTestCase(unittest.TestCase):
 
 class ServiceTestCase(unittest.TestCase):
     def setUp(self):
-        self.cn = connect()
+        global opts
+        self.cn = splunk.api.connect(**opts.kwargs)
 
     def tearDown(self):
         self.cn.close()
@@ -109,45 +100,10 @@ class ServiceTestCase(unittest.TestCase):
             for capability in role.capabilities:
                 self.assertTrue(capability in capabilities)
 
-# UNDONE: Generalize and move to cmdline.py
-def getopts(argv):
-    opts = {}
-    opts = merge(opts, parse(loadif(path.expanduser("~/.splunkrc"))))
-    opts = merge(opts, parse(argv))
-    opts = merge(opts, parse(loadif(opts.get("config", None))))
-    return record(opts)
-
-# UNDONE: Generalize and move to cmdline.py
-def parse(argv):
-    try:
-        rules = [
-            "config=", 
-            "host=", 
-            "password=", 
-            "port=", 
-            "username="
-        ]
-        kwargs, args = getopt.gnu_getopt(argv, "", rules)
-    except getopt.GetoptError as e:
-        error(e.msg) # UNDONE: Use same error messages as below
-        usage(2)
-    opts = {'args': args, 'kwargs': {}}
-    for k, v in kwargs:
-        assert k.startswith("--")
-        k = k[2:]
-        opts["kwargs"][k] = v
-    return opts
-
 def main(argv):
-    kwargs = getopts(argv).kwargs
-    global host, port, username, password, namespace
-    host = kwargs.get("host", host)
-    port = kwargs.get("port", port)
-    username = kwargs.get("username", "")
-    password = kwargs.get("password", "")
-    namespace = kwargs.get("namespace", None)
+    global opts
+    opts = cmdopts.parser().loadrc(".splunkrc").parse(argv).result
     unittest.main()
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-

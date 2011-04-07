@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+#
 # Copyright 2011 Splunk, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"): you may
@@ -14,18 +16,22 @@
 
 """A command line interface for the Splunk REST APIs."""
 
-from pprint import pprint # UNDONE
+# UNDONE: Support for POST
+# UNDONE: Support for scheme parameter
+# UNDONE: Generalize & share cmdline processor 
 
 import getopt
 from os import path
 import sys
-import urllib
+
+try:
+    import splunk
+except ImportError:
+    sys.path.insert(0, path.dirname(path.dirname(path.abspath(__file__))))
+    import splunk
 
 from cmdline import default, error, loadif, merge, record
-import splunk
-import splunk.http as http
 
-# UNDONE: Generalize and move to cmdline.py
 # Loads opts from .splunkrc, then orverrides with command line, then
 # overrides with any config file specified on the command line.
 def getopts(argv):
@@ -53,12 +59,18 @@ def help(exitCode = None):
     print " -u|--username=<username>    Specify username (required)"
     if not exitCode is None: sys.exit(exitCode)
 
-# UNDONE: Generalize and move to cmdline.py
 # Parse the given argument list
 def parse(argv):
     try:
         sargs = "p:u:h?"
-        largs = ["config=", "host=", "method=", "password=", "port=", "username=", "help"]
+        largs = [
+            "config=", 
+            "host=", 
+            "method=", 
+            "password=", 
+            "port=", 
+            "username=", 
+            "help" ]
         kwargs, args = getopt.gnu_getopt(argv, sargs, largs)
     except getopt.GetoptError as e:
         error(e.msg)
@@ -79,23 +91,10 @@ def parse(argv):
 
     return opts
             
-def login(**kwargs):
-    host = kwargs.get("host", default.host)
-    username = kwargs.get("username", "")
-    password = kwargs.get("password", "")
-    return splunk.login(host, username, password)
-
 # Invoke the url using the given opts parameters
 def invoke(path, **kwargs):
-    sessionKey = login(**kwargs)
-    message = {
-        "method": kwargs.get("method", "GET"),
-        "headers": [("Authorization", "Splunk " + sessionKey)]
-    }
-    host = kwargs.get("host", default.host)
-    port = kwargs.get("port", default.port)
-    url = "%s://%s:%s%s" % (default.scheme, host, port, path)
-    return http.request(url, message)
+    message = { "method": kwargs.get("method", "GET"), }
+    return splunk.connect(**kwargs).request(path, message)
 
 # Answer if the content typ eof the given message is text/plain
 def istext(response):
@@ -111,8 +110,6 @@ def print_response(response):
     if response.status != 200:
         print "%d %s" % (response.status, response.reason)
         return
-    #from pprint import pprint
-    #pprint(response)
     if isxml(response):
         print_xml(response.body)
     elif istext(response):
@@ -131,20 +128,11 @@ def usage(exitCode = None):
     print "             <path>"
     if not exitCode is None: sys.exit(exitCode)
 
-def run():
+def main():
     opts = getopts(sys.argv[1:])
     if opts.has_key("help"): help(0)
     for arg in opts.args: 
         print_response(invoke(arg, **opts.kwargs))
-
-def main():
-    import socket
-    run()
-    return
-    try:
-        run()
-    except (socket.error, splunk.HTTPError), e:
-        error(e, 2)
 
 if __name__ == "__main__":
     main()

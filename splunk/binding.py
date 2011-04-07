@@ -12,34 +12,39 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# UNDONE: Support for _reload endpoints
-# UNDONE: Support for _new endpoints
+# UNDONE: Support for _new endpoints (metadata)
+# UNDONE: Validate Context.get|post|delete path args are paths and not urls
+# UNDONE: HTTP POST does not support file upload
+# UNDONE: Finish Collection binding (including metadata & custom methods)
+# UNDONE: Finish Entity binding (including metadata & update)
 
 """Low-level bindings to the Splunk REST API."""
 
+# UNDONE: Can we retrieve the sessionKey without instantiating this? regex?
 from xml.etree.ElementTree import XML
-
-import splunk.http as http
-from splunk.util import record
-from splunk.wire import default
 
 __all__ = [
     "login",
     "connect",
 ]
 
-# UNDONE: Parameterize scheme?
-def mkurl(host, path):
-    # Append default port to host if port is not already provided
-    if not ':' in host: host = host + ':' + default.port
-    return "%s://%s%s" % (default.scheme, host, path)
+DEFAULT_HOST = "localhost"
+DEFAULT_PORT = "8089"
+DEFAULT_SCHEME = "https"
+
+# kwargs: scheme, host, port
+def prefix(**kwargs):
+    scheme = kwargs.get("scheme", DEFAULT_SCHEME)
+    host = kwargs.get("host", DEFAULT_HOST)
+    port = kwargs.get("port", DEFAULT_PORT)
+    return "%s://%s:%s" % (scheme, host, port)
 
 class Context:
-    def __init__(self, host, username, password, namespace = None):
-        self.host = host
-        self.username = username
-        self.password = password
-        self.namespace = namespace
+    def __init__(self, **kwargs):
+        self.username = kwargs.get("username", "")
+        self.password = kwargs.get("password", "")
+        self.namespace = kwargs.get("namespace", None)
+        self.prefix = prefix(**kwargs)
         self.token = None
 
     # Shared per-context request headers
@@ -70,8 +75,18 @@ class Context:
     def post(self, path, **kwargs):
         return http.post(self.url(path), self._headers(), **kwargs)
 
+    def request(self, path, message):
+        return http.request(
+            self.url(path), {
+                'method': message.get("method", "GET"),
+                'headers': message.get("headers", []) + self._headers(),
+                'body': message.get("body", "")})
+
     def login(self):
-        response = login(self.host, self.username, self.password)
+        response = http.post(
+            self.url("/services/auth/login"),
+            username=self.username, 
+            password=self.password)
         if response.status >= 400:
             raise HTTPError(response.status, response.reason)
         # assert response.status == 200
@@ -80,7 +95,7 @@ class Context:
         return self
 
     def fullpath(self, path):
-        """If the given path is a fragment, qualify with a prefix corresponding
+        """If the given path is a fragment, qualify with segments corresponding
            to the binding context's namespace."""
         if path.startswith('/'): return path
         if self.namespace is None: return "/services/%s" % path
@@ -89,21 +104,24 @@ class Context:
         if appname == "*": appname = '-'
         return "/servicesNS/%s/%s/%s" % (username, appname, path)
 
-    # Convet the given path into a fully qualified URL. If the path is
-    # relative, first convert into a full path by adding namespace segments
-    # if the context is namespace qualified, and then prefix with host, port
-    # and scheme.
+    # Convet the given path into a fully qualified URL by first qualifying
+    # the given path with namespace segments if necessarry and then prefixing
+    # with the scheme, host and port.
     def url(self, path):
-        return mkurl(self.host, self.fullpath(path))
+        return self.prefix + self.fullpath(path)
 
-def connect(host, username, password):
+# kwargs: scheme, host, port, username, password, namespace
+def connect(**kwargs):
     """Establishes an authenticated context with the given host."""
-    return Context(host, username, password).login() 
+    return Context(**kwargs).login() 
 
-def login(host, username, password):
-    """Issues a 'raw' login request and returns response message."""
-    url = mkurl(host, "/services/auth/login")
-    return http.post(url, username=username, password=password)
+# kwargs: scheme, host, port, username, password
+def login(**kwargs):
+    """Issues a login request and returns the response message."""
+    return http.post(
+        prefix(**kwargs) + "/services/auth/login",
+        username=kwargs.get("username", ""),
+        password=kwargs.get("password", ""))
 
 class Endpoint:
     """Defines an endpoint by affiliating a resource kind with a path and 
@@ -149,4 +167,124 @@ class Collection(Resource):
             self.create = cx.bind(path, "post")
         if "delete" in verbs:
             self.delete = cx.bind(itempath, "delete")
+
+#
+# The HTTP interface below, used by the Splunk binding layer, abstracts the 
+# unerlying HTTP library using request & response 'messages' which are dicts
+# with the following structure:
+#
+#   # HTTP request message (all keys optional)
+#   request {
+#       method? : str = "GET",
+#       headers? : [(str, str)*],
+#       body? : str,
+#   }
+#
+#   # HTTP response message (all keys present)
+#   response {
+#       status : int,
+#       reason : str,
+#       headers : [(str, str)*],
+#       body : file,
+#   }
+#
+
+# UNDONE: Make sure timeout arg works!
+# UNDONE: Consider moving timeout arg into kwargs
+# UNDONE: Make body a file instead of str
+
+import httplib
+import urllib
+
+from util import record
+
+debug = False # UNDONE
+
+def _print_request(method, url, head, body):
+    from pprint import pprint # UNDONE
+    print "** %s %s" % (method, url)
+    pprint(head)
+    print body
+
+def _print_response(response):
+    from pprint import pprint # UNDONE
+    print "=> %d %s" % (response.status, response.reason)
+    pprint(response.headers)
+    print response.body
+
+def _spliturl(url):
+    """Split the given url into (scheme, host, port, path)."""
+    scheme, part = url.split(':', 1)
+    host, path = urllib.splithost(part)
+    host, port = urllib.splitnport(host, 80)
+    return scheme, host, port, path
+
+class http:
+    """HTTP interface used by the Splunk binding layer."""
+
+    @staticmethod
+    def connect(scheme, host, port, timeout = None):
+        """Returns an HTTP connection object corresponding to the given scheme,
+           host and port."""
+        kwargs = {}
+        if timeout is not None: kwargs["timeout"] = timeout
+        if scheme == "http":
+            return httplib.HTTPConnection(host, port, None, **kwargs)
+        if scheme == "https":
+            return httplib.HTTPSConnection(host, port, None, **kwargs)
+        return None # UNDONE: Raise an invalid scheme exception
+
+    @staticmethod
+    def delete(url, headers = [], timeout = None, **kwargs):
+        if kwargs: url = url + '?' + urllib.urlencode(kwargs)
+        message = {
+            'method': "DELETE",
+            'headers': headers,
+        }
+        return http.request(url, message, timeout)
+
+    @staticmethod
+    def get(url, headers = [], timeout = None, **kwargs):
+        if kwargs: url = url + '?' + urllib.urlencode(kwargs)
+        return http.request(url, { "headers": headers }, timeout)
+
+    @staticmethod
+    def post(url, headers = [], timeout = None, **kwargs):
+        # UNDONE: The following doesn't support file upload
+        headers.append(("Content-Type", "application/x-www-form-urlencoded")),
+        message = {
+            "method": "POST",
+            "headers": headers,
+            "body": urllib.urlencode(kwargs)
+        }
+        return http.request(url, message, timeout)
+
+    @staticmethod
+    def request(url, message, timeout = None):
+        scheme, host, port, path = _spliturl(url)
+        body = message.get("body", "")
+        head = { 
+            "Content-Length": len(body),
+            "Host": host,
+            "User-Agent": "http.py/1.0",
+            "Accept": "*/*",
+        } # defaults
+        for k, v in message["headers"]: head[k] = v
+        method = message.get("method", "GET")
+        if debug: _print_request(method, url, head, body)
+        connection = http.connect(scheme, host, port, timeout)
+        try:
+            connection.request(method, path, body, head)
+            if timeout is not None: connection.sock.settimeout(timeout)
+            response = connection.getresponse()
+        finally:
+            connection.close()
+        response = record({
+            "status": response.status,
+            "reason": response.reason,
+            "headers": response.getheaders(),
+            "body": response.read() 
+        })
+        if debug: _print_response(response)
+        return response
 

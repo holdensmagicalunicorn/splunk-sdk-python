@@ -30,7 +30,6 @@
 """An interactive command shell for Splunk.""" 
 
 from code import compile_command, InteractiveInterpreter
-import getopt
 from os import path
 import readline # Activate readline editing
 import sys
@@ -41,7 +40,7 @@ except ImportError:
     sys.path.insert(0, path.dirname(path.dirname(path.abspath(__file__))))
     import splunk
 
-from cmdline import default, error, loadif, merge, record
+import cmdopts
 
 # Ambient search arguments
 _search_args = [
@@ -64,50 +63,12 @@ _search_args = [
     "timeout",  
 ]
 
-def _connect(**kwargs):
-    host = kwargs.get("host", default.host)
-    port = kwargs.get("port", default.port)
-    username = kwargs.get("username", "")
-    password = kwargs.get("password", "")
-    namespace = kwargs.get("namespace", None)
-    return splunk.connect("%s:%s" % (host, port), username, password, namespace)
-
-# UNDONE: Generalize and move to cmdline.py
-def getopts(argv):
-    opts = {}
-    opts = merge(opts, parse(loadif(path.expanduser("~/.splunkrc"))))
-    opts = merge(opts, parse(argv))
-    opts = merge(opts, parse(loadif(opts.get("config", None))))
-    return record(opts)
-
-# UNDONE: Generalize and move to cmdline.py
-def parse(argv):
-    try:
-        rules = [
-            "config=", 
-            "host=", 
-            "interactive",
-            "password=", 
-            "port=", 
-            "username=", 
-            "help"]
-        kwargs, args = getopt.gnu_getopt(argv, "", rules)
-    except getopt.GetoptError as e:
-        error(e.msg) # UNDONE: Use same error messages as below
-        usage(2)
-    opts = {'args': args, 'kwargs': {}}
-    for k, v in kwargs:
-        assert k.startswith("--")
-        k = k[2:]
-        opts["kwargs"][k] = v
-    return opts
-
 class Session(InteractiveInterpreter):
     def __init__(self, **kwargs):
-        self.cn = _connect(**kwargs)
+        self.cn = splunk.api.connect(**kwargs)
         locals = {
             'cn': self.cn,
-            'connect': _connect,
+            'connect': splunk.connect,
             'load': self.load,
             'search': self.search,
         }
@@ -172,15 +133,24 @@ class Session(InteractiveInterpreter):
         except Exception, e:
             return e
 
+
+# Additional cmdopts parser rules
+rules = {
+    "interactive": {
+        'flags': ["-i", "--interactive"], 
+        'action': "store_true",
+        'help': "Enter interactive mode",
+    }
+}
+
 def main():
-    opts = getopts(sys.argv[1:])
+    opts = cmdopts.parser(rules).loadrc(".splunkrc").parse(sys.argv[1:]).result
 
     # Connect and initialize the command session
     session = Session(**opts.kwargs)
 
     # Load any non-option args as script files
-    for arg in opts.args: 
-        session.load(arg)
+    for arg in opts.args: session.load(arg)
 
     # Enter interactive mode if specified, or if no non option args supplied
     if opts.kwargs.has_key("interactive") or len(opts.args) == 0:

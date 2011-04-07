@@ -12,7 +12,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# UNDONE: Optional schema support for loader, for validation and "shaping"
+# UNDONE: Schema: target datatype
+# UNDONE: Schema: target default value
 
 from xml.etree import ElementTree
 from xml.etree.ElementTree import XML
@@ -139,10 +140,8 @@ def load(text, path = None):
         # return { localname(item.tag): value }
     return [ load_value(item, nametable) for item in items ]
 
-def isxml(text):
-    return text.strip().startswith('<')
-
 if __name__ == "__main__":
+    def isxml(text): return text.strip().startswith('<')
     import sys
     from pprint import pprint
     input = sys.stdin.read()

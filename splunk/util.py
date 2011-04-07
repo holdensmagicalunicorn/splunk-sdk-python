@@ -13,7 +13,6 @@
 # under the License.
 
 # A generic utility that enables "dot" access to dicts
-
 class Record(dict):
     def __getattr__(self, name):
         try:
@@ -29,4 +28,5 @@ class Record(dict):
 
 def record(dict = {}): 
     return Record(dict)
+
 

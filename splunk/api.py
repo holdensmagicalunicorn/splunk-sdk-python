@@ -41,10 +41,11 @@ import urllib
 from xml.etree import ElementTree
 from xml.etree.ElementTree import XML
 
+import binding
+from splunk.binding import http
 import splunk.data as data
-import splunk.http as http
 from splunk.util import record, Record
-from splunk.wire import default, xname
+from splunk.wire import xname
 
 # Full resource paths
 _path = record({
@@ -88,8 +89,8 @@ def _check_response(response):
 # Combine the given host & path to create a fully-formed URL.
 def _mkurl(host, path):
     # Append default port to host if port is not already provided
-    if not ':' in host: host = host + ':' + default.port
-    return "%s://%s%s" % (default.scheme, host, path)
+    if not ':' in host: host = host + ':' + binding.DEFAULT_PORT
+    return "%s://%s%s" % (binding.DEFAULT_SCHEME, host, path)
 
 # Construct a resource path using the given path suffix and optional namespace
 def _mkpath(suffix, namespace = None):
@@ -230,8 +231,12 @@ class Connection:
     def status(self):
         return "closed" if self.token is None else "open"
 
-def connect(host, username, password, namespace = None):
+def connect(**kwargs):
     """Create and open a connection to the given host"""
+    host = kwargs.get("host")
+    username = kwargs.get("username")
+    password = kwargs.get("password")
+    namespace = kwargs.get("namespace")
     return Connection(host, username, password, namespace).open()
 
 class Collection: # Abstract
