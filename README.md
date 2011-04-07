@@ -21,6 +21,9 @@ This project is under active development and its contents will change at will.
 
 ## Getting Started
 
+In order to run the tools and samples from their respective SDK subdirectories, 
+simply place the SDK directory on your PYTHONPATH.
+
 ### Get a copy of the SDK
 
 You can get a copy of the sdk by downloading from <here> or by using git

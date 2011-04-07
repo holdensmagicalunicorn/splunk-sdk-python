@@ -23,12 +23,7 @@ import getopt
 from os import path
 import sys
 
-try:
-    import splunk
-except ImportError:
-    sys.path.insert(0, path.dirname(path.dirname(path.abspath(__file__))))
-    import splunk
-
+import splunk
 import cmdopts
 
 # Retrieve the content-type from the given response message

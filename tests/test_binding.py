@@ -19,9 +19,6 @@ from os import path
 import sys
 import unittest
 
-# Add parent to the Python path so we can find 'splunk', et al.
-sys.path.insert(0, path.dirname(path.dirname(path.abspath(__file__))))
-
 import splunk
 import tools.cmdopts as cmdopts
 

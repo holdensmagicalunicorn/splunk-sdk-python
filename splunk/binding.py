@@ -24,8 +24,11 @@
 from xml.etree.ElementTree import XML
 
 __all__ = [
+    "Entity",
     "login",
+    "Collection",
     "connect",
+    "Context",
 ]
 
 DEFAULT_HOST = "localhost"
@@ -40,6 +43,7 @@ def prefix(**kwargs):
     return "%s://%s:%s" % (scheme, host, port)
 
 class Context:
+    # kwargs: scheme, host, port, username, password, namespace
     def __init__(self, **kwargs):
         self.username = kwargs.get("username", "")
         self.password = kwargs.get("password", "")
@@ -123,50 +127,33 @@ def login(**kwargs):
         username=kwargs.get("username", ""),
         password=kwargs.get("password", ""))
 
-class Endpoint:
-    """Defines an endpoint by affiliating a resource kind with a path and 
-       provides a binder that instantiates a resource protocol for interacting
-       with the endpoint."""
-    def __init__(self, path, kind, *args):
-        self.bind = lambda cx: kind(path, cx, *args)
-
-    def __call__(self, cx):
-        return self.bind(cx)
-
-class Resource: 
-    """An abstract resource protocol."""
-    pass
-
-class Entity(Resource):
+class Entity:
     """Implements the protocol for interacting with 'entity' resources."""
-    def __init__(self, path, cx):
-        self.get = lambda **kwargs: cx.get(path, **kwargs)
+    def __init__(self, context, path, verbs = "get,update"):
+        if "get" in verbs:
+            self.get = context.bind(path, "get")
+        if "udapte" in verbs:
+            self.get = context.bind(path, "post")
 
-#class Method(Resource):
-#    """Implements the protocol for interacting with method-like resources. """
-#    def __init__(self, path, cx, method = "get"):
-#        fn = {
-#            'get': cx.get,
-#            'post': cx.post }.get(method.lower(), None) 
-#        if fn is None: raise ValueError, "Unknown method '%s'" % method
-#        self.invoke = lambda **kwargs: fn(path, **kwargs)
-#
-#    def __call__(self, **kwargs):
-#        return self.invoke(**kwargs)
+    def __call__(self, *args, **kwargs):
+        return self.get(*args, **kwargs)
 
-class Collection(Resource):
+class Collection:
     """Implements the protocol for interacting with a collection resource."""
-    def __init__(self, path, cx, verbs = "get,item,create,delete"):
+    def __init__(self, context, path, verbs = "get,item,create,delete"):
         verbs = verbs.split(',')
         itempath = "%s/{0}" % path
         if "get" in verbs:
-            self.get = cx.bind(path, "get")
+            self.get = context.bind(path, "get")
         if "item" in verbs:
-            self.item = cx.bind(itempath, "get")
+            self.item = context.bind(itempath, "get")
         if "create" in verbs:
-            self.create = cx.bind(path, "post")
+            self.create = context.bind(path, "post")
         if "delete" in verbs:
-            self.delete = cx.bind(itempath, "delete")
+            self.delete = context.bind(itempath, "delete")
+
+    def __call__(self, *args, **kwargs):
+        return self.get(*args, **kwargs)
 
 #
 # The HTTP interface below, used by the Splunk binding layer, abstracts the 

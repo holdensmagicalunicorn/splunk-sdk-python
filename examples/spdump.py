@@ -22,15 +22,9 @@
 # UNDONE: Is it useful to dump configs?
 
 from os import path
-from pprint import pprint
 import sys
 import textwrap
 
-try:
-    import splunk
-except ImportError:
-    sys.path.insert(0, path.dirname(path.dirname(path.abspath(__file__))))
-    import splunk
 import splunk.binding as binding
 import splunk.data as data
 

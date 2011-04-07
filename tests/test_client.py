@@ -12,16 +12,10 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# UNDONE: Test splunk namespace against baseline
-# UNDONE: Test splunk.data loader
-
 from os import path
 import sys
 import unittest
 from xml.etree.ElementTree import XML
-
-# Add parent to the Python path so we can find 'splunk', et al.
-sys.path.insert(0, path.dirname(path.dirname(path.abspath(__file__))))
 
 import splunk
 import tools.cmdopts as cmdopts

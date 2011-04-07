@@ -34,12 +34,7 @@ from os import path
 import readline # Activate readline editing
 import sys
 
-try:
-    import splunk
-except ImportError:
-    sys.path.insert(0, path.dirname(path.dirname(path.abspath(__file__))))
-    import splunk
-
+import splunk
 import cmdopts
 
 # Ambient search arguments
