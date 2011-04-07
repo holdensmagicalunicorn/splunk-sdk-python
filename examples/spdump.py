@@ -34,7 +34,7 @@ except ImportError:
 import splunk.binding as binding
 import splunk.data as data
 
-from tools.cmdline import default, error, loadif, merge, record
+import tools.cmdopts as cmdopts
 
 class HTTPError(Exception): pass
 
@@ -65,14 +65,6 @@ class Writer:
         if text is not None: self.write(text)
         self.out.write('\n')
 
-# UNDONE: Should be able to share the following (aka move to cmdline.py)
-def getopts(argv):
-    from os import path
-    opts = {}
-    opts = merge(opts, parse(loadif(path.expanduser("~/.splunkrc"))))
-    opts = merge(opts, parse(argv))
-    return record(opts)
-
 # Retrieve the link with the given rel value from the given atom entry
 def getlink(item, rel):
     link = item.get('link', None)
@@ -81,22 +73,6 @@ def getlink(item, rel):
     for elem in link: 
         if elem.rel == rel: return elem
     return None # Not found
-
-# UNDONE: Should be able to share long form arg parsing (aka move to cmdline.py)
-def parse(argv):
-    import getopt
-    try:
-        largs = ["host=", "password=", "port=", "username="]
-        kwargs, args = getopt.gnu_getopt(argv, "", largs)
-    except getopt.GetoptError as e:
-        error(e.msg)
-        usage(2)
-    opts = {'args': args, 'kwargs': {}}
-    for k, v in kwargs:
-        assert k.startswith("--")
-        k = k[2:]
-        opts["kwargs"][k] = v
-    return opts
 
 def check_response(response):
     if response.status != 200:
@@ -404,7 +380,7 @@ def dump(cx):
     out.writeln()
 
 def main():
-    opts = getopts(sys.argv[1:])
+    opts = cmdopts.parser().loadrc(".splunkrc").parse(sys.argv[1:]).result
     dump(binding.connect(**opts.kwargs))
 
 if __name__ == "__main__":
