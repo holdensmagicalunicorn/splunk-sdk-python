@@ -12,4 +12,4 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# UNDONE: Temporary to allow unit tests to share cmdline.py
+# This file only exists so the unit tests can share cmdopts.py
