@@ -1,5 +1,0 @@
-import splunk.binding as binding
-
-cx = binding.connect(host=cn.host, username=cn.username, password=cn.password)
-
-

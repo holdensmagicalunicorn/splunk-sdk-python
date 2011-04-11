@@ -76,8 +76,8 @@ SPLUNK_RULES = {
 }
 
 class Parser(OptionParser):
-    def __init__(self, rules = None):
-        OptionParser.__init__(self)
+    def __init__(self, rules = None, **kwargs):
+        OptionParser.__init__(self, **kwargs)
         self.dests = set({})
         self.result = record({ 'args': [], 'kwargs': record() })
         if rules is not None: self.init(rules)
@@ -144,11 +144,11 @@ class Parser(OptionParser):
 def parse(argv):
     return parser().parse(argv).result
 
-def parser(rules=None):
+def parser(rules=None, **kwargs):
     """Instantiate a parser with the default rule set and optional extensions
        and overrides."""
     rules = SPLUNK_RULES if rules is None else dict(SPLUNK_RULES, **rules)
-    return Parser(rules)
+    return Parser(rules, **kwargs)
         
 if __name__ == "__main__":
     import sys
