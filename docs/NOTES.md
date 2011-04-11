@@ -399,3 +399,5 @@ Issue: support for fragment level scoping of namespaces names?
 * DELETE /services/apps/local/{name} => 500 if app 'name' does not exist 
 * POST /services/configs/inputs name=foo => 500 (Internal Server Error)
 # DELETE /services/configs/inputs/SSL => 500 (Internal Server Error)
+* Set invalid role on user => 400, Set multiple roles incuding invalid roles
+  (if at least 1 valid) will ignore invalid and => 200.

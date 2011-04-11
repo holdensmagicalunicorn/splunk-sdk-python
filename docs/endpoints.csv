@@ -70,7 +70,7 @@ authentication/providers/services, get;
 authentication/providers/services/{name}, get;
 authentication/roles, get;create?name
 authentication/roles/{name}, get;edit;delete
-authentication/users, get;create:name&password
+authentication/users, get;create:name&password&roles
 authentication/users/{name}:, get;edit;delete
 authorization/capabilities, get
 authorization/roles, get;create?name

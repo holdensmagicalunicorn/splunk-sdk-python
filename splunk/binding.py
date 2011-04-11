@@ -24,11 +24,12 @@
 from xml.etree.ElementTree import XML
 
 __all__ = [
-    "Entity",
-    "login",
     "Collection",
     "connect",
     "Context",
+    "Entity",
+    "HTTPError",
+    "login",
 ]
 
 DEFAULT_HOST = "localhost"
@@ -45,6 +46,9 @@ def prefix(**kwargs):
 class Context:
     # kwargs: scheme, host, port, username, password, namespace
     def __init__(self, **kwargs):
+        self.scheme = kwargs.get("scheme", DEFAULT_SCHEME)
+        self.host = kwargs.get("host", DEFAULT_HOST)
+        self.port = kwargs.get("port", DEFAULT_PORT)
         self.username = kwargs.get("username", "")
         self.password = kwargs.get("password", "")
         self.namespace = kwargs.get("namespace", None)
@@ -206,6 +210,19 @@ def _spliturl(url):
     host, port = urllib.splitnport(host, 80)
     return scheme, host, port, path
 
+# Encode the given kwargs as a query string. This wrapper will also encode 
+# a list value as a sequence of assignemnts to the corresponding arg name, 
+# for example an argument such as 'foo=[1,2,3]' will be encoded as
+# 'foo=1&foo=2&foo=3'. 
+def encode(**kwargs):
+    items = []
+    for k, v in kwargs.iteritems():
+        if isinstance(v, list):
+            items.extend([(k, item) for item in v])
+        else:
+            items.append((k, v))
+    return urllib.urlencode(items)
+
 class http:
     """HTTP interface used by the Splunk binding layer."""
 
@@ -223,7 +240,7 @@ class http:
 
     @staticmethod
     def delete(url, headers = [], timeout = None, **kwargs):
-        if kwargs: url = url + '?' + urllib.urlencode(kwargs)
+        if kwargs: url = url + '?' + encode(**kwargs)
         message = {
             'method': "DELETE",
             'headers': headers,
@@ -232,7 +249,7 @@ class http:
 
     @staticmethod
     def get(url, headers = [], timeout = None, **kwargs):
-        if kwargs: url = url + '?' + urllib.urlencode(kwargs)
+        if kwargs: url = url + '?' + encode(**kwargs)
         return http.request(url, { "headers": headers }, timeout)
 
     @staticmethod
@@ -242,7 +259,7 @@ class http:
         message = {
             "method": "POST",
             "headers": headers,
-            "body": urllib.urlencode(kwargs)
+            "body": encode(**kwargs)
         }
         return http.request(url, message, timeout)
 
@@ -275,3 +292,8 @@ class http:
         if debug: _print_response(response)
         return response
 
+class HTTPError(Exception):
+    def __init__(self, status, reason):
+        Exception.__init__(self, "HTTP %d %s" % (status, reason)) 
+        self.reason = reason
+        self.status = status

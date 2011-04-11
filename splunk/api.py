@@ -620,8 +620,3 @@ class SplunkError(Exception):
 class SyntaxError(SplunkError):
     pass
 
-class HTTPError(SplunkError):
-    def __init__(self, status, reason):
-        SplunkError.__init__(self, "HTTP %d %s" % (status, reason)) 
-        self.reason = reason
-        self.status = status
