@@ -27,11 +27,14 @@ This was originally a sample WSGI application:
 import os.path
 import os
 import sys
+import urllib
+import xml.dom.minidom
 
 # splunk support files
-import splunk
 import tools.cmdopts as cmdopts
 from splunk.binding import connect
+
+DEBUG = True
 
 DEBUG_TEMPLATE = """\
   Python: %(python_version)s
@@ -44,12 +47,50 @@ DEBUG_TEMPLATE = """\
 """
 ROW_DATA = "  %s -->> %r"
 PORT = 8086
-DEBUG = False
 
 try:
     __file__
 except NameError:
     __file__ = '?'
+
+
+FD = None
+if DEBUG:
+    FD = open('./sdk_proxy.debug', 'w')
+
+def fix_xml(xml_text):
+    """ fixup broken XML """
+
+    ## this function detcts broken XML and fixes it up.
+    ## using emprical evidence, fix up things we have 
+    ## seen before as broken XML
+
+    xml_decl = "<?xml version='1.0' encoding='UTF-8'?>"
+    result_preview = "<results preview='0'>"
+    outer_wrapper_start = "<splunk_outer_wrapper>"
+    outer_wrapper_end = "</splunk_outer_wrapper>"
+
+    # if unchanged will return original
+    fixed_xml = xml_text
+
+    ## 1. does it parse?
+    try:
+        xml.dom.minidom.parseString(xml_text)
+    except xml.parsers.expat.ExpatError:
+        # got exception, so look for multi-result-previews
+        index = xml_text.find(result_preview)
+        if index > 0:
+            next_index = xml_text.find(result_preview, index+1)
+            if next_index > 0:
+                # build outer wrapper
+                fixed_xml = xml_decl
+                fixed_xml += outer_wrapper_start
+                fixed_xml += xml_text.replace(xml_decl, "", 1)
+                fixed_xml += outer_wrapper_end
+
+    ## 2. <next condition> [TBD]
+
+    return fixed_xml
 
 def application(environ, start_response):
     """ The splunk proxy processor """
@@ -66,12 +107,12 @@ def application(environ, start_response):
         }
 
         ## debug print 
-        print "Context data:\n%s" % debugdata
+        FD.write("Context data:\n%s\n" % debugdata)
 
     ## extract some basic HTTP/WSGI info
     endpoint = environ["PATH_INFO"]
     query = environ["QUERY_STRING"]
-    #operation = environ["REQUEST_METHOD"]    # GET, POST, PUT, etc (wkcfix)
+    operation = environ["REQUEST_METHOD"]    # GET, POST, PUT, etc 
 
     ## perform idempotent login/connect -- get login creds from ~/.splunkrc
     opts = cmdopts.parser().loadrc(".splunkrc").parse(sys.argv[1:]).result
@@ -81,11 +122,17 @@ def application(environ, start_response):
     ## needs to be done -- for now we simply "get" (wkcfix)
 
     ## sanitize query, and issue
+    ## this is a little awkward, browsers and BI apps seem to sanitize the 
+    ## query string(s) which doesn't get accepted by splunkd. So we unquote
+    ## the original and rebuild it the way we would like to see it.
     if query:
+        query = urllib.unquote(query)
+        query = urllib.quote_plus(query)
+        query = query.replace("%3D", "=", 1)
         final = endpoint + "?" + query
     else:
         final = endpoint
-    data = connection.get(final)
+    data = connection.get(final) # output mode? (wkcfix: brad to investigate sdk support)
 
     ## extract the status and headers from the splunk operation 
     status = str(data["status"]) + " " + data["reason"]
@@ -103,7 +150,15 @@ def application(environ, start_response):
     ## Here is where we can/should/must translate the 
     ## atom/odata format to ... atom (wkcfix)
 
-    return [data["body"]]
+    if DEBUG:
+        FD.write("http request %s to %s\n" % (operation, final))
+        FD.write("Return data body:\n")
+        FD.write(data["body"] + "\n")
+        FD.flush()
+
+    body = fix_xml(data["body"])
+
+    return [body]
 
 if __name__ == '__main__':
     # this script only runs when started directly from a shell
