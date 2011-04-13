@@ -98,7 +98,8 @@ class Context:
         if response.status >= 400:
             raise HTTPError(response.status, response.reason)
         # assert response.status == 200
-        sessionKey = XML(response.body).findtext("./sessionKey")
+        body = response.body.read()
+        sessionKey = XML(body).findtext("./sessionKey")
         self.token = "Splunk %s" % sessionKey
         return self
 
@@ -287,10 +288,21 @@ class http:
             "status": response.status,
             "reason": response.reason,
             "headers": response.getheaders(),
-            "body": response.read() 
+            "body": ResponseReader(response),
         })
         if debug: _print_response(response)
         return response
+
+# UNDONE: Complete implementation of file-like object
+class ResponseReader:
+    def __init__(self, response):
+        self._response = response
+
+    def __str__(self):
+        return self.read()
+
+    def read(self, size = None):
+        return self._response.read(size)
 
 class HTTPError(Exception):
     def __init__(self, status, reason):

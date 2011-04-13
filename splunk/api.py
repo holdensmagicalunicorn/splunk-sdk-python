@@ -106,7 +106,8 @@ def login(host, username, password):
     url = _mkurl(host, _path.login)
     response = http.post(url, username=username, password=password)
     _check_response(response)
-    return XML(response.body).findtext("./sessionKey")
+    body = response.body.read()
+    return XML(body).findtext("./sessionKey")
 
 class Connection:
     def __enter__(self):
@@ -188,33 +189,33 @@ class Connection:
     def commands(self):
         path = _mkpath(_suffix.search_commands, self.namespace)
         response = self._checked_get(path, count=-1)
-        return _parse_titles(response.body)
+        return _parse_titles(response.body.read())
 
     # List
     def capabilities(self):
         path = _mkpath(_suffix.capabilities)
         response = self._checked_get(path)
         xpath = "%s/%s" % (xname.entry, xname.content)
-        return data.load(response.body, xpath).capabilities
+        return data.load(response.body.read(), xpath).capabilities
 
     # List
     def fields(self, **kwargs):
         """Returns a list of search fields."""
         path = _mkpath(_suffix.search_fields, self.namespace)
         response = self._checked_get(path, **kwargs)
-        return _parse_titles(response.body)
+        return _parse_titles(response.body.read())
 
     def info(self):
         response = self._checked_get("/services/server/info")
-        return _parse_content(response.body)
+        return _parse_content(response.body.read())
 
     def parse(self, query):
         path = _mkpath(_suffix.search_parser)
         response = self.get(path, q=query)
         if response.status == 200:
-            return data.load(response.body)
+            return data.load(response.body.read())
         message = "Syntax Error"
-        messages = _parse_messages(response.body) # Grab error messages
+        messages = _parse_messages(response.body.read()) # Grab error messages
         if len(messages) > 0: message = messages[0].get("$text", message)
         raise SyntaxError(message)
 
@@ -226,7 +227,7 @@ class Connection:
         path = _mkpath(_suffix.search_export, self.namespace)
         if query is not None: kwargs['search'] = "search %s" % query 
         response = self.post(path, **kwargs)
-        return response.body
+        return response.body.read()
 
     def status(self):
         return "closed" if self.token is None else "open"
@@ -317,7 +318,7 @@ class Applications(Collection):
     def refresh(self):
         path = _mkpath(_suffix.apps, self._cn.namespace)
         response = self._cn._checked_get(path, count=-1)
-        self._items = _parse_entries(response.body)
+        self._items = _parse_entries(response.body.read())
 
 class Eventtypes(Collection):
     def create(self): pass # UNDONE
@@ -327,7 +328,7 @@ class Eventtypes(Collection):
     def refresh(self):
         path = _mkpath(_suffix.eventtypes, self._cn.namespace)
         response = self._cn._checked_get(path, count=-1)
-        self._items = _parse_entries(response.body)
+        self._items = _parse_entries(response.body.read())
 
 class Indexes(Collection):
     def create(self, name, **kwargs):
@@ -348,7 +349,7 @@ class Indexes(Collection):
     def refresh(self):
         path = _mkpath(_suffix.indexes, self._cn.namespace)
         response = self._cn._checked_get(path, count=-1)
-        self._items = _parse_entries(response.body)
+        self._items = _parse_entries(response.body.read())
 
 class Inputs(Collection):
     def create(self): raise # UNDONE
@@ -367,7 +368,7 @@ class Inputs(Collection):
     def refresh(self):
         path = _mkpath("data/inputs/monitor")
         response = self._cn._checked_get(path, count=-1)
-        self._items = _parse_entries(response.body)
+        self._items = _parse_entries(response.body.read())
 
 class Jobs(Collection):
     # UNDONE: Finish implementation
@@ -387,7 +388,7 @@ class Jobs(Collection):
     def refresh(self):
         path = _mkpath(_suffix.search_jobs, self._cn.namespace)
         response = self._cn._checked_get(path, count=0)
-        self._items = _parse_jobs(response.body)
+        self._items = _parse_jobs(response.body.read())
 
 class Licenses(Collection):
     def create(self): raise # UNDONE
@@ -397,7 +398,7 @@ class Licenses(Collection):
     def refresh(self):
         path = _mkpath("licenser/licenses")
         response = self._cn._checked_get(path, count=-1)
-        self._items = _parse_entries(response.body)
+        self._items = _parse_entries(response.body.read())
 
 class Objects(Collection):
     def create(self): raise # UNDONE
@@ -407,7 +408,7 @@ class Objects(Collection):
     def refresh(self):
         path = _mkpath(_suffix.directory);
         response = self._cn._checked_get(path, count=-1)
-        self._items = _parse_entries(response.body)
+        self._items = _parse_entries(response.body.read())
 
 class Roles(Collection):
     def create(self): pass # UNDONE
@@ -417,7 +418,7 @@ class Roles(Collection):
     def refresh(self):
         path = _mkpath(_suffix.roles);
         response = self._cn._checked_get(path, count=-1)
-        self._items = _parse_entries(response.body)
+        self._items = _parse_entries(response.body.read())
     
 class Users(Collection):
     def create(self): pass # UNDONE
@@ -427,7 +428,7 @@ class Users(Collection):
     def refresh(self):
         path = _mkpath(_suffix.users);
         response = self._cn._checked_get(path, count=-1)
-        self._items = _parse_entries(response.body)
+        self._items = _parse_entries(response.body.read())
     
 #
 # Jobs collection
