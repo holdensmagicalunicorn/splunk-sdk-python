@@ -126,15 +126,17 @@ class UsersTestCase(BindingTestCase):
         """Returns entity value for given user name."""
         response = self.get("%s/%s" % (PATH_USERS, username))
         self.assertEqual(response.status, 200)
-        self.assertEqual(XML(response.body).tag, XNAME_FEED)
-        return data.load(response.body).entry.content
+        body = response.body.read()
+        self.assertEqual(XML(body).tag, XNAME_FEED)
+        return data.load(body).entry.content
 
     def users(self):
         """Returns a list of user names."""
         response = self.get(PATH_USERS)
         self.assertEqual(response.status, 200)
-        self.assertEqual(XML(response.body).tag, XNAME_FEED)
-        return entry_titles(response.body)
+        body = response.body.read()
+        self.assertEqual(XML(body).tag, XNAME_FEED)
+        return entry_titles(body)
 
     def test(self):
         self.get(PATH_USERS)

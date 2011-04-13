@@ -44,7 +44,7 @@ class ProtocolTestCase(unittest.TestCase):
     def test(self):
         paths = ["/services"]
         for path in paths:
-            body = self.cn.get(path).body
+            body = self.cn.get(path).body.read()
             root = XML(body)
             self.assertTrue(root.tag == FEED)
             self.assertTrue(root.find(AUTHOR) is not None)

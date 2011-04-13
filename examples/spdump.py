@@ -75,7 +75,7 @@ def check_response(response):
 def load(cx, path, **kwargs):
     response = cx.get(path, **kwargs)
     check_response(response)
-    return data.load(response.body)
+    return data.load(response.body.read())
 
 # Load an entity resource from the given path
 def load_entity(cx, path):
@@ -158,7 +158,7 @@ def write_conf_stanza(cx, out, url):
         key = item.title
         if key in ignore: continue
         href = getlink(item, 'alternate').href
-        body = cx.get(href).body.strip()
+        body = cx.get(href).body.read().strip()
         if len(body) != 0: 
             out.writeln("%s = %s" % (key, body))
 

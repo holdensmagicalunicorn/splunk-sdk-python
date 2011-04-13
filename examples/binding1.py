@@ -21,7 +21,7 @@ from splunk.binding import connect, Collection, Entity
 
 import tools.cmdopts as cmdopts
 
-class Services:
+class Service:
     def __init__(self, context):
         self.apps = Collection(context, "apps/local")
         self.roles = Collection(context, "authorization/roles")
@@ -36,14 +36,14 @@ class Services:
 
 def main(argv):
     opts = cmdopts.parser().loadrc(".splunkrc").parse(sys.argv[1:]).result
-    services = Services(connect(**opts.kwargs))
-    assert services.apps().status == 200
-    assert services.roles().status == 200
-    assert services.users().status == 200
-    assert services.indexes().status == 200
-    assert services.info().status == 200
-    assert services.settings().status == 200
-    assert services.search("search 404").status == 200
+    service = Service(connect(**opts.kwargs))
+    assert service.apps().status == 200
+    assert service.roles().status == 200
+    assert service.users().status == 200
+    assert service.indexes().status == 200
+    assert service.info().status == 200
+    assert service.settings().status == 200
+    assert service.search("search 404").status == 200
 
 if __name__ == "__main__":
     import sys

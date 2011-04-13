@@ -17,50 +17,27 @@
 """A simple command line interface for the Splunk REST APIs."""
 
 # UNDONE: Support for POST
-# UNDONE: Generalize & share cmdline processor 
 
-import getopt
-from os import path
 import sys
 
 import splunk
 import cmdopts
-
-# Retrieve the content-type from the given response message
-def contentType(response):
-    for k, v in response.headers:
-        if k.lower() == "content-type":
-            return v
-    return None
 
 # Invoke the url using the given opts parameters
 def invoke(path, **kwargs):
     message = { "method": kwargs.get("method", "GET"), }
     return splunk.connect(**kwargs).request(path, message)
 
-# Answer if the content typ eof the given message is text/plain
-def istext(response):
-    type = contentType(response)
-    return type and type.find("text/plain") != -1
-
-# Answer if the content type of the given message is text/xml
-def isxml(response):
-    type = contentType(response)
-    return type and type.find("text/xml") != -1
-
 def print_response(response):
     if response.status != 200:
         print "%d %s" % (response.status, response.reason)
         return
-    if isxml(response):
-        print_xml(response.body)
-    elif istext(response):
-        print response.body
-
-def print_xml(value):
-    from xml.etree import ElementTree
-    root = ElementTree.XML(value)
-    print ElementTree.tostring(root)
+    body = response.body.read()
+    try:
+        root = ElementTree.XML(body)
+        print ElementTree.tostring(root)
+    except:
+        print body
 
 def main():
     opts = cmdopts.parser().loadrc(".splunkrc").parse(sys.argv[1:]).result

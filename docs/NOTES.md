@@ -120,24 +120,19 @@ Source-class rules
         CAN_OPTIMIZE (default=true)
 
 Search
-  Queries (aka SavedSearches)
-  Commands
-  Macros
-  Export (search)
+    Queries (aka SavedSearches)
+    Commands
+    Macros
+    Parser
+    Export
+    Jobs
+    Alerts
 
 Presentation (aka User interface)
     Views
     Navigation (interaction? controllers?)
     PDF (scheduled)
     Time ranges ** Why is this under UI **
-
-Configurations
-
-Runtime
-    Parser
-    Export
-    Jobs
-    Alerts
 
 ##
 ## props.conf

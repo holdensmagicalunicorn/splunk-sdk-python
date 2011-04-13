@@ -54,11 +54,19 @@ def main(argv):
             kwargs[key] = opts.kwargs[key]
 
     query = opts.args[0]
+
+    # UNDONE: Call the parser here to syntax check the query
+
+    # Execute the query
     result = context.get('search/jobs/export', search=query, **kwargs)
     if result.status != 200:
         print "HTTP %d (%s)" % (result.status, result.reason)
         return
-    print result.body
+
+    while True:
+        content = result.body.read(1024)
+        if len(content) == 0: break
+        sys.stdout.write(content)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
