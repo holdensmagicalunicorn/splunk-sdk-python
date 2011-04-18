@@ -42,42 +42,44 @@ Source classification
 
 Source-class rules
 
-    Parse
-        # Encoding
-        props!CHARSET = <?>
+    # Encoding (byte* => char*)
+    props!CHARSET = <?>
 
-        # "Event" rules (scanner?)
-        props!TRUNCATE = <uint>
-        props!LINE_BREAKER = <regex>
-        props!LINE_BREAKER_LOOKBEHIND = <int>
-        props!SHOULD_LINEMERGE = <bool>
-            props!BREAK_ONLY_BEFORE_DATE = <bool>
-            props!BREAK_ONLY_BEFORE = <regex>
-            props!MUST_BREAK_AFTER = <regex>
-            props!MUST_NOT_BREAK_AFTER = <regex>
-            props!MUST_NOT_BREAK_BEFORE = <regex>
-            props!MAX_EVENTS = <int>
+    # Event structure (char* => event*)
+    props!TRUNCATE = <uint>
+    props!LINE_BREAKER = <regex>
+    props!LINE_BREAKER_LOOKBEHIND = <int>
+    props!SHOULD_LINEMERGE = <bool>
+        props!BREAK_ONLY_BEFORE_DATE = <bool>
+        props!BREAK_ONLY_BEFORE = <regex>
+        props!MUST_BREAK_AFTER = <regex>
+        props!MUST_NOT_BREAK_AFTER = <regex>
+        props!MUST_NOT_BREAK_BEFORE = <regex>
+        props!MAX_EVENTS = <int>
 
-        # Date/time rules
-        props!DATETIME_CONFIG = <filename>
-        props!TIME_PREFIX = <regex>
-        props!MAX_TIMESTAMP_LOOKAHEAD = <int>
-        props!TIME_FORMAT = <strptime-style format>
-        props!TZ = <timezone identifier>
-        props!MAX_DAYS_AGO = <int>
-        props!MAX_DAYS_HENCE = <int>
-        props!MAX_DIFF_SECS_AGO = <int>
-        props!MAX_DIFF_SECS_HENCE = <int>
+    # Date/time rules
+    props!DATETIME_CONFIG = <filename>
+    props!TIME_PREFIX = <regex>
+    props!MAX_TIMESTAMP_LOOKAHEAD = <int>
+    props!TIME_FORMAT = <strptime-style format>
+    props!TZ = <timezone identifier>
+    props!MAX_DAYS_AGO = <int>
+    props!MAX_DAYS_HENCE = <int>
+    props!MAX_DIFF_SECS_AGO = <int>
+    props!MAX_DIFF_SECS_HENCE = <int>
         
-        props!SEDCMD-<class> = <sed script>
+    props!SEDCMD-<class> = <sed script> (event => event)
 
-        props!TRANSFORMS-<value> = <stanza in transforms.conf>
-        props!CHECK_FOR_HEADER = <bool>
+    props!TRANSFORMS-<value> = <stanza in transforms.conf> (UNDONE)
+    props!CHECK_FOR_HEADER = <bool>
 
-        Fields (fields.conf)
-            INDEXED = <bool>
-            INDEXED_VALUE = <bool>
-            TOKENIZER = <?>
+    Auditing (event => event)
+        Event signing (audit.conf)
+
+    Fields (fields.conf)
+        INDEXED = <bool>
+        INDEXED_VALUE = <bool>
+        TOKENIZER = <?>
 
     Indexing rules
         indexes.conf
@@ -119,7 +121,7 @@ Source-class rules
         KEEP_EMPTY_VALS (default=false)
         CAN_OPTIMIZE (default=true)
 
-Search
+Runtime
     Queries (aka SavedSearches)
     Commands
     Macros
@@ -290,7 +292,6 @@ FIELDALIAS (keeps original field)
     schema 
         field1 index::index
 
-
 ## Etc
 
 # Tasks
@@ -339,7 +340,85 @@ Issue: support for fragment level scoping of namespaces names?
 '{xxx}yyy': {} # Element (singleton)
 '{xxx}yyy': [] # Element list
 
-# UNDONE
+Config system
+=============
+
+# System
+distsearch.conf, Configuration of distributed search
+literals.conf, System strings (I think) (internal?)
+outputs.conf, Configure forwarders
+pubsub.conf, Configure pub/sub broker (deprecated?)
+restmap.conf, Configure custom endpoints
+server.conf, Configure Splunk server
+web.conf, Configure Splunk web
+
+## Access control
+authentication.conf, Configure authentication method
+authorize.conf, Define roles and assign capabilities to roles
+default.meta.conf, Access controls for splunk objects
+user-seed.conf, Configures initial username & password
+
+## Deployment server
+deploymentclient.conf, Configuration of deployment client (deprecated?)
+serverclass.conf, Configuration info used by deployment server
+serverclass.seed.xml.conf
+tenants.conf
+
+## Applications (what is an app?)
+app.conf, Maintains the state and configuration of a Splunk app
+<credentail store> - app.conf and admin/passwords
+
+# Indexes
+indexes.conf, Configure indexes
+segmenters.conf (UNDONE)
+
+# Inputs (data sources) (? => byte*)
+crawl.conf, Configure the crawler
+inputs.conf, Configure inputs & forwarders
+
+## Windows
+admon.conf, Configure Windows Active Directory monitoring
+perfmon.conf, Configure Window Performance Monitor
+procmon-filters.conf, Configure Windows Process Monitor
+regmon-filters.conf, Configure Windows Registry Monitor
+sysmon.conf, Configure Windows monitoring
+wmi.conf, Configure WMI for use as data source
+
+# <Input pipeline>
+audit.conf, Configure event signing
+eventdiscoverer.conf, Configure the eventtype learner (?)
+eventtypes.conf, Configure eventtype classifications
+fields.conf, Field metadata - multivalued fields & field/value indexing
+multikv.conf - Event rules for table-like inputs
+props.conf
+source-classifier.conf (UNDONE)
+sourcetypes.conf (UNDONE, machine generated)
+tags.conf, Configure event tagging
+transforms.conf
+
+# Runitme (search)
+alert_actions.conf, Configure global saved search actions
+commands.conf, Configure custom search commands
+limits.conf, Configure limits for search 
+macros.conf, Define search macros
+savedsearch.conf
+transactiontypes.conf (UNDONE)
+workflow_actions.conf (UNDONE)
+
+# Presentation
+event_renderers.conf, Associates template with eventtype
+pdf_server.conf
+report_server.conf
+searchbnf.conf, Used by the search-assistant (read-only)
+setup.xml.conf, Something having todo with app setup UI
+times.conf
+viewstates.conf
+
+UNDONE
+======
+UNDONE: Convert the following to Jira items
+
+# Misc
 * Search model
 
 ## tools/

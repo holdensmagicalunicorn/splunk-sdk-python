@@ -44,6 +44,8 @@
 /services/admin/auth/login, post?username&password
 /services/admin/directory, get
 /services/admin/directory{name}, get;edit?* # args depend on object
+/services/admin/passwords, get;create:user&password
+/services/admin/passwords/:{name}:, get;edit;delete
 alerts, get
 alerts/fired_alerts, get
 alerts/fired_alerts/-, get
