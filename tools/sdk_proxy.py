@@ -66,19 +66,16 @@ def trace(string):
         FD.write(string + "\n")
         FD.flush()
 
+##
+## The full atom RFC can be found here -- for reference
+##
+## http://tools.ietf.org/html/rfc4287
+##
+
 def convert_xml_to_atom(xml_text):
     """ splunk specific XML to Atom coverter """
 
-    ## this function takes a splunk search XML and converts it
-    ## into Atom. A distilled Atom description can be found here:
     ##
-    ## http://www.atomenabled.org/developers/syndication/
-    ##
-    ## for the full RFC:
-    ##
-    ## http://tools.ietf.org/html/rfc4287
-    ##
-
     ## Requires elements of <feed>:
     ## id:      Identifies the feed using a universally unique and permanent 
     ##          URI. If you have a long-term, renewable lease on your Internet
@@ -195,6 +192,76 @@ def convert_xml_to_atom(xml_text):
 
     return xml_text
 
+def fix_indeces(xml_text, idstring):
+    """ fixup identical ids to conform with Atom spec """
+
+    #
+    # splunk returns multiple <entry> components all with
+    # the same index (<id>). Make them unique
+    #
+
+    rawtext = idstring.lstrip("<id>").rstrip("</id>")
+    count = 0
+
+    while xml_text.find(idstring) != -1:
+        insert = "<id>http:/" + rawtext + "-" + str(count) + "</id>"
+        xml_text = xml_text.replace(idstring, insert, 1)
+        count = count + 1
+
+    return xml_text
+
+def fixup_to_msft_schema(fixed_xml):
+    """ transform the splunk schema to msft schema """
+
+    #
+    # for powerpivot/excel parsing and interpretation
+    # add in the microsoft schema and then munge the named multi-key
+    # elements to individually named elements
+    #
+
+    ## add msft schema to splunk schema (namespace)
+    fixed_xml = fixed_xml.replace(
+    'xmlns:s="http://dev.splunk.com/ns/rest"', 
+    'xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" \
+     xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" \
+     xmlns:s="http://dev.splunk.com"', 1)
+
+    ## replace s:dict with m:properties
+    fixed_xml = fixed_xml.replace("<s:dict>", "<m:properties>")
+    fixed_xml = fixed_xml.replace("</s:dict>", "</m:properties>")
+
+    ## change the keys to elements
+    try:
+        doc = xml.dom.minidom.parseString(fixed_xml)
+    except xml.parsers.expat.ExpatError:
+        trace("Error: xml failed to parse via xml.dom.minidom")
+        return fixed_xml
+
+    ## get all keys within m:properties
+    ## replace keys with d:<name> entities
+    allprops = doc.getElementsByTagName("m:properties")
+    for prop in allprops:
+        newlist = []
+        children = prop.childNodes
+        for child in children:
+            if child.attributes != None and child.firstChild != None:
+                name = str(child.getAttribute("name"))
+                value = str(child.firstChild.nodeValue)
+                newelement = doc.createElement("d:"+name)
+                newtext = doc.createTextNode(value)
+                newelement.appendChild(newtext)
+                newlist.append(newelement)
+        while len(prop.childNodes) != 0:
+            prop.removeChild(prop.childNodes[0])
+        for child in newlist:
+            newtext = doc.createTextNode("\n")
+            prop.appendChild(newtext)
+            prop.appendChild(child)
+    
+    fixed_xml = str(doc.toxml())
+
+    return fixed_xml
+
 def fix_xml(xml_text):
     """ fixup broken XML """
 
@@ -225,7 +292,38 @@ def fix_xml(xml_text):
                 fixed_xml += xml_text.replace(xml_decl, "", 1)
                 fixed_xml += outer_wrapper_end
 
-    ## 2. <next condition> [TBD]
+    ## 2. <id></id> must be unique within a feed, AND be a complete
+    #     URL (i.e. partial URL is insufficent)
+    #
+    #     <id>/services/search/jobs/1303147485.159</id>
+    #     changes to:
+    #     <id>http://DNSname/services/search/jobs/1303147485.159</id>
+    #
+    #     and that there cannot be multiple id's with the same value
+    #
+    #     <id>http://DNSname/services/search/jobs/1303147485.159</id>
+    #     changes to (add -[Number])
+    #     <id>http://DNSname/services/search/jobs/1303147485.159-1</id>
+    #
+    #     So says the Atom 1.0 verifiers
+    
+    index = fixed_xml.find("<id>")
+    if index != -1:
+        # extract id string
+        eol = fixed_xml.find("\n", index)
+        idstring = fixed_xml[index:eol]
+    
+        # get the number of occurances
+        occurances = fixed_xml.count(idstring)
+    
+        if occurances > 1:
+            fixed_xml = fix_indeces(fixed_xml, idstring)
+    
+    ## 3. comvert s:* to d:* and m:*
+
+    fixed_xml = fixup_to_msft_schema(fixed_xml)
+
+    ## 4. <test condition> [TBD]
 
     return fixed_xml
 
@@ -295,6 +393,7 @@ def application(environ, start_response):
                                username=connection.username,
                                password=connection.password)
 
+    ##
     ## here we can/should/must look up the endpoint and decide what operation
     ## needs to be done -- for now we simply "get" for basic urls, and 
     ## look for a special "search" in the query (if present) and build a job 
@@ -316,6 +415,8 @@ def application(environ, start_response):
 
         if endpoint == "/services/search/jobs":
             data = post_query(context, endpoint, query)
+            # fixup query results 
+            body = fix_xml(body)
         else:
             data = context.get(endpoint, search=query) 
     else:
@@ -325,22 +426,22 @@ def application(environ, start_response):
     status = str(data["status"]) + " " + data["reason"]
     headers = data["headers"]
 
-    ## clean hop-by-hop from headers (described in section 13.5.1 of RFC2616)
-    for thing in headers:
-        if thing[0] == "connection":
-            headers.remove(thing)
-
-    ## start the response (retransmit the status and headers)
-    start_response(status, headers)
-
     body = data.body.read()
-
-    # if XML is broken, will attempt to fixup
-    # otherwise it is left alone
-    body = fix_xml(body)
 
     trace("Return data body:\n")
     trace(body + "\n")
+
+    ## clean hop-by-hop from headers (described in section 13.5.1 of RFC2616),
+    ## and adjust the header length if modified by fix_xml()
+    for thing in headers:
+        if thing[0] == "connection":
+            headers.remove(thing)
+        if thing[0] == "content-length":
+            headers.remove(thing)
+            headers.insert(0, ("content-length", str(len(body))))
+
+    ## start the response (retransmit the status and headers)
+    start_response(status, headers)
 
     return [body]
 
