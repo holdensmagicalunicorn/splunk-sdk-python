@@ -30,6 +30,7 @@ import sys
 import urllib
 import time
 import xml.dom.minidom
+import socket
 
 # splunk support files
 import tools.cmdopts as cmdopts
@@ -65,6 +66,15 @@ def trace(string):
     if DEBUG:
         FD.write(string + "\n")
         FD.flush()
+
+
+def get_local_ip():
+    """ get the local ip address of this machine """
+
+    # Nota Bene: this assume some sort of internet access
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.connect(("gmail.com", 80))
+    return sock.getsockname()[0]
 
 ##
 ## The full atom RFC can be found here -- for reference
@@ -139,12 +149,12 @@ def convert_xml_to_atom(xml_text):
     ##          <id>http://host-name:8086/xxx/yyyy</id>
     ## title:   Contains a human readable title for the entry.
     ##          <title>Splunk powered nanomites scour your IT</title>
-    ## updated	Indicates the last time the entry was modified.
+    ## updated  Indicates the last time the entry was modified.
     ##          <updated>2003-12-13T18:30:02-05:00</updated>
     ##
 
     ## Recommended elements of <entry>
-    ## author	Names one author of the entry.
+    ## author   Names one author of the entry.
     ##          <author>
     ##            <name>Splunk</name>
     ##          </author>
@@ -210,7 +220,63 @@ def fix_indeces(xml_text, idstring):
 
     return xml_text
 
-def fixup_to_msft_schema(fixed_xml):
+def process_content(odata, atomcontent):
+    """ lowest level fixup for atom-->odata """
+
+    newcontent = odata.createElement("content")
+    if atomcontent.hasAttributes():
+        for attr in atomcontent.attributes.keys():
+            newcontent.setAttribute(attr, atomcontent.getAttribute(attr))
+    newprops = odata.createElement("m:properties")
+    newtext = odata.createTextNode("\n      ")
+    newcontent.appendChild(newtext)
+    newcontent.appendChild(newprops)
+
+    # should only be one
+    for prop in atomcontent.getElementsByTagName("s:dict"):
+        newlist = []
+        children = prop.childNodes
+        for child in children:
+            if child.attributes != None and child.firstChild != None:
+                for key in child.attributes.keys():
+                    if str(key) == "name":
+                        name = str(child.getAttribute("name"))
+                        # tweak chars for now (wkcfix -- readdress technique?)
+                        name = name.replace("(", "-")
+                        name = name.replace(")", "-")
+                        name = name.replace("/", "")
+                        value = str(child.firstChild.nodeValue)
+                        newelement = odata.createElement("d:"+name)
+                        newtext = odata.createTextNode(value)
+                        newelement.appendChild(newtext)
+                        newlist.append(newelement)
+            else:
+                newlist.append(child)
+        for child in newlist:
+            newprops.appendChild(child)
+
+    newtext = odata.createTextNode("\n    ")
+    newcontent.appendChild(newtext)
+
+    return newcontent
+
+def process_entry(odata, entry):
+    """ process the splunk entry data """
+
+    ## change s:dict to m:properties
+    ## change the keys to elements
+
+    newentry = odata.createElement("entry")
+
+    for child in entry.childNodes:
+        if child.nodeName == "content":
+            newentry.appendChild(process_content(odata, child))
+        else:
+            newentry.appendChild(child.cloneNode(True))
+
+    return newentry
+    
+def fixup_to_msft_schema(fixed_xml, title):
     """ transform the splunk schema to msft schema """
 
     #
@@ -219,50 +285,93 @@ def fixup_to_msft_schema(fixed_xml):
     # elements to individually named elements
     #
 
-    ## add msft schema to splunk schema (namespace)
-    fixed_xml = fixed_xml.replace(
-    'xmlns:s="http://dev.splunk.com/ns/rest"', 
-    'xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" \
-     xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" \
-     xmlns:s="http://dev.splunk.com"', 1)
-
-    ## replace s:dict with m:properties
-    fixed_xml = fixed_xml.replace("<s:dict>", "<m:properties>")
-    fixed_xml = fixed_xml.replace("</s:dict>", "</m:properties>")
-
-    ## change the keys to elements
     try:
         doc = xml.dom.minidom.parseString(fixed_xml)
     except xml.parsers.expat.ExpatError:
+        # if we fail to parser the XML, return an empty feed 
         trace("Error: xml failed to parse via xml.dom.minidom")
-        return fixed_xml
+        trace("wkc: failing XML is:")
+        trace(str(fixed_xml))
+        # return an empty collection
+        return "<?xml version='1.0' encoding='UTF-8'?>"+\
+          '<feed xmlns="http://www.w3.org/2005/Atom" '+\
+          'xmlns:s="http://dev.splunk.com/ns/rest" '+\
+          'xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/">'+\
+          '<title>dummy</title>'+\
+          '<id>https://127.0.0.1/servicesNS/admin/search/saved/searches</id>'+\
+          '<updated>2011-04-25T14:18:54-07:00</updated>'+\
+          '<generator version="97641"/>'+\
+          '<author>'+\
+          '<name>Splunk</name>'+\
+          '</author>'+\
+          '</feed>' 
 
-    ## get all keys within m:properties
-    ## replace keys with d:<name> entities
-    allprops = doc.getElementsByTagName("m:properties")
-    for prop in allprops:
-        newlist = []
-        children = prop.childNodes
-        for child in children:
-            if child.attributes != None and child.firstChild != None:
-                name = str(child.getAttribute("name"))
-                value = str(child.firstChild.nodeValue)
-                newelement = doc.createElement("d:"+name)
-                newtext = doc.createTextNode(value)
-                newelement.appendChild(newtext)
-                newlist.append(newelement)
-        while len(prop.childNodes) != 0:
-            prop.removeChild(prop.childNodes[0])
-        for child in newlist:
-            newtext = doc.createTextNode("\n")
-            prop.appendChild(newtext)
-            prop.appendChild(child)
+    ## pull apart the atom feed and rebuild with Odata style feed
+
+    odata = xml.dom.minidom.Document()
+
+    ## assume the feed is of the form we are expecting: 
+    ## xml-stylesheet, feed
+
+    for child in doc.childNodes:
+        if str(child.nodeName) == "xml-stylesheet":
+            instr = child.cloneNode(True)
+        elif str(child.nodeName) == "feed":
+            ofeed = child
+            feed = child.cloneNode(False)
+
+    # attach the children
+    odata.appendChild(instr)
+    odata.appendChild(feed)
+
+    # add the msft data schemas 
+    feed.setAttribute("xmlns:d", "http://schemas.microsoft.com/ado/2007/08/dataservices")
+    feed.setAttribute("xmlns:m", "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata")
+
+    # we don't expect a link element, so add one, prefaced with 
+    # a little whitespace
+
+
+    newtext = odata.createTextNode("\n  ")
+    feed.appendChild(newtext)
     
-    fixed_xml = str(doc.toxml())
+    title = title.replace("/","/Catalog/")
+    link = odata.createElement("link")
+    link.setAttribute("rel", "self")
+    link.setAttribute("title", title)
+    link.setAttribute("href", title)
+    feed.appendChild(link)
+
+    # loop through all the child nodes of feed, and adjust as necessary
+    # we expect (as high level child nodes):
+    # title, id, updated, generator version, author and then zero or 
+    # more entries we can skip processing any of the next nodes: they 
+    # are just whitespace so simply tack them on
+
+    for child in ofeed.childNodes:
+        if child.nodeType != 3:
+            if str(child.nodeName) == "title":
+                feed.appendChild(child.cloneNode(True))
+            elif str(child.nodeName) == "id":
+                feed.appendChild(child.cloneNode(True))
+            elif str(child.nodeName) == "updated":
+                feed.appendChild(child.cloneNode(True))
+            elif str(child.nodeName) == "generator":
+                feed.appendChild(child.cloneNode(True))
+            elif str(child.nodeName) == "author":
+                feed.appendChild(child.cloneNode(True))
+            elif str(child.nodeName) == "entry":
+                feed.appendChild(process_entry(odata, child))
+            else:
+                trace("WARNING: unknown node: %s" % str(child.nodeName))
+        else:
+            feed.appendChild(child.cloneNode(True))
+
+    fixed_xml = str(odata.toxml())
 
     return fixed_xml
 
-def fix_xml(xml_text):
+def fix_xml(xml_text, title=None):
     """ fixup broken XML """
 
     ## this function detects broken XML and fixes it up.
@@ -319,9 +428,9 @@ def fix_xml(xml_text):
         if occurances > 1:
             fixed_xml = fix_indeces(fixed_xml, idstring)
     
-    ## 3. comvert s:* to d:* and m:*
+    ## 3. multiple fix/conversions for Odata
 
-    fixed_xml = fixup_to_msft_schema(fixed_xml)
+    fixed_xml = fixup_to_msft_schema(fixed_xml, title)
 
     ## 4. <test condition> [TBD]
 
@@ -350,20 +459,42 @@ def wait_for_search(context, url):
     ## if posting, wait on the object to be finished
     while True:
         data = context.get(url)
-        pxml = xml.dom.minidom.parseString(data.body.read())
-        for key in pxml.getElementsByTagName("s:key"):
-            if key.getAttribute("name") == "isDone":
-                if key.firstChild.nodeValue == "1":
-                    return
+        if data["status"] == 404:
+            trace("Waiting for search on URL: %s failed with 404" % url)
+            return
+        if data["status"] != 204:
+            pxml = xml.dom.minidom.parseString(data.body.read())
+            for key in pxml.getElementsByTagName("s:key"):
+                if key.getAttribute("name") == "isDone":
+                    if key.firstChild.nodeValue == "1":
+                        return
         time.sleep(1)
 
-def post_query(context, endpoint, query):
+def post_catalog_search(context, endpoint):
+    """ post a catalog search, wait for response """
+
+    endpoint = "/services/saved/searches%s/dispatch" % endpoint
+    trace("post_catalog_search: %s, %s" % (context, endpoint))
+
+    sid_xml_text = context.post(endpoint).body.read()
+    sid_xml = xml.dom.minidom.parseString(sid_xml_text)
+    sid = str(sid_xml.getElementsByTagName("sid")[0].firstChild.nodeValue)
+
+    endpoint = "/services/search/jobs/" + sid
+    wait_for_search(context, endpoint)
+
+    # search has completed, get the data and return
+    endpoint = endpoint + "/results"
+    return context.get(endpoint, output_mode="atom")
+
+def post_query(context, endpoint, query=None):
     """ post a query, wait for response """
 
     trace("post_query : %s, %s, %s" % (context, endpoint, query))
 
     # remove double search
-    query = query.replace("search=", "", 1)
+    if query:
+        query = query.replace("search=", "", 1)
 
     sid_xml_text = context.post(endpoint, search=query).body.read()
     sid_xml = xml.dom.minidom.parseString(sid_xml_text)
@@ -375,6 +506,68 @@ def post_query(context, endpoint, query):
     # search has completed, get the data and return
     endpoint = endpoint + "/results"
     return context.get(endpoint, output_mode="atom")
+
+def get_splunk_catalog(context):
+    """ http GET the saved jobs endpoint and build Odata style catalog """
+
+    data = context.get("/services/saved/searches") 
+    body = data.body.read()
+
+    bxml = xml.dom.minidom.parseString(body)
+    catalog = xml.dom.minidom.Document()
+
+    # create root service
+    rootelement = catalog.createElement("service")
+    rootelement.setAttribute("xml:base",
+                             "http://%s:%s/Catalog/" % (get_local_ip(), PORT))
+    rootelement.setAttribute("xmlns:atom",
+                             "http://www.w3.org/2005/Atom")
+    rootelement.setAttribute("xmlns:app",
+                             "http://www.w3.org/2007/app")
+    rootelement.setAttribute("xmlns",
+                             "http://www.w3.org/2007/app")
+
+    catalog.appendChild(rootelement)
+
+    # add in the workspace
+
+    workspace = catalog.createElement("workspace")
+    rootelement.appendChild(workspace)
+
+    # add high level title
+
+    maintitle = catalog.createElement("atom:title")
+    text = catalog.createTextNode("Splunk Catalog")
+    maintitle.appendChild(text)
+    workspace.appendChild(maintitle)
+
+    ##
+    ## pull apart each splunk saved search and build as:
+    ##
+    ## <collection href="<reference to save searc>">\
+    ##   <atom:title><name of saved search></atom:title>\
+    ## </collection>\
+    ##
+
+    entries = bxml.getElementsByTagName("entry")
+    for entry in entries:
+        # get existing 
+        title = entry.getElementsByTagName("title")[0]
+        text_title = str(title.firstChild.nodeValue)
+
+        # build
+        #href = "/catalog/services/saved/searches/%s/dispatch" % text_title
+        collection = catalog.createElement("collection")
+        collection.setAttribute("href", "%s" % text_title)
+
+        xtitle = catalog.createElement("atom:title")
+        text = catalog.createTextNode("%s" % text_title)
+        xtitle.appendChild(text)
+        collection.appendChild(xtitle)
+
+        workspace.appendChild(collection)
+
+    return (data, str(catalog.toxml()))
 
 def application(environ, start_response):
     """ The splunk proxy processor """
@@ -397,36 +590,64 @@ def application(environ, start_response):
     ## here we can/should/must look up the endpoint and decide what operation
     ## needs to be done -- for now we simply "get" for basic urls, and 
     ## look for a special "search" in the query (if present) and build a job 
-    ## out of it.
+    ## out of it. We also look for special Odata (excel) Catalog lookups
     ## 
     ## in particular, we want to look for:
     ##
     ## /services/search/jobs
     
-    ## sanitize query, and issue
-    ##
-    ## this is a little awkward, browsers and BI apps seem to sanitize the 
-    ## query string(s) which doesn't get accepted by splunkd. So we unquote
-    ## the original and rebuild it the way we would like to see it.
-    if query:
+    print "wkc: application ENDPOINT is: %s" % endpoint
+
+    if endpoint.lower() == "/catalog" or endpoint.lower() == "/catalog/":
+        # here we fabricate a catalog endpoint
+        trace("OData catalog get")
+        (data, body) = get_splunk_catalog(context)
+    elif endpoint.lower().find("/catalog/") == 0:
+        # we have a full-on catalog query/search
+        # remove the pre-pended catalog
+        endpoint = endpoint.replace("/Catalog","")
+        title = endpoint
+        # quote the special characters
+        endpoint = urllib.quote(endpoint)
+        trace("OData catalog dispatch: %s" % endpoint)
+        data = post_catalog_search(context, endpoint)
+        trace("wkc: data returned is")
+        trace(str(data))
+        # fixup query results 
+        body = str(data.body.read())
+        trace("wkc: XML before fixup is")
+        trace(body)
+        body = fix_xml(body, title)
+    elif query:
+        trace("raw query: base: %s, query: %s" % (endpoint, query))
+        ## sanitize query, and issue
+        ##
+        ## this is a little awkward, browsers and BI apps seem to sanitize the 
+        ## query string(s) which doesn't get accepted by splunkd. So we unquote
+        ## the original and rebuild it the way we would like to see it.
+
         query = urllib.unquote(query)
+        endpoint = urllib.quote(endpoint)
+
         ## wkcfix -- break out ? <something> = and use <something> 
         ## as keyword, not "search"?
 
         if endpoint == "/services/search/jobs":
-            data = post_query(context, endpoint, query)
+            data = post_query(context, endpoint, query=query)
             # fixup query results 
-            body = fix_xml(body)
+            body = fix_xml(data.body.read())
         else:
             data = context.get(endpoint, search=query) 
+            body = data.body.read()
     else:
+        ## catch all for passthrough
+        trace("request passthrough endpoint: %s" % endpoint)
         data = context.get(endpoint) 
+        body = data.body.read()
 
     ## extract the status and headers from the splunk operation 
     status = str(data["status"]) + " " + data["reason"]
     headers = data["headers"]
-
-    body = data.body.read()
 
     trace("Return data body:\n")
     trace(body + "\n")
@@ -439,6 +660,9 @@ def application(environ, start_response):
         if thing[0] == "content-length":
             headers.remove(thing)
             headers.insert(0, ("content-length", str(len(body))))
+
+    trace("Return header:\n")
+    trace(str(headers) + "\n")
 
     ## start the response (retransmit the status and headers)
     start_response(status, headers)
