@@ -202,23 +202,20 @@ def convert_xml_to_atom(xml_text):
 
     return xml_text
 
-def fix_indeces(xml_text, idstring):
+def fix_ids(doc):
     """ fixup identical ids to conform with Atom spec """
 
-    #
-    # splunk returns multiple <entry> components all with
-    # the same index (<id>). Make them unique
-    #
-
-    rawtext = idstring.lstrip("<id>").rstrip("</id>")
     count = 0
+    ids = doc.getElementsByTagName("id")
+    for xid in ids:
+        if xid.firstChild and xid.firstChild.nodeType == 3: # text
+            nodevalue = str(xid.firstChild.nodeValue) + "-%d" % count
+            xid.removeChild(xid.firstChild)
+            newchild = doc.createTextNode(nodevalue)
+            xid.appendChild(newchild)
+            count = count + 1
 
-    while xml_text.find(idstring) != -1:
-        insert = "<id>http:/" + rawtext + "-" + str(count) + "</id>"
-        xml_text = xml_text.replace(idstring, insert, 1)
-        count = count + 1
-
-    return xml_text
+    return doc
 
 def process_content(odata, atomcontent):
     """ lowest level fixup for atom-->odata """
@@ -244,7 +241,8 @@ def process_content(odata, atomcontent):
                         # tweak chars for now (wkcfix -- readdress technique?)
                         name = name.replace("(", "-")
                         name = name.replace(")", "-")
-                        name = name.replace("/", "")
+                        if name.find("/") == 0:
+                            name = name.replace("/", "", 1)
                         value = str(child.firstChild.nodeValue)
                         newelement = odata.createElement("d:"+name)
                         newtext = odata.createTextNode(value)
@@ -290,7 +288,7 @@ def fixup_to_msft_schema(fixed_xml, title):
     except xml.parsers.expat.ExpatError:
         # if we fail to parser the XML, return an empty feed 
         trace("Error: xml failed to parse via xml.dom.minidom")
-        trace("wkc: failing XML is:")
+        trace("failing XML is as follows, returning empty XML feed instead:")
         trace(str(fixed_xml))
         # return an empty collection
         return "<?xml version='1.0' encoding='UTF-8'?>"+\
@@ -306,7 +304,22 @@ def fixup_to_msft_schema(fixed_xml, title):
           '</author>'+\
           '</feed>' 
 
-    ## pull apart the atom feed and rebuild with Odata style feed
+    ## <id></id> must be unique within a feed, AND be a complete
+    #     URL (i.e. partial URL is insufficent)
+    #
+    #     <id>/services/search/jobs/1303147485.159</id>
+    #     changes to:
+    #     <id>http://DNSname/services/search/jobs/1303147485.159</id>
+    #
+    #     and that there cannot be multiple id's with the same value
+    #
+    #     <id>http://DNSname/services/search/jobs/1303147485.159</id>
+    #     changes to (add -[Number])
+    #     <id>http://DNSname/services/search/jobs/1303147485.159-1</id>
+    #
+    #     So says the Atom 1.0 verifiers
+
+    doc = fix_ids(doc)
 
     odata = xml.dom.minidom.Document()
 
@@ -330,7 +343,6 @@ def fixup_to_msft_schema(fixed_xml, title):
 
     # we don't expect a link element, so add one, prefaced with 
     # a little whitespace
-
 
     newtext = odata.createTextNode("\n  ")
     feed.appendChild(newtext)
@@ -374,14 +386,9 @@ def fixup_to_msft_schema(fixed_xml, title):
 def fix_xml(xml_text, title=None):
     """ fixup broken XML """
 
-    ## this function detects broken XML and fixes it up.
+    ## this function detects broken XML and tries to fix it up.
     ## using emprical evidence, fix up things we have 
     ## seen before as broken XML
-
-    xml_decl = "<?xml version='1.0' encoding='UTF-8'?>"
-    result_preview = "<results preview='0'>"
-    outer_wrapper_start = "<splunk_outer_wrapper>"
-    outer_wrapper_end = "</splunk_outer_wrapper>"
 
     # if unchanged will return original
     fixed_xml = xml_text
@@ -391,6 +398,12 @@ def fix_xml(xml_text, title=None):
         xml.dom.minidom.parseString(xml_text)
     except xml.parsers.expat.ExpatError:
         # got exception, so look for multi-result-previews
+
+        xml_decl = "<?xml version='1.0' encoding='UTF-8'?>"
+        result_preview = "<results preview='0'>"
+        outer_wrapper_start = "<splunk_outer_wrapper>"
+        outer_wrapper_end = "</splunk_outer_wrapper>"
+
         index = xml_text.find(result_preview)
         if index > 0:
             next_index = xml_text.find(result_preview, index+1)
@@ -401,34 +414,7 @@ def fix_xml(xml_text, title=None):
                 fixed_xml += xml_text.replace(xml_decl, "", 1)
                 fixed_xml += outer_wrapper_end
 
-    ## 2. <id></id> must be unique within a feed, AND be a complete
-    #     URL (i.e. partial URL is insufficent)
-    #
-    #     <id>/services/search/jobs/1303147485.159</id>
-    #     changes to:
-    #     <id>http://DNSname/services/search/jobs/1303147485.159</id>
-    #
-    #     and that there cannot be multiple id's with the same value
-    #
-    #     <id>http://DNSname/services/search/jobs/1303147485.159</id>
-    #     changes to (add -[Number])
-    #     <id>http://DNSname/services/search/jobs/1303147485.159-1</id>
-    #
-    #     So says the Atom 1.0 verifiers
-    
-    index = fixed_xml.find("<id>")
-    if index != -1:
-        # extract id string
-        eol = fixed_xml.find("\n", index)
-        idstring = fixed_xml[index:eol]
-    
-        # get the number of occurances
-        occurances = fixed_xml.count(idstring)
-    
-        if occurances > 1:
-            fixed_xml = fix_indeces(fixed_xml, idstring)
-    
-    ## 3. multiple fix/conversions for Odata
+    ## 2. multiple fix/conversions for Odata
 
     fixed_xml = fixup_to_msft_schema(fixed_xml, title)
 
@@ -596,8 +582,6 @@ def application(environ, start_response):
     ##
     ## /services/search/jobs
     
-    print "wkc: application ENDPOINT is: %s" % endpoint
-
     if endpoint.lower() == "/catalog" or endpoint.lower() == "/catalog/":
         # here we fabricate a catalog endpoint
         trace("OData catalog get")
@@ -607,15 +591,14 @@ def application(environ, start_response):
         # remove the pre-pended catalog
         endpoint = endpoint.replace("/Catalog","")
         title = endpoint
-        # quote the special characters
+        # quote the special characters, and post the search
         endpoint = urllib.quote(endpoint)
         trace("OData catalog dispatch: %s" % endpoint)
         data = post_catalog_search(context, endpoint)
-        trace("wkc: data returned is")
-        trace(str(data))
+
         # fixup query results 
         body = str(data.body.read())
-        trace("wkc: XML before fixup is")
+        trace("Splunk generated Atom/XML before fixup is:")
         trace(body)
         body = fix_xml(body, title)
     elif query:
@@ -649,7 +632,7 @@ def application(environ, start_response):
     status = str(data["status"]) + " " + data["reason"]
     headers = data["headers"]
 
-    trace("Return data body:\n")
+    trace("Returning Atom/XML:\n")
     trace(body + "\n")
 
     ## clean hop-by-hop from headers (described in section 13.5.1 of RFC2616),
@@ -660,9 +643,6 @@ def application(environ, start_response):
         if thing[0] == "content-length":
             headers.remove(thing)
             headers.insert(0, ("content-length", str(len(body))))
-
-    trace("Return header:\n")
-    trace(str(headers) + "\n")
 
     ## start the response (retransmit the status and headers)
     start_response(status, headers)
