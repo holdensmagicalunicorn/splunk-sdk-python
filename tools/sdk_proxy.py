@@ -205,6 +205,12 @@ def convert_xml_to_atom(xml_text):
 def fix_ids(doc):
     """ fixup identical ids to conform with Atom spec """
 
+    ##
+    ## without actually checking, guarantee that each id element is 
+    ## unique by appending a monotonically increasing -<number> 
+    ## to the of the id value
+    ##
+
     count = 0
     ids = doc.getElementsByTagName("id")
     for xid in ids:
@@ -220,6 +226,15 @@ def fix_ids(doc):
 def process_content(odata, atomcontent):
     """ lowest level fixup for atom-->odata """
 
+    ##
+    ## process the incoming atom and convert to excel friendly schema
+    ##
+
+    ##
+    ## create an m:properties element that we populate with data
+    ## from the s:dict 
+    ##
+
     newcontent = odata.createElement("content")
     if atomcontent.hasAttributes():
         for attr in atomcontent.attributes.keys():
@@ -229,7 +244,11 @@ def process_content(odata, atomcontent):
     newcontent.appendChild(newtext)
     newcontent.appendChild(newprops)
 
-    # should only be one
+    ##
+    ## should only be one dictionary but convert the keys in the 
+    ## dictionary to elements
+    ##
+
     for prop in atomcontent.getElementsByTagName("s:dict"):
         newlist = []
         children = prop.childNodes
@@ -238,7 +257,13 @@ def process_content(odata, atomcontent):
                 for key in child.attributes.keys():
                     if str(key) == "name":
                         name = str(child.getAttribute("name"))
-                        # tweak chars for now (wkcfix -- readdress technique?)
+
+                        ##
+                        ## seems that parenthesis and leading slash found
+                        ## in the atom make Odata unhappy, so here we
+                        ## convert parens to dashes and strip the slash
+                        ##
+
                         name = name.replace("(", "-")
                         name = name.replace(")", "-")
                         if name.find("/") == 0:
@@ -261,8 +286,10 @@ def process_content(odata, atomcontent):
 def process_entry(odata, entry):
     """ process the splunk entry data """
 
+    ##
     ## change s:dict to m:properties
     ## change the keys to elements
+    ##
 
     newentry = odata.createElement("entry")
 
@@ -277,11 +304,11 @@ def process_entry(odata, entry):
 def fixup_to_msft_schema(fixed_xml, title):
     """ transform the splunk schema to msft schema """
 
-    #
-    # for powerpivot/excel parsing and interpretation
-    # add in the microsoft schema and then munge the named multi-key
-    # elements to individually named elements
-    #
+    ##
+    ## for powerpivot/excel parsing and interpretation
+    ## add in the microsoft schema and then munge the named multi-key
+    ## elements to individually named elements
+    ##
 
     try:
         doc = xml.dom.minidom.parseString(fixed_xml)
@@ -304,27 +331,31 @@ def fixup_to_msft_schema(fixed_xml, title):
           '</author>'+\
           '</feed>' 
 
+    ##
     ## <id></id> must be unique within a feed, AND be a complete
-    #     URL (i.e. partial URL is insufficent)
-    #
-    #     <id>/services/search/jobs/1303147485.159</id>
-    #     changes to:
-    #     <id>http://DNSname/services/search/jobs/1303147485.159</id>
-    #
-    #     and that there cannot be multiple id's with the same value
-    #
-    #     <id>http://DNSname/services/search/jobs/1303147485.159</id>
-    #     changes to (add -[Number])
-    #     <id>http://DNSname/services/search/jobs/1303147485.159-1</id>
-    #
-    #     So says the Atom 1.0 verifiers
+    ##     URL (i.e. partial URL is insufficent)
+    ##
+    ##     <id>/services/search/jobs/1303147485.159</id>
+    ##     changes to:
+    ##     <id>http://DNSname/services/search/jobs/1303147485.159</id>
+    ##
+    ##     and that there cannot be multiple id's with the same value
+    ##
+    ##     <id>http://DNSname/services/search/jobs/1303147485.159</id>
+    ##     changes to (add -[Number])
+    ##     <id>http://DNSname/services/search/jobs/1303147485.159-1</id>
+    ##
+    ##     So says the Atom 1.0 verifiers
+    ##
 
     doc = fix_ids(doc)
 
     odata = xml.dom.minidom.Document()
 
+    ##
     ## assume the feed is of the form we are expecting: 
     ## xml-stylesheet, feed
+    ##
 
     for child in doc.childNodes:
         if str(child.nodeName) == "xml-stylesheet":
@@ -341,8 +372,10 @@ def fixup_to_msft_schema(fixed_xml, title):
     feed.setAttribute("xmlns:d", "http://schemas.microsoft.com/ado/2007/08/dataservices")
     feed.setAttribute("xmlns:m", "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata")
 
-    # we don't expect a link element, so add one, prefaced with 
-    # a little whitespace
+    ##
+    ## we don't expect a link element, so add one, prefaced with 
+    ## a little whitespace
+    ##
 
     newtext = odata.createTextNode("\n  ")
     feed.appendChild(newtext)
@@ -354,11 +387,13 @@ def fixup_to_msft_schema(fixed_xml, title):
     link.setAttribute("href", title)
     feed.appendChild(link)
 
-    # loop through all the child nodes of feed, and adjust as necessary
-    # we expect (as high level child nodes):
-    # title, id, updated, generator version, author and then zero or 
-    # more entries we can skip processing any of the next nodes: they 
-    # are just whitespace so simply tack them on
+    ##
+    ## loop through all the child nodes of feed, and adjust as necessary
+    ## we expect (as high level child nodes):
+    ## title, id, updated, generator version, author and then zero or 
+    ## more entries we can skip processing any of the next nodes: they 
+    ## are just whitespace so simply tack them on
+    ##
 
     for child in ofeed.childNodes:
         if child.nodeType != 3:
@@ -386,18 +421,23 @@ def fixup_to_msft_schema(fixed_xml, title):
 def fix_xml(xml_text, title=None):
     """ fixup broken XML """
 
+    ##
     ## this function detects broken XML and tries to fix it up.
     ## using emprical evidence, fix up things we have 
     ## seen before as broken XML
+    ##
 
-    # if unchanged will return original
     fixed_xml = xml_text
 
-    ## 1. does it parse?
+    # 1. does it parse?
     try:
         xml.dom.minidom.parseString(xml_text)
     except xml.parsers.expat.ExpatError:
-        # got exception, so look for multi-result-previews
+
+        ##
+        ## got exception, so look for multi-result-previews
+        ## and if found, add an outside wrapper
+        ##
 
         xml_decl = "<?xml version='1.0' encoding='UTF-8'?>"
         result_preview = "<results preview='0'>"
@@ -414,11 +454,11 @@ def fix_xml(xml_text, title=None):
                 fixed_xml += xml_text.replace(xml_decl, "", 1)
                 fixed_xml += outer_wrapper_end
 
-    ## 2. multiple fix/conversions for Odata
+    # 2. multiple fix/conversions for Odata
 
     fixed_xml = fixup_to_msft_schema(fixed_xml, title)
 
-    ## 4. <test condition> [TBD]
+    # 3. <test condition> [TBD]
 
     return fixed_xml
 
@@ -442,13 +482,15 @@ def wait_for_search(context, url):
 
     trace("wait_for_search: %s, %s" % (context, url))
 
-    ## if posting, wait on the object to be finished
+    # if posting, wait on the object to be finished.
+    # nota bene: this could be dangerous if there is a different kind
+    #            of error other than 404
     while True:
         data = context.get(url)
         if data["status"] == 404:
             trace("Waiting for search on URL: %s failed with 404" % url)
             return
-        if data["status"] != 204:
+        if data["status"] != 204: # skip no-body returns
             pxml = xml.dom.minidom.parseString(data.body.read())
             for key in pxml.getElementsByTagName("s:key"):
                 if key.getAttribute("name") == "isDone":
@@ -459,13 +501,16 @@ def wait_for_search(context, url):
 def post_catalog_search(context, endpoint):
     """ post a catalog search, wait for response """
 
+    # generate a real splunkd endpoint from our incoming catalog
     endpoint = "/services/saved/searches%s/dispatch" % endpoint
     trace("post_catalog_search: %s, %s" % (context, endpoint))
 
+    # get the session id
     sid_xml_text = context.post(endpoint).body.read()
     sid_xml = xml.dom.minidom.parseString(sid_xml_text)
     sid = str(sid_xml.getElementsByTagName("sid")[0].firstChild.nodeValue)
 
+    # wait on the endopint return
     endpoint = "/services/search/jobs/" + sid
     wait_for_search(context, endpoint)
 
@@ -476,16 +521,19 @@ def post_catalog_search(context, endpoint):
 def post_query(context, endpoint, query=None):
     """ post a query, wait for response """
 
+    # generate a real splunkd request from the request
     trace("post_query : %s, %s, %s" % (context, endpoint, query))
 
     # remove double search
     if query:
         query = query.replace("search=", "", 1)
 
+    # get the session id
     sid_xml_text = context.post(endpoint, search=query).body.read()
     sid_xml = xml.dom.minidom.parseString(sid_xml_text)
     sid = str(sid_xml.getElementsByTagName("sid")[0].firstChild.nodeValue)
 
+    # wait in the endpoint return
     endpoint = endpoint + "/" + sid
     wait_for_search(context, endpoint)
 
@@ -496,6 +544,7 @@ def post_query(context, endpoint, query=None):
 def get_splunk_catalog(context):
     """ http GET the saved jobs endpoint and build Odata style catalog """
 
+    # generate an Odata ctalog from splunkd's saved searches
     data = context.get("/services/saved/searches") 
     body = data.body.read()
 
@@ -516,12 +565,10 @@ def get_splunk_catalog(context):
     catalog.appendChild(rootelement)
 
     # add in the workspace
-
     workspace = catalog.createElement("workspace")
     rootelement.appendChild(workspace)
 
     # add high level title
-
     maintitle = catalog.createElement("atom:title")
     text = catalog.createTextNode("Splunk Catalog")
     maintitle.appendChild(text)
@@ -560,11 +607,11 @@ def application(environ, start_response):
 
     debug_connect(environ)
 
-    ## extract some basic HTTP/WSGI info
+    # extract some basic HTTP/WSGI info
     endpoint = environ["PATH_INFO"]
     query = environ["QUERY_STRING"]
 
-    ## perform idempotent login/connect -- get login creds from ~/.splunkrc
+    # perform idempotent login/connect -- get login creds from ~/.splunkrc
     connection = connect(**(cmdopts.parser().loadrc(".splunkrc")
                             .parse(sys.argv[1:]).result).kwargs)
     # get lower level context
@@ -581,6 +628,7 @@ def application(environ, start_response):
     ## in particular, we want to look for:
     ##
     ## /services/search/jobs
+    ##
     
     if endpoint.lower() == "/catalog" or endpoint.lower() == "/catalog/":
         # here we fabricate a catalog endpoint
@@ -603,17 +651,22 @@ def application(environ, start_response):
         body = fix_xml(body, title)
     elif query:
         trace("raw query: base: %s, query: %s" % (endpoint, query))
+
+        ##
         ## sanitize query, and issue
         ##
         ## this is a little awkward, browsers and BI apps seem to sanitize the 
         ## query string(s) which doesn't get accepted by splunkd. So we unquote
         ## the original and rebuild it the way we would like to see it.
+        ##
 
         query = urllib.unquote(query)
         endpoint = urllib.quote(endpoint)
 
+        ##
         ## wkcfix -- break out ? <something> = and use <something> 
         ## as keyword, not "search"?
+        ##
 
         if endpoint == "/services/search/jobs":
             data = post_query(context, endpoint, query=query)
@@ -623,20 +676,23 @@ def application(environ, start_response):
             data = context.get(endpoint, search=query) 
             body = data.body.read()
     else:
-        ## catch all for passthrough
+        # catch all for passthrough
         trace("request passthrough endpoint: %s" % endpoint)
         data = context.get(endpoint) 
         body = data.body.read()
 
-    ## extract the status and headers from the splunk operation 
+    # extract the status and headers from the splunk operation 
     status = str(data["status"]) + " " + data["reason"]
     headers = data["headers"]
 
     trace("Returning Atom/XML:\n")
     trace(body + "\n")
 
+    ##
     ## clean hop-by-hop from headers (described in section 13.5.1 of RFC2616),
     ## and adjust the header length if modified by fix_xml()
+    ##
+
     for thing in headers:
         if thing[0] == "connection":
             headers.remove(thing)
@@ -644,7 +700,7 @@ def application(environ, start_response):
             headers.remove(thing)
             headers.insert(0, ("content-length", str(len(body))))
 
-    ## start the response (retransmit the status and headers)
+    # start the response (retransmit the status and headers)
     start_response(status, headers)
 
     return [body]
