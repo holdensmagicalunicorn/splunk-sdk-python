@@ -15,8 +15,7 @@
 # UNDONE: Support for _new endpoints (metadata)
 # UNDONE: Validate Context.get|post|delete path args are paths and not urls
 # UNDONE: HTTP POST does not support file upload
-# UNDONE: Finish Collection binding (including metadata & custom methods)
-# UNDONE: Finish Entity binding (including metadata & update)
+# UNDONE: self.namespace should default to actual string and not None
 
 """Low-level bindings to the Splunk REST API."""
 

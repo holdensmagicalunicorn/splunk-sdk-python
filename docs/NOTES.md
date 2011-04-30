@@ -1,31 +1,54 @@
+# ResultSet
+
+class ResultSet:
+    def fields(self): # => [str*]
+        pass
+
+    # Support for slicing
+    def __getitem__(self, index):
+        pass
+
+    def __iter__(self):
+        pass
+
+    def moveto(self, index)
+        pass
+
+** Cursor?
+
+
 # Outline
 
 System
-    Info & Settings
+    Settings
     Licensing
     Deployment (Topology: Forwarders, Indexers, Search-heads)
         Outputs
-    Users (Password & Profile)
-    Access Control (Roles & Capabilities)
-    Monitoring (Logs, Messages)
+    Monitoring (Info, Logs, Messages)
     ..discovery?..
 
+Users
+    Profile (password)
+
+Access Control
+    Roles & Capabilities
+
 Applications
+
+Data Sources
+    inputs.conf
+    [props] sourcetype
+
+    # Enables processing of binary files (true)
+    [props] NO_BINARY_CHECK = <bool>
+
+    # File 'checksum' method
+    [props] CHECK_METHOD = <endpoint_md5|entire_md5|modtime>
 
 Indexes
     Inputs
 
-Input
-    inputs.conf
-    props!sourcetype
-
-    # Enables processing of binary files (true)
-    props!NO_BINARY_CHECK = <bool>
-
-    # File 'checksum' method
-    props!CHECK_METHOD = <endpoint_md5|entire_md5|modtime>
-
-Source classification
+Source classification rules
 
     Sourcetype classification:
         Assigned in inputs.conf or props.conf
@@ -40,7 +63,7 @@ Source classification
 
     UNDONE: Transactions?
 
-Source-class rules
+Scanner (lexical rules)
 
     # Encoding (byte* => char*)
     props!CHARSET = <?>
@@ -70,11 +93,9 @@ Source-class rules
         
     props!SEDCMD-<class> = <sed script> (event => event)
 
-    props!TRANSFORMS-<value> = <stanza in transforms.conf> (UNDONE)
-    props!CHECK_FOR_HEADER = <bool>
+Preprocessor
 
-    Auditing (event => event)
-        Event signing (audit.conf)
+Database
 
     Fields (fields.conf)
         INDEXED = <bool>
@@ -87,6 +108,14 @@ Source-class rules
             segmeters.conf
 
         UNDONE: Summary indexing
+
+Knowledge (Schema)
+
+    props!TRANSFORMS-<value> = <stanza in transforms.conf> (UNDONE)
+    props!CHECK_FOR_HEADER = <bool>
+
+    Auditing (event => event)
+        Event signing (audit.conf)
 
     Projection rules
         props!EXTRACT-<class> = <rex> | <transforms.conf stanza> 
@@ -126,8 +155,7 @@ Runtime
     Commands
     Macros
     Parser
-    Export
-    Jobs
+    Jobs/Export
     Alerts
 
 Presentation (aka User interface)
@@ -403,7 +431,6 @@ limits.conf, Configure limits for search
 macros.conf, Define search macros
 savedsearch.conf
 transactiontypes.conf (UNDONE)
-workflow_actions.conf (UNDONE)
 
 # Presentation
 event_renderers.conf, Associates template with eventtype
@@ -413,6 +440,7 @@ searchbnf.conf, Used by the search-assistant (read-only)
 setup.xml.conf, Something having todo with app setup UI
 times.conf
 viewstates.conf
+workflow_actions.conf (UNDONE)
 
 UNDONE
 ======

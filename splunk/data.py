@@ -14,6 +14,8 @@
 
 # UNDONE: Schema: target datatype
 # UNDONE: Schema: target default value
+# UNDONE: Figure out what to do with examples like: <a>foo<b>bar</b></a>, seems
+#  like we should at least detect and error on less 'well-formed' sdata inputs
 
 from xml.etree import ElementTree
 from xml.etree.ElementTree import XML
