@@ -45,7 +45,7 @@ def main(argv):
     if len(opts.args) != 1:
         parser.error("Single query argument required")
 
-    context = splunk.connect(**opts.kwargs)
+    context = splunk.binding.connect(**opts.kwargs)
 
     # Extract search options
     kwargs = {}

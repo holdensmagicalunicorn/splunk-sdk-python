@@ -14,6 +14,5 @@
 
 """The Splunk framework and tools."""
 
-from splunk.binding import *
-
-import api # UNDONE: Temporary fix for units
+import binding
+import client

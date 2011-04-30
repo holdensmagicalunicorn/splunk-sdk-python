@@ -26,7 +26,7 @@ import cmdopts
 # Invoke the url using the given opts parameters
 def invoke(path, **kwargs):
     message = { "method": kwargs.get("method", "GET"), }
-    return splunk.connect(**kwargs).request(path, message)
+    return splunk.binding.connect(**kwargs).request(path, message)
 
 def print_response(response):
     if response.status != 200:

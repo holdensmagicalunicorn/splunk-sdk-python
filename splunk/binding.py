@@ -22,6 +22,8 @@
 # UNDONE: Can we retrieve the sessionKey without instantiating this? regex?
 from xml.etree.ElementTree import XML
 
+from splunk.data import record
+
 __all__ = [
     "Collection",
     "connect",
@@ -186,8 +188,6 @@ class Collection:
 
 import httplib
 import urllib
-
-from util import record
 
 debug = False # UNDONE
 

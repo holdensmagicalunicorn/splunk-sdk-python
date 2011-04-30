@@ -12,9 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""Command line utilities used by command line tools & unit tests. These are
-   not general purpose utilities, they are common code shared by the Splunk
-   command line tools and unit tests."""
+"""Command line utilities shared by command line tools & unit tests."""
 
 from os import path
 from optparse import OptionParser

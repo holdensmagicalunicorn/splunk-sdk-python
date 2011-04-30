@@ -24,7 +24,7 @@ import uuid
 from xml.etree import ElementTree
 from xml.etree.ElementTree import XML
 
-import splunk
+from splunk.binding import *
 import splunk.data as data
 import tools.cmdopts as cmdopts
 
@@ -48,9 +48,14 @@ XNAME_ENTRY = XNAMEF_ATOM % "entry"
 
 opts = None # Command line options
 
+# UNDONE: Finish testing package namespaces
 class PackageTestCase(unittest.TestCase):
     def test_names(self):
+        import splunk
         names = dir(splunk)
+
+        import splunk.binding
+        # ...
 
 def entry_titles(text):
     """Returns list of atom entry titles from the given atom text."""
@@ -65,13 +70,13 @@ def uname():
 class BindingTestCase(unittest.TestCase): # Base class
     def setUp(self):
         global opts
-        self.context = splunk.connect(**opts.kwargs)
+        self.context = connect(**opts.kwargs)
 
     def tearDown(self):
         pass
 
     def connect(self, username, password, namespace = None):
-        return splunk.connect(
+        return connect(
             scheme=self.context.scheme,
             host=self.context.host,
             port=self.context.port,
@@ -216,7 +221,7 @@ class UsersTestCase(BindingTestCase):
             self.assertEqual(response.status, 200)
 
             # Try to connect with original password ..
-            self.assertRaises(splunk.HTTPError,
+            self.assertRaises(HTTPError,
                 self.connect, username, password, "%s:-" % username)
 
             # Admin changes it back

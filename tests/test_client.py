@@ -36,7 +36,7 @@ class PackageTestCase(unittest.TestCase):
 class ProtocolTestCase(unittest.TestCase):
     def setUp(self):
         global opts
-        self.cn = splunk.api.connect(**opts.kwargs)
+        self.cn = splunk.client.connect(**opts.kwargs)
 
     def tearDown(self):
         self.cn.close()
@@ -55,7 +55,7 @@ class ProtocolTestCase(unittest.TestCase):
 class ServiceTestCase(unittest.TestCase):
     def setUp(self):
         global opts
-        self.cn = splunk.api.connect(**opts.kwargs)
+        self.cn = splunk.client.connect(**opts.kwargs)
 
     def tearDown(self):
         self.cn.close()

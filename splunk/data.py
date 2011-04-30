@@ -20,23 +20,27 @@
 from xml.etree import ElementTree
 from xml.etree.ElementTree import XML
 
-from wire import xname
-from util import record
+XNAMEF_REST = "{http://dev.splunk.com/ns/rest}%s"
 
-# Unfortunately, some responses don't use namespaces, eg: /services/search/parse
+XNAME_DICT = XNAMEF_REST % "dict"
+XNAME_ITEM = XNAMEF_REST % "item"
+XNAME_KEY  = XNAMEF_REST % "key"
+XNAME_LIST = XNAMEF_REST % "list"
+
+# Unfortunately, some responses don't use namespaces, eg: search/parse
 # so we look for both the extended and local version of the following names.
 
 def isdict(name):
-    return name == xname.dict or name == "dict"
+    return name == XNAME_DICT or name == "dict"
 
 def isitem(name):
-    return name == xname.item or name == "item"
+    return name == XNAME_ITEM or name == "item"
 
 def iskey(name):
-    return name == xname.key or name == "key"
+    return name == XNAME_KEY or name == "key"
 
 def islist(name):
-    return name == xname.list or name == "list"
+    return name == XNAME_LIST or name == "list"
 
 def hasattrs(element):
     return len(element.attrib) > 0
@@ -141,6 +145,23 @@ def load(text, path = None):
         return load_value(item, nametable)
         # return { localname(item.tag): value }
     return [ load_value(item, nametable) for item in items ]
+
+# A generic utility that enables "dot" access to dicts
+class Record(dict):
+    def __getattr__(self, name):
+        try:
+            return self[name]
+        except KeyError: 
+            raise AttributeError(name)
+
+    def __delattr__(self, name):
+        del self[name]
+
+    def __setattr__(self, name, value):
+        self[name] = value
+
+def record(dict = {}): 
+    return Record(dict)
 
 if __name__ == "__main__":
     def isxml(text): return text.strip().startswith('<')

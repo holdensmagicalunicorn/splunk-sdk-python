@@ -23,7 +23,6 @@
 
 # UNDONE: Banner!
 # UNDONE: Attempt to re-login on a 401 (Unauthorized) in case session expired
-# UNDONE: usage() is not defined (!) 
 # UNDONE: Implement command completion 
 # UNDONE: Ambient args for other methods
 
@@ -60,21 +59,35 @@ _search_args = [
 
 class Session(InteractiveInterpreter):
     def __init__(self, **kwargs):
-        self.cn = splunk.api.connect(**kwargs)
+        self.context = splunk.binding.connect(**kwargs)
+        self.bind = self.context.bind
+        self.delete = self.context.delete
+        self.get = self.context.get
+        self.post = self.context.post
         locals = {
-            'cn': self.cn,
-            'connect': splunk.connect,
+            'bind': self.bind,
+            'context': self.context,
+            'connect': splunk.binding.connect,
+            'delete': self.delete,
+            'get': self.get,
+            'post': self.post,
             'load': self.load,
             'search': self.search,
         }
         InteractiveInterpreter.__init__(self, locals)
+
+    def eval(self, expression):
+        return self.runsource(expression)
 
     def load(self, filename):
         exec open(filename).read() in self.locals, self.locals
 
     # Run the interactive interpreter
     def run(self):
-        print "%s connected to %s" % (self.cn.username, self.cn.host)
+        print "%s connected to %s:%s" % (
+            self.context.username, 
+            self.context.host, 
+            self.context.port)
         while True:
             try:
                 input = raw_input("> ")
@@ -108,35 +121,48 @@ class Session(InteractiveInterpreter):
             query = "search %s" % query
 
         # Do a quick syntax check on the search query
-        try:
-            self.cn.parse(query)
-        except splunk.SyntaxError, e:
-            return e
+        response = self.context.get('search/parser', q=query)
+        if response.status != 200:
+            # UNDONE: Extract error message from response body
+            return "Syntax error in query: '%s'" % query
             
-        # Pick up ambient search args from environment
-        ambient = {}
+        # Pick up ambient search args from environment that do not already
+        # exist in explicitly passed kwargs.
         for arg in _search_args:
-            value = self.locals.get(arg, None)
-            if value is not None:
-                ambient[arg] = value
+            if self.locals.has_key(arg) and not kwargs.has_key(arg): 
+                kwargs[arg] = self.locals[arg]
+        kwargs['search'] = query
 
-        # Override ambient args with any passed explicitly
-        ambient.update(kwargs)
+        response =  self.context.post('search/jobs/export', **kwargs)
+        if response.status != 200:
+            return "HTTP %d (%s)" % (response.status, response.reason)
 
-        try:
-            return self.cn.search(query, **ambient)
-        except Exception, e:
-            return e
-
+        return response.body.read()
 
 # Additional cmdopts parser rules
 rules = {
+    "eval": {
+        'flags': ["-e", "--eval"],
+        'action': "append",
+        'help': "Evaluate the given expression",
+    },
+    "search": {
+        'flags': ["-s", "--search"],
+        'action': "append",
+        'help': "Execute the given search",
+    },
     "interactive": {
         'flags': ["-i", "--interactive"], 
         'action': "store_true",
         'help': "Enter interactive mode",
     }
 }
+
+def actions(opts):
+    """Ansers if the given command line options specify any 'actions'."""
+    return len(opts.args) > 0 \
+        or opts.kwargs.has_key('eval') \
+        or opts.kwargs.has_key('search')
 
 def main():
     opts = cmdopts.parser(rules).loadrc(".splunkrc").parse(sys.argv[1:]).result
@@ -145,10 +171,20 @@ def main():
     session = Session(**opts.kwargs)
 
     # Load any non-option args as script files
-    for arg in opts.args: session.load(arg)
+    for arg in opts.args: 
+        session.load(arg)
 
-    # Enter interactive mode if specified, or if no non option args supplied
-    if opts.kwargs.has_key("interactive") or len(opts.args) == 0:
+    # Process any command line evals
+    for arg in opts.kwargs.get('eval', []): 
+        session.eval(arg)
+
+    # Process the search command if given
+    for arg in opts.kwargs.get('search', []):
+        session.eval("search('%s')" % arg)
+
+    # Enter interactive mode automatically if no actions were specified or
+    # or if interactive mode was specifically requested.
+    if not actions(opts) or opts.kwargs.has_key("interactive"):
         session.run()
 
 if __name__ == "__main__":

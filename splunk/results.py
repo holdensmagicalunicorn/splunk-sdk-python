@@ -433,7 +433,7 @@ def test4():
     print "%d results in %f secs = %f results/sec" % (count, delta, count/delta)
 
 def main():
-    test4()
+    test3()
 
 if __name__ == "__main__":
     main()
