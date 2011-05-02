@@ -24,6 +24,10 @@ class ExamplesTestCase(unittest.TestCase):
         result = os.system("python binding1.py > __stdout__")
         self.assertEquals(result, 0)
 
+    def test_index(self):
+        result = os.system("python index/index.py > __stdout__")
+        self.assertEquals(result, 0)
+
     def test_spdump(self):
         result = os.system("python spdump.py > __stdout__")
         self.assertEquals(result, 0)
