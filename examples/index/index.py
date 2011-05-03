@@ -18,12 +18,12 @@
 
 # UNDONE: Improve command line help to show individual commands
 
-from pprint import pprint # UNDONE
-
 import sys
+from time import sleep
 
-import splunk.data as data
 from splunk.binding import *
+import splunk.data as data
+from splunk.data import record
 
 import tools.cmdopts as cmdopts
 
@@ -54,22 +54,39 @@ class Index:
     def __init__(self, context, name):
         self.context = context
         self.name = name
-        itempath = PATH_INDEXES_ITEM % name
-        self._item = context.bind(itempath, "get")
-        self._edit = context.bind(itempath, "post")
-        self._disable = context.bind(itempath + "/disable", "post")
-        self._enable = context.bind(itempath + "/enable", "post")
+        self.path = PATH_INDEXES_ITEM % name
+        self._item = context.bind(self.path, "get")
+        self._edit = context.bind(self.path, "post")
+        self._disable = context.bind(self.path + "/disable", "post")
+        self._enable = context.bind(self.path + "/enable", "post")
 
-    def __call__(self):
-        result = body(self.item()).entry.content
-        del result['eai:acl'] # Noise ..
-        del result['eai:attributes']
-        del result['type']
+    def __call__(self, *args):
+        content = body(self.item()).entry.content
+        if len(args) > 0: # We have filter args
+            result = record({})
+            for key in args: result[key] = content[key]
+        else:
+            # Eliminate some noise by default
+            result = content
+            del result['eai:acl']
+            del result['eai:attributes']
+            del result['type']
         return result
+
+    def _roll_hot_buckets(self):
+        response = context.post(self.path + "/roll-hot-buckets")
+        check_status(response, 200)
+        return response
         
     def clear(self):
-        self.ensure()
-        # UNDONE: Clear the index
+        if not self.exists(): return
+        saved = self('maxTotalDataSizeMB', 'frozenTimePeriodInSecs')
+        self.edit(maxTotalDataSizeMB=1, frozenTimePeriodInSecs=1)
+        self._roll_hot_buckets()
+        while True: # Wait until event count goes to zero
+            sleep(1)
+            if self('totalEventCount').totalEventCount == '0': break
+        self.edit(**saved)
 
     def create(self):
         response = self.post(name=self.name)
@@ -139,7 +156,8 @@ def edit(argv):
 
     # Build parser rules
     rules = {}
-    for field in fields: rules[field] = { 'flags': ["--%s" % field] }
+    for field in fields: 
+        rules[field] = { 'flags': ["--%s" % field] }
 
     # Parse the argument vector
     opts = cmdopts.Parser(rules).parse(argv).result
@@ -186,7 +204,8 @@ def main():
         command = "list"
         cmdargv = []
     else:
-        appargv = argv[1:cmdix-1]
+        #appargv = [] if cmdix == 0 else argv[:cmdix]
+        appargv = argv[:cmdix]
         command = argv[cmdix]
         cmdargv = argv[cmdix+1:]
 
@@ -200,14 +219,20 @@ def main():
     context = connect(**opts.kwargs)
 
     # Dispatch the command
-    { 'clear': lambda argv: verb("clear", argv),
-      'create': lambda argv: verb("create", argv),
-      'disable': lambda argv: verb("disable", argv),
-      'enable': lambda argv: verb("enable", argv),
-      'edit': edit,
-      'list': list,
-      'print': lambda argv: verb("print", argv),
-    }[command](cmdargv)
+    commands = { 
+        'clear': lambda argv: verb("clear", argv),
+        'create': lambda argv: verb("create", argv),
+        'disable': lambda argv: verb("disable", argv),
+        'enable': lambda argv: verb("enable", argv),
+        'edit': edit,
+        'list': list,
+        'print': lambda argv: verb("print", argv),
+    }
+
+    if command not in commands.keys():
+        parser.error("Unrecognized command: %s" % command)
+
+    commands[command](cmdargv)
 
 if __name__ == "__main__":
     main()
