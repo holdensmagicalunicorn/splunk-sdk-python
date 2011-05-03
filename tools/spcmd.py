@@ -137,7 +137,7 @@ class Session(InteractiveInterpreter):
         if response.status != 200:
             return "HTTP %d (%s)" % (response.status, response.reason)
 
-        return response.body.read()
+        return response.body
 
 # Additional cmdopts parser rules
 rules = {
