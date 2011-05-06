@@ -487,6 +487,8 @@ UNDONE: Convert the following to Jira items
 # FEEDBACK
 * No way to delete an index: DELETE /services/data/indexes/{name} => 404
 * No way to get a listing of all inputs, or all inputs/index
+* Endpoint metadata should be available via a separate metadata "channel" and
+  should not be interleaved with eg: entity data
 * POST /services/authentication/capabilities name=<name> => 404 (verify)
     Is there really no way to dynamically create/delete capabilities?
 * search/tags and search/fields/{name}/tags use an 'older' collection
