@@ -14,12 +14,9 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""Given a hostname (and credentials), print out a simple report showing 
-   the state of the system. This example shows how to access various system
-   resources."""
+"""Prints info for the given Splunk instance."""
 
 # UNDONE: print_info could inculde info on auth providers
-# UNDONE: Is it useful to dump configs?
 
 from os import path
 import sys

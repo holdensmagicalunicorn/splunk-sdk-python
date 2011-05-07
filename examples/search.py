@@ -19,21 +19,14 @@
 import sys
 
 import splunk
-import cmdopts
+
+import tools.cmdopts as cmdopts
 
 rules = {
-    "earliest_time": {
-        'flags': ["--earliest_time"],
-        'help': "",
-    },
-    "latest_time": {
-        'flags': ["--latest_time"],
-        'help': "",
-    },
-    "output_mode": {
-        'flags': ["--output_mode"],
-        'help': "",
-    },
+    "earliest_time": { 'flags': ["--earliest_time"] },
+    "latest_time": { 'flags': ["--latest_time"] },
+    "output_mode": { 'flags': ["--output_mode"] },
+    "f": {'flags': ["--f"] },
     # UNDONE: Add additional export/search arguments
 }
 

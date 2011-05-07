@@ -164,6 +164,7 @@ def edit(argv):
 
     # Execute the edit request
     response = index.edit(**opts.kwargs)
+    check_status(response, 200)
 
 def list(argv):
     """List the indexes that are available via the given binding context."""
@@ -171,6 +172,20 @@ def list(argv):
 
     if len(argv) != 0: parser.error("Invalid command line")
     for item in indexes(context): print item
+
+def publish(argv):
+    """Publish the given data value to the given index."""
+
+    if len(argv) != 2:  
+        parser.error("Command requires an index name and data to publish")
+    
+    name = argv[0]
+    data = argv[1]
+
+    path = "receivers/simple?index=%s" % name
+    message = { 'method': "POST", 'body': data }
+    response = context.request(path, message)
+    check_status(response, 200)
     
 def show(index):
     """Print the given indexes property values."""
@@ -227,6 +242,7 @@ def main():
         'edit': edit,
         'list': list,
         'print': lambda argv: verb("print", argv),
+        'publish': publish
     }
 
     if command not in commands.keys():

@@ -20,13 +20,6 @@ class ToolsTestCase(unittest.TestCase):
     def tearDown(self):
         os.remove("__stdout__")
 
-    def test_search(self):
-        result = os.system("python search.py --help > __stdout__")
-        self.assertEquals(result, 0)
-
-        result = os.system("python search.py 'search *' > __stdout__")
-        self.assertEquals(result, 0)
-
     def test_spcmd(self):
         result = os.system("python spcmd.py --help > __stdout__")
         self.assertEquals(result, 0)

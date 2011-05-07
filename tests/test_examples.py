@@ -25,13 +25,23 @@ class ExamplesTestCase(unittest.TestCase):
         self.assertEquals(result, 0)
 
     def test_index(self):
-        result = os.system("python index/index.py > __stdout__")
+        result = os.system("python index.py > __stdout__")
         self.assertEquals(result, 0)
 
-    def test_spdump(self):
-        result = os.system("python spdump.py > __stdout__")
+    def test_info(self):
+        result = os.system("python info.py > __stdout__")
         self.assertEquals(result, 0)
         
+    def test_publish(self):
+        result = os.system("python publish.py --help > __stdout__")
+        self.assertEquals(result, 0)
+        
+    def test_search(self):
+        result = os.system("python search.py --help > __stdout__")
+        self.assertEquals(result, 0)
+        result = os.system("python search.py 'search * | head 10' > __stdout__")
+        self.assertEquals(result, 0)
+
 def main():
     os.chdir("../examples")
     unittest.main()
