@@ -184,7 +184,8 @@ class Collection:
 
 # UNDONE: Make sure timeout arg works!
 # UNDONE: Consider moving timeout arg into kwargs
-# UNDONE: Make body a file instead of str
+# UNDONE: http.post does not support: file upload, 'raw' body data, streaming,
+#   multipart/form-data, query args
 
 import httplib
 import urllib
@@ -254,7 +255,6 @@ class http:
 
     @staticmethod
     def post(url, headers = [], timeout = None, **kwargs):
-        # UNDONE: The following doesn't support file upload
         headers.append(("Content-Type", "application/x-www-form-urlencoded")),
         message = {
             "method": "POST",
