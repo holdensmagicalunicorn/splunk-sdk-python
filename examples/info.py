@@ -14,7 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""Prints info for the given Splunk instance."""
+"""A utility that dumps info for a Splunk instance."""
 
 # UNDONE: print_info could inculde info on auth providers
 

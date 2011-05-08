@@ -12,8 +12,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from pprint import pprint # UNDONE
-
 from cStringIO import StringIO
 import xml.dom.pulldom as pulldom
 
@@ -373,67 +371,3 @@ class ResultsReader:
 
             self._error()
 
-def test0():
-    import sys
-    stream = ListStream("***", "START", "***", sys.stdin, "***", "END", "***")
-    while True:
-        result = stream.read(11)
-        if len(result) == 0: break
-        sys.stdout.write(result)
-
-def test1():
-    import sys
-    stream = XMLStream(sys.stdin)
-    while True:
-        result = stream.read(253)
-        if result is None or len(result) == 0: return
-        sys.stdout.write(result)
-        sys.stdout.flush()
-
-def test2():
-    import sys
-    reader = XMLReader(sys.stdin)
-    for item in reader: 
-        pprint(item)
-        sys.stdout.flush()
-
-def test3():
-    import sys
-    reader = ResultsReader(sys.stdin)
-    last = None
-    count = 0 
-    while True:
-        kind = reader.read()
-        if kind == None: 
-            print
-            break
-        if kind == RESULTS:
-            if last == RESULT: print
-            print "# Results: preview = %s" % reader.value['preview']
-        elif kind == MESSAGE:
-            if last == RESULT: print
-            print "# Messasge: %s" % reader.value['message']
-        elif kind == RESULT:
-            count += 1
-            if last != RESULT or count % 1 == 0: 
-                sys.stdout.write(".")
-                sys.stdout.flush()
-        last = kind
-
-def test4():
-    import sys, time
-    start = time.time()
-    reader = ResultsReader(sys.stdin)
-    count = 0
-    while True:
-        kind = reader.read()
-        if kind == None: break
-        if kind == RESULT: count += 1
-    delta = time.time() - start
-    print "%d results in %f secs = %f results/sec" % (count, delta, count/delta)
-
-def main():
-    test3()
-
-if __name__ == "__main__":
-    main()

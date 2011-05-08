@@ -12,10 +12,10 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# This simplistic example shows how to use the Splunk binding module to
-# create a convenient 'wrapper" interface around the Splunk REST APIs.
-# The example below binds to a sampling of endpoings, demonstrating access to
-# resource collections, entities and "method-like" endpoints.
+"""An example that shows how to use the Splunk binding module to create a
+   convenient 'wrapper' interface around the Splunk REST APIs. The example
+   binds to a sampling of endpoints showing how to access collections,
+   entities and 'method-like' endpoints."""
 
 from splunk.binding import connect, Collection, Entity
 

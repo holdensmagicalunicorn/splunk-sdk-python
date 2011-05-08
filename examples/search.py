@@ -14,7 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""A simple CLI for executing searches against the export endpoint."""
+"""A command line utility for executing searches against the export endpoint."""
 
 import sys
 

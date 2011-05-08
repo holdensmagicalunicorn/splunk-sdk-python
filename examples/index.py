@@ -14,7 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""A sample command line utility for interacting with Splunk indexes."""
+"""A command line utility for interacting with Splunk indexes."""
 
 # UNDONE: Improve command line help to show individual commands
 

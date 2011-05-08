@@ -14,10 +14,10 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""A utility that publishes events to a named index. The first command 
-   argument must be the name of the target index and each additional argument
-   will be published to the index as a separate event. If no event arguments
-   are provided, the event data will be read from stdin."""
+"""An example that shows how to interface with the conf system via the Splunk
+   REST API."""
+
+# UNDONE: Finish this example!
 
 import sys
 
@@ -79,43 +79,8 @@ class Stanza:
         if len(kwargs) > 0: self._post(self.path, **kwargs)
         return self
 
-def create_stanza(context):
-    pass
-
-def delete_stanza(context):
-    pass
-            
-def publish(context, index, events):
-    # Create the sourcetype rule used for the published event
-    stanza = Stanza(context, "props", "__insert__")
-    rules = {
-        'MAX_EVENTS': "100000",
-        'SHOULD_LINEMERGE': "True",
-        'TRUNCATE': "0",
-    }
-    stanza.create(**rules)
-    for event in events: publish_event(context, index, event)
-    stanza.delete()
-
-def publish_event(context, index, event):
-    path = "receivers/simple?index=%s" % index
-    # Prefix the event data with a Splunk header that assigns the sourcetype
-    # to the event. This header will trigger the input rule we created to
-    # define the extent of the event.
-    body = "***SPLUNK*** sourcetype=__insert__\n" + event
-    message = { 'method': "POST", 'body': body }
-    response = context.request(path, message)
-    check_status(response, 200)
-
 def main(argv):
-    usage = 'usage: %prog [options] <index> [<events>]'
-    parser = cmdopts.parser(usage=usage)
-    opts = parser.loadrc(".splunkrc").parse(argv).result
-    if len(opts.args) == 0: parser.error("Index name rquired")
-    index = opts.args[0]
-    events = opts.args[1:] if len(opts.args) > 1 else [sys.stdin.read()]
-    context = connect(**opts.kwargs)
-    publish(context, index, events)
+    pass
 
 if __name__ == "__main__":
     main(sys.argv[1:])
