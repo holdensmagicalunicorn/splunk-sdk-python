@@ -138,8 +138,8 @@ class Entity:
     def __init__(self, context, path, verbs = "get,update"):
         if "get" in verbs:
             self.get = context.bind(path, "get")
-        if "udapte" in verbs:
-            self.get = context.bind(path, "post")
+        if "update" in verbs:
+            self.update = context.bind(path, "post")
 
     def __call__(self, *args, **kwargs):
         return self.get(*args, **kwargs)
