@@ -1,64 +1,30 @@
-# Collection -- an endpoint container
-# Entity (member of a collection)
-# Resource -- generic resource, not an entity
-# Method
-
-# collection {path}
-#   get
-#   create - POST {path}
-#     metadata - GET {path}/_new
-#
-# entity
-#   get
-#   edit - POST {path}
-#   remove - DELETE {path}
-#
-# UNDONE: How do we want to document, eg:
-#   enable
-#   disable
-#   _reload
-
-/services/admin/auth/login, post
-
-/services/admin/directory, get
-/services/admin/directory/{name}, get;edit
-
-/services/admin/passwords, get;create
-/services/admin/passwords/:{name}:, __methods__
-
-alerts, get
-alerts/fired_alerts, get
-alerts/fired_alerts/-, get
-
-apps/appinstall, get;create
-
-apps/apptemplates, get
-apps/apptemplates/{name}, get
-
-apps/local, get;create
-apps/local/{name}, get;edit;remove
-apps/local/{name}/package, get;edit
-
+/services/admin/auth/login
+/services/admin/directory
+/services/admin/directory/{name}
+/services/admin/passwords
+/services/admin/passwords/:{name}:
+alerts
+alerts/fired_alerts
+alerts/fired_alerts/-
+apps/appinstall
+apps/apptemplates
+apps/apptemplates/{name}
+apps/local
+apps/local/{name}
+apps/local/{name}/package
 #apps/remote
-
-authentication/auth-tokens, __methods__
-authentication/auth-tokens/{?}, __methods__
-
-authenticaiton/capabilities, get
-authenticaiton/capabilities/capabilities, get
-
-authentication/changepassword, __methods__
-authentication/changepassword/{name}, __methods__
-
-authentication/current-context, __methods__
-authentication/current-context/context, __methods__
-
-authentication/httpauth-tokens, __methods__
-authentication/httpauth-tokens/{key}, __methods__
-
-# UNDONE: Is this a collection or a static container?
-authentication/providers, get
-authentication/providers/{name}, __methods__
+authentication/auth-tokens
+authentication/auth-tokens/{?}
+authenticaiton/capabilities
+authenticaiton/capabilities/capabilities
+authentication/changepassword
+authentication/changepassword/{name}
+authentication/current-context
+authentication/current-context/context
+authentication/httpauth-tokens
+authentication/httpauth-tokens/{key}
+authentication/providers
+authentication/providers/{name}
 #authentication/providers/LDAP
 #authentication/providers/LDAP/{name}
 #authentication/providers/Scripted
@@ -67,188 +33,132 @@ authentication/providers/{name}, __methods__
 #authentication/providers/Splunk/{name}
 #authentication/providers/services
 #authentication/providers/services/{name}
-
-authentication/roles, __methods__
-authentication/roles/{name}, __methods__
-
-authentication/users, __methods__
-authentication/users/{name}, __methods__
-
-authorization/capabilities, __methods__
-authorization/capabilities/{name}, __methods__
-
-authorization/roles, __methods__
-authorization/roles/{name}, __methods__
-
-configs/deploymentclient, __methods__
-configs/inputs, __methods__
-configs/inputs/{name}, __methods__
-configs/wmi, __methods__
-
-data/commands, __methods__
-data/commands/{name}, __methods__
-
-data/indexes, __methods__
-data/indexes/{name}, __methods__
-
-data/inputs/monitor, __methods__
-data/inputs/monitor/{name}, __methods__
-data/inputs/monitor/{name}/members, __methods__
-data/inputs/monitor/{name}/members/{name}, __methods__
-
-data/inputs/oneshot, __methods__
-
-data/inputs/script, __methods__
-data/inputs/script/restart, __methods__
-
-data/inputs/tcp/cooked, __methods__
-data/inputs/tcp/cooked/{name}, __methods__
-data/inputs/tcp/raw, __methods__
-data/inputs/tcp/raw/{name}, __methods__
-data/inputs/tcp/ssl, __methods__
-
-data/inputs/udp, __methods__
-
-data/lookup-table-files, __methods__
-data/lookup-table-files/{name}, __methods__
-
-data/outputs/tcp, __methods__
-data/outputs/tcp/default, __methods__
-data/outputs/tcp/default/{name}, __methods__
-data/outputs/tcp/group, __methods__
-data/outputs/tcp/group/{name}, __methods__
-data/outputs/tcp/server, __methods__
-data/outputs/tcp/server/{name}, __methods__
-data/outputs/tcp/syslog, __methods__
-data/outputs/tcp/syslog/{name}, __methods__
-
-data/props/extractions, __methods__
-data/props/extractions/{name}, __methods__
-
-data/props/fieldaliases, __methods__
-data/props/fieldaliases/{name}, __methods__
-
-data/props/lookups, __methods__
-data/props/lookups/{name}, __methods__
-
-data/props/sourcetype-rename, __methods__
-data/props/sourcetype-rename/{name}, __methods__
-
-data/transforms/extractions, __methods__
-data/transforms/extractions/{name}, __methods__
-
-data/transforms/lookups, __methods__
-data/transforms/lookups/{name}, __methods__
-
+authentication/roles
+authentication/roles/{name}
+authentication/users
+authentication/users/{name}
+authorization/capabilities
+authorization/capabilities/{name}
+authorization/roles
+authorization/roles/{name}
+configs/deploymentclient
+configs/inputs
+configs/inputs/{name}
+configs/wmi
+data/commands
+data/commands/{name}
+data/indexes
+data/indexes/{name}
+data/inputs/monitor
+data/inputs/monitor/{name}
+data/inputs/monitor/{name}/members
+data/inputs/monitor/{name}/members/{name}
+data/inputs/oneshot
+data/inputs/script
+data/inputs/script/restart
+data/inputs/tcp/cooked
+data/inputs/tcp/cooked/{name}
+data/inputs/tcp/raw
+data/inputs/tcp/raw/{name}
+data/inputs/tcp/ssl
+data/inputs/udp
+data/lookup-table-files
+data/lookup-table-files/{name}
+data/outputs/tcp
+data/outputs/tcp/default
+data/outputs/tcp/default/{name}
+data/outputs/tcp/group
+data/outputs/tcp/group/{name}
+data/outputs/tcp/server
+data/outputs/tcp/server/{name}
+data/outputs/tcp/syslog
+data/outputs/tcp/syslog/{name}
+data/props/extractions
+data/props/extractions/{name}
+data/props/fieldaliases
+data/props/fieldaliases/{name}
+data/props/lookups
+data/props/lookups/{name}
+data/props/sourcetype-rename
+data/props/sourcetype-rename/{name}
+data/transforms/extractions
+data/transforms/extractions/{name}
+data/transforms/lookups
+data/transforms/lookups/{name}
 #data/ui/...
 #data/user-prefs/...
-
-deployment/client, __methods__
-
-deployment/server, __methods__
-deployment/server/default, __methods__
-
-deployment/serverclass, __methods__
-deployment/serverclass/{name}, __methods__
-
-deployment/serverclass_status, __methods__
-deployment/serverclass_status/{name}, __methods__
-
-deployment/tenants, __methods__
-deployment/tenants/default, __methods__
-
-distributed/forwarders/tcp, __methods__
-distributed/forwarders/tcp/default, __methods__
-distributed/forwarders/tcp/server, __methods__
-
-licenser/groups, __methods__
-licenser/groups/{name}, __methods__
-
-licenser/licenses, __methods__
-licenser/licenses/{hash}, __methods__
-
-licenser/localslave, __methods__
-licenser/localslave/license, __methods__
-
-licenser/messages, __methods__
-
-licenser/pools, __methods__
-licenser/pools/{name}, __methods__
-
-licenser/slaves, __methods__
-licenser/slaves/{guid}, __methods__
-
-licenser/stacks, __methods__
-licenser/stacks/{name}, __methods__
-
-messages, get;create
-
-properties, get
-properties/{file}, get
-properties/{file}/{stanza}, __methods__
-properties/{file}/{stanza}/{key}, __methods__
-
-receivers/simple, __methods__
-
-receivers/stream, __methods__
-
-saved/eventtypes, __methods__
-saved/eventtypes/{name}, __methods__
-
-saved/searches, __methods__
-saved/searches/{name}, __methods__
-saved/searches/{name}/acknowledge, __methods__
-saved/searches/{name}/disable, __methods__
-saved/searches/{name}/dispatch, __methods__
-saved/searches/{name}/history, __methods__
-saved/searches/{name}/notify, __methods__
-saved/searches/{name}/scheduled_times, __methods__
-saved/searches/{name}/suppress, __methods__
-
-saved/snapshots, __methods__
-
-scheduled/views, __methods__
-
+deployment/client
+deployment/server
+deployment/server/default
+deployment/serverclass
+deployment/serverclass/{name}
+deployment/serverclass_status
+deployment/serverclass_status/{name}
+deployment/tenants
+deployment/tenants/default
+distributed/forwarders/tcp
+distributed/forwarders/tcp/default
+distributed/forwarders/tcp/server
+licenser/groups
+licenser/groups/{name}
+licenser/licenses
+licenser/licenses/{hash}
+licenser/localslave
+licenser/localslave/license
+licenser/messages
+licenser/pools
+licenser/pools/{name}
+licenser/slaves
+licenser/slaves/{guid}
+licenser/stacks
+licenser/stacks/{name}
+messages
+properties
+properties/{file}
+properties/{file}/{stanza}
+properties/{file}/{stanza}/{key}
+receivers/simple
+receivers/stream
+saved/eventtypes
+saved/eventtypes/{name}
+saved/searches
+saved/searches/{name}
+saved/searches/{name}/acknowledge
+saved/searches/{name}/disable
+saved/searches/{name}/dispatch
+saved/searches/{name}/history
+saved/searches/{name}/notify
+saved/searches/{name}/scheduled_times
+saved/searches/{name}/suppress
+saved/snapshots
+scheduled/views
 #search/commands
 #search/commands/{name}
-
-search/distributed, __methods__
-search/distributed/config, __methods__
-search/distributed/config/distributedSearch, __methods__
-search/distributed/peers, __methods__
-
-search/fields, __methods__
-search/fields/{name}, __methods__
-search/fields/{name}/tags, __methods__
-
-search/jobs, __methods__
-search/jobs/{sid}/control, __methods__
-search/jobs/{sid}/events, __methods__
-search/jobs/{sid}/results, __methods__
-search/jobs/{sid}/results_preview, __methods__
-search/jobs/{sid}/search.log, __methods__
-search/jobs/{sid}/timeline, __methods__
-search/jobs/{sid}/summary, __methods__
-
-search/jobs/export, __methods__
-
-search/parser, __methods__
-
-search/tags, __methods__
-search/tags/{name}, __methods__
-
-search/timeparser, __methods__
-
-search/typeahead, __methods__
-
-server/control/restart, __methods__
-
-server/info, get
-server/info/server-info, get
-
-server/logger, __methods__
-server/logger/{name}, __methods__
-
-server/settings, get
-server/settings/settings, get
-
+search/distributed
+search/distributed/config
+search/distributed/config/distributedSearch
+search/distributed/peers
+search/fields
+search/fields/{name}
+search/fields/{name}/tags
+search/jobs
+search/jobs/{sid}/control
+search/jobs/{sid}/events
+search/jobs/{sid}/results
+search/jobs/{sid}/results_preview
+search/jobs/{sid}/search.log
+search/jobs/{sid}/timeline
+search/jobs/{sid}/summary
+search/jobs/export
+search/parser
+search/tags
+search/tags/{name}
+search/timeparser
+search/typeahead
+server/control/restart
+server/info
+server/info/server-info
+server/logger
+server/logger/{name}
+server/settings
+server/settings/settings
