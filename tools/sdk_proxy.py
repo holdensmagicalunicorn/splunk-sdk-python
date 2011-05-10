@@ -380,12 +380,14 @@ def fixup_to_msft_schema(fixed_xml, title):
     newtext = odata.createTextNode("\n  ")
     feed.appendChild(newtext)
     
-    title = title.replace("/","/Catalog/")
     link = odata.createElement("link")
-    link.setAttribute("rel", "self")
-    link.setAttribute("title", title)
-    link.setAttribute("href", title)
-    feed.appendChild(link)
+
+    if title:
+        title = title.replace("/","/Catalog/")
+        link.setAttribute("rel", "self")
+        link.setAttribute("title", title)
+        link.setAttribute("href", title)
+        feed.appendChild(link)
 
     ##
     ## loop through all the child nodes of feed, and adjust as necessary
@@ -520,6 +522,10 @@ def post_catalog_search(context, endpoint):
 
 def post_query(context, endpoint, query=None):
     """ post a query, wait for response """
+
+    # hack for tableau
+    query = query.replace("$inlinecount=allpages&$top=1&", "", 1)
+    query = query.replace("$top=1&", "", 1)
 
     # generate a real splunkd request from the request
     trace("post_query : %s, %s, %s" % (context, endpoint, query))
