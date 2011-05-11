@@ -1,0 +1,1032 @@
+###
+###
+###  GET data/inputs/monitor
+###
+###
+
+msgctxt "GET data/inputs/monitor"
+msgid "description"
+msgstr "UNDONE"
+
+msgctxt "GET data/inputs/monitor"
+msgid "summary"
+msgstr "UNDONE"
+
+msgctxt "GET data/inputs/monitor?count"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "GET data/inputs/monitor?count"
+msgid "summary"
+msgstr "Index for first item to return."
+
+#.readonly
+msgctxt "GET data/inputs/monitor?count"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "GET data/inputs/monitor?count"
+msgid "default"
+msgstr "30"
+
+#.readonly
+msgctxt "GET data/inputs/monitor?count"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "GET data/inputs/monitor?offset"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "GET data/inputs/monitor?offset"
+msgid "summary"
+msgstr "Maximum number of items to return."
+
+#.readonly
+msgctxt "GET data/inputs/monitor?offset"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "GET data/inputs/monitor?offset"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "GET data/inputs/monitor?offset"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "GET data/inputs/monitor?search"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "GET data/inputs/monitor?search"
+msgid "summary"
+msgstr "Search to filter results."
+
+#.readonly
+msgctxt "GET data/inputs/monitor?search"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "GET data/inputs/monitor?search"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "GET data/inputs/monitor?search"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "GET data/inputs/monitor?sort"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "GET data/inputs/monitor?sort"
+msgid "summary"
+msgstr "Field to sort by."
+
+#.readonly
+msgctxt "GET data/inputs/monitor?sort"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "GET data/inputs/monitor?sort"
+msgid "default"
+msgstr "name"
+
+#.readonly
+msgctxt "GET data/inputs/monitor?sort"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+###
+###
+###  POST data/inputs/monitor
+###
+###
+
+msgctxt "POST data/inputs/monitor"
+msgid "description"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor"
+msgid "summary"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?name"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?name"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?name"
+msgid "required"
+msgstr "true"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?name"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor?name"
+msgid "validation"
+msgstr "validate(len(name) < 4096, 'Must be less than 4096 characters.')"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor?blacklist"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?blacklist"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?blacklist"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?blacklist"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor?blacklist"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST data/inputs/monitor?check-index"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?check-index"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?check-index"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?check-index"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor?check-index"
+msgid "validation"
+msgstr "is_bool('check-index')"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor?check-path"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?check-path"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?check-path"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?check-path"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor?check-path"
+msgid "validation"
+msgstr "is_bool('check-path')"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor?crc-salt"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?crc-salt"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?crc-salt"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?crc-salt"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor?crc-salt"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST data/inputs/monitor?dedicatedFD"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?dedicatedFD"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?dedicatedFD"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?dedicatedFD"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor?dedicatedFD"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST data/inputs/monitor?eatonlylivefiles"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?eatonlylivefiles"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?eatonlylivefiles"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?eatonlylivefiles"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor?eatonlylivefiles"
+msgid "validation"
+msgstr "is_bool('eatonlylivefiles')"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor?followTail"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?followTail"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?followTail"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?followTail"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor?followTail"
+msgid "validation"
+msgstr "is_bool('followTail')"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor?host"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?host"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?host"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?host"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor?host"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST data/inputs/monitor?host_regex"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?host_regex"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?host_regex"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?host_regex"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor?host_regex"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST data/inputs/monitor?host_segment"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?host_segment"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?host_segment"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?host_segment"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor?host_segment"
+msgid "validation"
+msgstr "is_pos_int('host_segment')"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor?ignore-older-than"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?ignore-older-than"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?ignore-older-than"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?ignore-older-than"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor?ignore-older-than"
+msgid "validation"
+msgstr "validate(match('ignore-older-than', \"^\\d+[dms]$\"),\"'Ignore older than' must be a number immediately followed by d(ays), m(inutes), or s(econds).\")"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor?index"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?index"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?index"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?index"
+msgid "default"
+msgstr "default"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?index"
+msgid "validation"
+msgstr "is_index('index')"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor?recursive"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?recursive"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?recursive"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?recursive"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor?recursive"
+msgid "validation"
+msgstr "is_bool('recursive')"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor?rename-source"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?rename-source"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?rename-source"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?rename-source"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor?rename-source"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST data/inputs/monitor?sourcetype"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?sourcetype"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?sourcetype"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?sourcetype"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor?sourcetype"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST data/inputs/monitor?time-before-close"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?time-before-close"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?time-before-close"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?time-before-close"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor?time-before-close"
+msgid "validation"
+msgstr "is_pos_int('time-before-close')"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor?whitelist"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor?whitelist"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?whitelist"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor?whitelist"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor?whitelist"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+###
+###
+###  DELETE data/inputs/monitor/{name}
+###
+###
+
+msgctxt "DELETE data/inputs/monitor/{name}"
+msgid "description"
+msgstr "UNDONE"
+
+msgctxt "DELETE data/inputs/monitor/{name}"
+msgid "summary"
+msgstr "UNDONE"
+
+###
+###
+###  POST data/inputs/monitor/{name}
+###
+###
+
+msgctxt "POST data/inputs/monitor/{name}"
+msgid "description"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}"
+msgid "summary"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}?blacklist"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}?blacklist"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?blacklist"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?blacklist"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?blacklist"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST data/inputs/monitor/{name}?check-index"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}?check-index"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?check-index"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?check-index"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?check-index"
+msgid "validation"
+msgstr "is_bool('check-index')"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor/{name}?check-path"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}?check-path"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?check-path"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?check-path"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?check-path"
+msgid "validation"
+msgstr "is_bool('check-path')"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor/{name}?crc-salt"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}?crc-salt"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?crc-salt"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?crc-salt"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?crc-salt"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST data/inputs/monitor/{name}?dedicatedFD"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}?dedicatedFD"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?dedicatedFD"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?dedicatedFD"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?dedicatedFD"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST data/inputs/monitor/{name}?eatonlylivefiles"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}?eatonlylivefiles"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?eatonlylivefiles"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?eatonlylivefiles"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?eatonlylivefiles"
+msgid "validation"
+msgstr "is_bool('eatonlylivefiles')"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor/{name}?followTail"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}?followTail"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?followTail"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?followTail"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?followTail"
+msgid "validation"
+msgstr "is_bool('followTail')"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor/{name}?host"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}?host"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?host"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?host"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?host"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST data/inputs/monitor/{name}?host_regex"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}?host_regex"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?host_regex"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?host_regex"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?host_regex"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST data/inputs/monitor/{name}?host_segment"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}?host_segment"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?host_segment"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?host_segment"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?host_segment"
+msgid "validation"
+msgstr "is_pos_int('host_segment')"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor/{name}?ignore-older-than"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}?ignore-older-than"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?ignore-older-than"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?ignore-older-than"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?ignore-older-than"
+msgid "validation"
+msgstr "validate(match('ignore-older-than', \"^\\d+[dms]$\"),\"'Ignore older than' must be a number immediately followed by d(ays), m(inutes), or s(econds).\")"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor/{name}?index"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}?index"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?index"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?index"
+msgid "default"
+msgstr "default"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?index"
+msgid "validation"
+msgstr "is_index('index')"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor/{name}?recursive"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}?recursive"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?recursive"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?recursive"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?recursive"
+msgid "validation"
+msgstr "is_bool('recursive')"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor/{name}?rename-source"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}?rename-source"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?rename-source"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?rename-source"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?rename-source"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST data/inputs/monitor/{name}?sourcetype"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}?sourcetype"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?sourcetype"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?sourcetype"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?sourcetype"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST data/inputs/monitor/{name}?time-before-close"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}?time-before-close"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?time-before-close"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?time-before-close"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?time-before-close"
+msgid "validation"
+msgstr "is_pos_int('time-before-close')"
+
+# ----------
+
+msgctxt "POST data/inputs/monitor/{name}?whitelist"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST data/inputs/monitor/{name}?whitelist"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?whitelist"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?whitelist"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST data/inputs/monitor/{name}?whitelist"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+

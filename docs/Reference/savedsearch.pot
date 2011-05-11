@@ -1,0 +1,5057 @@
+###
+###
+###  GET saved/searches
+###
+###
+
+msgctxt "GET saved/searches"
+msgid "description"
+msgstr "UNDONE"
+
+msgctxt "GET saved/searches"
+msgid "summary"
+msgstr "UNDONE"
+
+msgctxt "GET saved/searches?count"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "GET saved/searches?count"
+msgid "summary"
+msgstr "Index for first item to return."
+
+#.readonly
+msgctxt "GET saved/searches?count"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "GET saved/searches?count"
+msgid "default"
+msgstr "30"
+
+#.readonly
+msgctxt "GET saved/searches?count"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "GET saved/searches?earliest_time"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "GET saved/searches?earliest_time"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "GET saved/searches?earliest_time"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "GET saved/searches?earliest_time"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "GET saved/searches?earliest_time"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "GET saved/searches?latest_time"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "GET saved/searches?latest_time"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "GET saved/searches?latest_time"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "GET saved/searches?latest_time"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "GET saved/searches?latest_time"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "GET saved/searches?offset"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "GET saved/searches?offset"
+msgid "summary"
+msgstr "Maximum number of items to return."
+
+#.readonly
+msgctxt "GET saved/searches?offset"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "GET saved/searches?offset"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "GET saved/searches?offset"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "GET saved/searches?search"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "GET saved/searches?search"
+msgid "summary"
+msgstr "Search to filter results."
+
+#.readonly
+msgctxt "GET saved/searches?search"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "GET saved/searches?search"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "GET saved/searches?search"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "GET saved/searches?sort"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "GET saved/searches?sort"
+msgid "summary"
+msgstr "Field to sort by."
+
+#.readonly
+msgctxt "GET saved/searches?sort"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "GET saved/searches?sort"
+msgid "default"
+msgstr "name"
+
+#.readonly
+msgctxt "GET saved/searches?sort"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+###
+###
+###  POST saved/searches
+###
+###
+
+msgctxt "POST saved/searches"
+msgid "description"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches"
+msgid "summary"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?search"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?search"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?search"
+msgid "required"
+msgstr "true"
+
+#.readonly
+msgctxt "POST saved/searches?search"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?search"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches?action.email"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.auth_password"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.auth_password"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.auth_password"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.auth_password"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.auth_password"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.auth_username"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.auth_username"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.auth_username"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.auth_username"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.auth_username"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.bcc"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.bcc"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.bcc"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.bcc"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.bcc"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.cc"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.cc"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.cc"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.cc"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.cc"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.command"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.command"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.command"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.command"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.command"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.format"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.format"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.format"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.format"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.format"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.from"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.from"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.from"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.from"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.from"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.hostname"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.hostname"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.hostname"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.hostname"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.hostname"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.inline"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.inline"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.inline"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.inline"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.inline"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.mailserver"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.mailserver"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.mailserver"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.mailserver"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.mailserver"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.maxresults"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.maxresults"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.maxresults"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.maxresults"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.maxresults"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.maxtime"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.maxtime"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.maxtime"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.maxtime"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.maxtime"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.preprocess_results"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.preprocess_results"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.preprocess_results"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.preprocess_results"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.preprocess_results"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.reportPaperOrientation"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.reportPaperOrientation"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.reportPaperOrientation"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.reportPaperOrientation"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.reportPaperOrientation"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.reportPaperSize"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.reportPaperSize"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.reportPaperSize"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.reportPaperSize"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.reportPaperSize"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.reportServerEnabled"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.reportServerEnabled"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.reportServerEnabled"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.reportServerEnabled"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.reportServerEnabled"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.reportServerURL"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.reportServerURL"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.reportServerURL"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.reportServerURL"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.reportServerURL"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.sendpdf"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.sendpdf"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.sendpdf"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.sendpdf"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.sendpdf"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.sendresults"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.sendresults"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.sendresults"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.sendresults"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.sendresults"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.subject"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.subject"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.subject"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.subject"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.subject"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.to"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.to"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.to"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.to"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.to"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.track_alert"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.track_alert"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.track_alert"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.track_alert"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.track_alert"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.ttl"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.ttl"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.ttl"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.ttl"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.ttl"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.use_ssl"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.use_ssl"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.use_ssl"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.use_ssl"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.use_ssl"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.email.use_tls"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.email.use_tls"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.use_tls"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.email.use_tls"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.email.use_tls"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.populate_lookup"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.populate_lookup"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.populate_lookup.command"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.populate_lookup.command"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup.command"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup.command"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup.command"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.populate_lookup.hostname"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.populate_lookup.hostname"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup.hostname"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup.hostname"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup.hostname"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.populate_lookup.maxresults"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.populate_lookup.maxresults"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup.maxresults"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup.maxresults"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup.maxresults"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.populate_lookup.maxtime"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.populate_lookup.maxtime"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup.maxtime"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup.maxtime"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup.maxtime"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.populate_lookup.track_alert"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.populate_lookup.track_alert"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup.track_alert"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup.track_alert"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup.track_alert"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.populate_lookup.ttl"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.populate_lookup.ttl"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup.ttl"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup.ttl"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.populate_lookup.ttl"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.rss"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.rss"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.rss"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.rss"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches?action.rss"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.rss.command"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.rss.command"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.rss.command"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.rss.command"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.rss.command"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.rss.hostname"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.rss.hostname"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.rss.hostname"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.rss.hostname"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.rss.hostname"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.rss.maxresults"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.rss.maxresults"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.rss.maxresults"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.rss.maxresults"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.rss.maxresults"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.rss.maxtime"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.rss.maxtime"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.rss.maxtime"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.rss.maxtime"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.rss.maxtime"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.rss.track_alert"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.rss.track_alert"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.rss.track_alert"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.rss.track_alert"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.rss.track_alert"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.rss.ttl"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.rss.ttl"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.rss.ttl"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.rss.ttl"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.rss.ttl"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.script"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.script"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.script"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.script"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches?action.script"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.script.command"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.script.command"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.script.command"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.script.command"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.script.command"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.script.hostname"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.script.hostname"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.script.hostname"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.script.hostname"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.script.hostname"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.script.maxresults"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.script.maxresults"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.script.maxresults"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.script.maxresults"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.script.maxresults"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.script.maxtime"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.script.maxtime"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.script.maxtime"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.script.maxtime"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.script.maxtime"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.script.track_alert"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.script.track_alert"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.script.track_alert"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.script.track_alert"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.script.track_alert"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.script.ttl"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.script.ttl"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.script.ttl"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.script.ttl"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.script.ttl"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.summary_index"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.summary_index"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.summary_index._name"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.summary_index._name"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index._name"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index._name"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index._name"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.summary_index.command"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.summary_index.command"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.command"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.command"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.command"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.summary_index.hostname"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.summary_index.hostname"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.hostname"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.hostname"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.hostname"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.summary_index.inline"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.summary_index.inline"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.inline"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.inline"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.inline"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.summary_index.maxresults"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.summary_index.maxresults"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.maxresults"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.maxresults"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.maxresults"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.summary_index.maxtime"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.summary_index.maxtime"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.maxtime"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.maxtime"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.maxtime"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.summary_index.track_alert"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.summary_index.track_alert"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.track_alert"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.track_alert"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.track_alert"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?action.summary_index.ttl"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?action.summary_index.ttl"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.ttl"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.ttl"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?action.summary_index.ttl"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?actions"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?actions"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?actions"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?actions"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?actions"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?alert.digest_mode"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?alert.digest_mode"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?alert.digest_mode"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?alert.digest_mode"
+msgid "default"
+msgstr "1"
+
+#.readonly
+msgctxt "POST saved/searches?alert.digest_mode"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?alert.expires"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?alert.expires"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?alert.expires"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?alert.expires"
+msgid "default"
+msgstr "24h"
+
+#.readonly
+msgctxt "POST saved/searches?alert.expires"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?alert.severity"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?alert.severity"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?alert.severity"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?alert.severity"
+msgid "default"
+msgstr "3"
+
+#.readonly
+msgctxt "POST saved/searches?alert.severity"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?alert.suppress"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?alert.suppress"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?alert.suppress"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?alert.suppress"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches?alert.suppress"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?alert.suppress.period"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?alert.suppress.period"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?alert.suppress.period"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?alert.suppress.period"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?alert.suppress.period"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?alert.track"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?alert.track"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?alert.track"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?alert.track"
+msgid "default"
+msgstr "auto"
+
+#.readonly
+msgctxt "POST saved/searches?alert.track"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?alert_comparator"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?alert_comparator"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?alert_comparator"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?alert_comparator"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?alert_comparator"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?alert_condition"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?alert_condition"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?alert_condition"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?alert_condition"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?alert_condition"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?alert_threshold"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?alert_threshold"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?alert_threshold"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?alert_threshold"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?alert_threshold"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?alert_type"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?alert_type"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?alert_type"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?alert_type"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?alert_type"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?auto_summarize"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?auto_summarize"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?auto_summarize"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?auto_summarize"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches?auto_summarize"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?auto_summarize.command"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?auto_summarize.command"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?auto_summarize.command"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?auto_summarize.command"
+msgid "default"
+msgstr "| summarize override=none timespan=$auto_summarize.timespan$ [ $search$ ]"
+
+#.readonly
+msgctxt "POST saved/searches?auto_summarize.command"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?auto_summarize.cron_schedule"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?auto_summarize.cron_schedule"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?auto_summarize.cron_schedule"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?auto_summarize.cron_schedule"
+msgid "default"
+msgstr "0 */4 * * *"
+
+#.readonly
+msgctxt "POST saved/searches?auto_summarize.cron_schedule"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?cron_schedule"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?cron_schedule"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?cron_schedule"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?cron_schedule"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?cron_schedule"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?description"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?description"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?description"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?description"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?description"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?disabled"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?disabled"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?disabled"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?disabled"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches?disabled"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?dispatch.buckets"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?dispatch.buckets"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.buckets"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.buckets"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.buckets"
+msgid "validation"
+msgstr "validate(isint($dispatch.buckets$) AND $dispatch.buckets$>=0, \"Value of argument 'dispatch.buckets' must be a non-negative integer\")"
+
+# ----------
+
+msgctxt "POST saved/searches?dispatch.earliest_time"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?dispatch.earliest_time"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.earliest_time"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.earliest_time"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.earliest_time"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?dispatch.latest_time"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?dispatch.latest_time"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.latest_time"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.latest_time"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.latest_time"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?dispatch.lookups"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?dispatch.lookups"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.lookups"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.lookups"
+msgid "default"
+msgstr "1"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.lookups"
+msgid "validation"
+msgstr "validate(is_bool($dispatch.lookups$), \"Value of argument 'dispatch.lookups' must be a boolean\")"
+
+# ----------
+
+msgctxt "POST saved/searches?dispatch.max_count"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?dispatch.max_count"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.max_count"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.max_count"
+msgid "default"
+msgstr "500000"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.max_count"
+msgid "validation"
+msgstr "validate(isint($dispatch.max_count$) AND $dispatch.max_count$>=0, \"Value of argument 'dispatch.max_count' must be a non-negative integer\")"
+
+# ----------
+
+msgctxt "POST saved/searches?dispatch.max_time"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?dispatch.max_time"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.max_time"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.max_time"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.max_time"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?dispatch.reduce_freq"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?dispatch.reduce_freq"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.reduce_freq"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.reduce_freq"
+msgid "default"
+msgstr "10"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.reduce_freq"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?dispatch.spawn_process"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?dispatch.spawn_process"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.spawn_process"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.spawn_process"
+msgid "default"
+msgstr "1"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.spawn_process"
+msgid "validation"
+msgstr "validate(is_bool($dispatch.spawn_process$), \"Value of argument 'dispatch.spawn_process' must be a boolean\")"
+
+# ----------
+
+msgctxt "POST saved/searches?dispatch.time_format"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?dispatch.time_format"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.time_format"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.time_format"
+msgid "default"
+msgstr "%FT%T.%Q%:z"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.time_format"
+msgid "validation"
+msgstr "validate(is_time_format($dispatch.time_format$), \"Value of argument 'dispatch.time_format' must be a time format string\")"
+
+# ----------
+
+msgctxt "POST saved/searches?dispatch.ttl"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?dispatch.ttl"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.ttl"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.ttl"
+msgid "default"
+msgstr "2p"
+
+#.readonly
+msgctxt "POST saved/searches?dispatch.ttl"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?displayview"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?displayview"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?displayview"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?displayview"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?displayview"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?is_scheduled"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?is_scheduled"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?is_scheduled"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?is_scheduled"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?is_scheduled"
+msgid "validation"
+msgstr "validate(is_bool($is_scheduled$), \"Value of argument 'is_scheduled' must be a boolean\")"
+
+# ----------
+
+msgctxt "POST saved/searches?is_visible"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?is_visible"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?is_visible"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?is_visible"
+msgid "default"
+msgstr "true"
+
+#.readonly
+msgctxt "POST saved/searches?is_visible"
+msgid "validation"
+msgstr "validate(is_bool($is_visible$), \"Value of argument 'is_visible' must be a boolean\")"
+
+# ----------
+
+msgctxt "POST saved/searches?max_concurrent"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?max_concurrent"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?max_concurrent"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?max_concurrent"
+msgid "default"
+msgstr "1"
+
+#.readonly
+msgctxt "POST saved/searches?max_concurrent"
+msgid "validation"
+msgstr "validate(isint($max_concurrent$) AND $max_concurrent$>=0, \"Value of argument 'max_concurrent' must be a non-negative integer\")"
+
+# ----------
+
+msgctxt "POST saved/searches?next_scheduled_time"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?next_scheduled_time"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?next_scheduled_time"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?next_scheduled_time"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?next_scheduled_time"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?qualifiedSearch"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?qualifiedSearch"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?qualifiedSearch"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?qualifiedSearch"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?qualifiedSearch"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?realtime_schedule"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?realtime_schedule"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?realtime_schedule"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?realtime_schedule"
+msgid "default"
+msgstr "1"
+
+#.readonly
+msgctxt "POST saved/searches?realtime_schedule"
+msgid "validation"
+msgstr "validate(is_bool($realtime_schedule$), \"Value of argument 'realtime_schedule' must be a boolean\")"
+
+# ----------
+
+msgctxt "POST saved/searches?request.ui_dispatch_app"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?request.ui_dispatch_app"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?request.ui_dispatch_app"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?request.ui_dispatch_app"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?request.ui_dispatch_app"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?request.ui_dispatch_view"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?request.ui_dispatch_view"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?request.ui_dispatch_view"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?request.ui_dispatch_view"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?request.ui_dispatch_view"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?restart_on_searchpeer_add"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?restart_on_searchpeer_add"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?restart_on_searchpeer_add"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?restart_on_searchpeer_add"
+msgid "default"
+msgstr "1"
+
+#.readonly
+msgctxt "POST saved/searches?restart_on_searchpeer_add"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches?run_on_startup"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?run_on_startup"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?run_on_startup"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?run_on_startup"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches?run_on_startup"
+msgid "validation"
+msgstr "validate(is_bool($run_on_startup$), \"Value of argument 'run_on_startup' must be a boolean\")"
+
+# ----------
+
+msgctxt "POST saved/searches?vsid"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches?vsid"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches?vsid"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches?vsid"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches?vsid"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+###
+###
+###  DELETE saved/searches/{name}
+###
+###
+
+msgctxt "DELETE saved/searches/{name}"
+msgid "description"
+msgstr "UNDONE"
+
+msgctxt "DELETE saved/searches/{name}"
+msgid "summary"
+msgstr "UNDONE"
+
+msgctxt "DELETE saved/searches/{name}?earliest_time"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "DELETE saved/searches/{name}?earliest_time"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "DELETE saved/searches/{name}?earliest_time"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "DELETE saved/searches/{name}?earliest_time"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "DELETE saved/searches/{name}?earliest_time"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "DELETE saved/searches/{name}?latest_time"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "DELETE saved/searches/{name}?latest_time"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "DELETE saved/searches/{name}?latest_time"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "DELETE saved/searches/{name}?latest_time"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "DELETE saved/searches/{name}?latest_time"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+###
+###
+###  POST saved/searches/{name}
+###
+###
+
+msgctxt "POST saved/searches/{name}"
+msgid "description"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}"
+msgid "summary"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?search"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?search"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?search"
+msgid "required"
+msgstr "true"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?search"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?search"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.auth_password"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.auth_password"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.auth_password"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.auth_password"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.auth_password"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.auth_username"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.auth_username"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.auth_username"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.auth_username"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.auth_username"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.bcc"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.bcc"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.bcc"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.bcc"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.bcc"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.cc"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.cc"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.cc"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.cc"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.cc"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.command"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.command"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.command"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.command"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.command"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.format"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.format"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.format"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.format"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.format"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.from"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.from"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.from"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.from"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.from"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.hostname"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.hostname"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.hostname"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.hostname"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.hostname"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.inline"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.inline"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.inline"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.inline"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.inline"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.mailserver"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.mailserver"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.mailserver"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.mailserver"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.mailserver"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.maxresults"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.maxresults"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.maxresults"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.maxresults"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.maxresults"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.maxtime"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.maxtime"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.maxtime"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.maxtime"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.maxtime"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.preprocess_results"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.preprocess_results"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.preprocess_results"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.preprocess_results"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.preprocess_results"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.reportPaperOrientation"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.reportPaperOrientation"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.reportPaperOrientation"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.reportPaperOrientation"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.reportPaperOrientation"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.reportPaperSize"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.reportPaperSize"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.reportPaperSize"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.reportPaperSize"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.reportPaperSize"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.reportServerEnabled"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.reportServerEnabled"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.reportServerEnabled"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.reportServerEnabled"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.reportServerEnabled"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.reportServerURL"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.reportServerURL"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.reportServerURL"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.reportServerURL"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.reportServerURL"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.sendpdf"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.sendpdf"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.sendpdf"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.sendpdf"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.sendpdf"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.sendresults"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.sendresults"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.sendresults"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.sendresults"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.sendresults"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.subject"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.subject"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.subject"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.subject"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.subject"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.to"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.to"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.to"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.to"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.to"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.track_alert"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.track_alert"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.track_alert"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.track_alert"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.track_alert"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.ttl"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.ttl"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.ttl"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.ttl"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.ttl"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.use_ssl"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.use_ssl"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.use_ssl"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.use_ssl"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.use_ssl"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.email.use_tls"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.email.use_tls"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.use_tls"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.use_tls"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.email.use_tls"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.populate_lookup"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.populate_lookup"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.populate_lookup.command"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.populate_lookup.command"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup.command"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup.command"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup.command"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.populate_lookup.hostname"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.populate_lookup.hostname"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup.hostname"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup.hostname"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup.hostname"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.populate_lookup.maxresults"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.populate_lookup.maxresults"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup.maxresults"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup.maxresults"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup.maxresults"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.populate_lookup.maxtime"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.populate_lookup.maxtime"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup.maxtime"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup.maxtime"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup.maxtime"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.populate_lookup.track_alert"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.populate_lookup.track_alert"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup.track_alert"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup.track_alert"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup.track_alert"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.populate_lookup.ttl"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.populate_lookup.ttl"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup.ttl"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup.ttl"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.populate_lookup.ttl"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.rss"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.rss"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.rss.command"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.rss.command"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss.command"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss.command"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss.command"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.rss.hostname"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.rss.hostname"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss.hostname"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss.hostname"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss.hostname"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.rss.maxresults"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.rss.maxresults"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss.maxresults"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss.maxresults"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss.maxresults"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.rss.maxtime"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.rss.maxtime"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss.maxtime"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss.maxtime"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss.maxtime"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.rss.track_alert"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.rss.track_alert"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss.track_alert"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss.track_alert"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss.track_alert"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.rss.ttl"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.rss.ttl"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss.ttl"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss.ttl"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.rss.ttl"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.script"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.script"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.script.command"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.script.command"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script.command"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script.command"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script.command"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.script.hostname"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.script.hostname"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script.hostname"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script.hostname"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script.hostname"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.script.maxresults"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.script.maxresults"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script.maxresults"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script.maxresults"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script.maxresults"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.script.maxtime"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.script.maxtime"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script.maxtime"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script.maxtime"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script.maxtime"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.script.track_alert"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.script.track_alert"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script.track_alert"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script.track_alert"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script.track_alert"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.script.ttl"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.script.ttl"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script.ttl"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script.ttl"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.script.ttl"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.summary_index"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.summary_index"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.summary_index._name"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.summary_index._name"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index._name"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index._name"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index._name"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.summary_index.command"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.summary_index.command"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.command"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.command"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.command"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.summary_index.hostname"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.summary_index.hostname"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.hostname"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.hostname"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.hostname"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.summary_index.inline"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.summary_index.inline"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.inline"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.inline"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.inline"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.summary_index.maxresults"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.summary_index.maxresults"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.maxresults"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.maxresults"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.maxresults"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.summary_index.maxtime"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.summary_index.maxtime"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.maxtime"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.maxtime"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.maxtime"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.summary_index.track_alert"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.summary_index.track_alert"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.track_alert"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.track_alert"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.track_alert"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?action.summary_index.ttl"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?action.summary_index.ttl"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.ttl"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.ttl"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?action.summary_index.ttl"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?actions"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?actions"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?actions"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?actions"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?actions"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?alert.digest_mode"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?alert.digest_mode"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert.digest_mode"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert.digest_mode"
+msgid "default"
+msgstr "1"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert.digest_mode"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?alert.expires"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?alert.expires"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert.expires"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert.expires"
+msgid "default"
+msgstr "24h"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert.expires"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?alert.severity"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?alert.severity"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert.severity"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert.severity"
+msgid "default"
+msgstr "3"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert.severity"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?alert.suppress"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?alert.suppress"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert.suppress"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert.suppress"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert.suppress"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?alert.suppress.period"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?alert.suppress.period"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert.suppress.period"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert.suppress.period"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert.suppress.period"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?alert.track"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?alert.track"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert.track"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert.track"
+msgid "default"
+msgstr "auto"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert.track"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?alert_comparator"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?alert_comparator"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert_comparator"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert_comparator"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert_comparator"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?alert_condition"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?alert_condition"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert_condition"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert_condition"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert_condition"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?alert_threshold"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?alert_threshold"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert_threshold"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert_threshold"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert_threshold"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?alert_type"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?alert_type"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert_type"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert_type"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?alert_type"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?auto_summarize"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?auto_summarize"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?auto_summarize"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?auto_summarize"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?auto_summarize"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?auto_summarize.command"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?auto_summarize.command"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?auto_summarize.command"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?auto_summarize.command"
+msgid "default"
+msgstr "| summarize override=none timespan=$auto_summarize.timespan$ [ $search$ ]"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?auto_summarize.command"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?auto_summarize.cron_schedule"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?auto_summarize.cron_schedule"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?auto_summarize.cron_schedule"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?auto_summarize.cron_schedule"
+msgid "default"
+msgstr "0 */4 * * *"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?auto_summarize.cron_schedule"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?cron_schedule"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?cron_schedule"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?cron_schedule"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?cron_schedule"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?cron_schedule"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?description"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?description"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?description"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?description"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?description"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?disabled"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?disabled"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?disabled"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?disabled"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?disabled"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?dispatch.buckets"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?dispatch.buckets"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.buckets"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.buckets"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.buckets"
+msgid "validation"
+msgstr "validate(isint($dispatch.buckets$) AND $dispatch.buckets$>=0, \"Value of argument 'dispatch.buckets' must be a non-negative integer\")"
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?dispatch.earliest_time"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?dispatch.earliest_time"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.earliest_time"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.earliest_time"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.earliest_time"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?dispatch.latest_time"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?dispatch.latest_time"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.latest_time"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.latest_time"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.latest_time"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?dispatch.lookups"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?dispatch.lookups"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.lookups"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.lookups"
+msgid "default"
+msgstr "1"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.lookups"
+msgid "validation"
+msgstr "validate(is_bool($dispatch.lookups$), \"Value of argument 'dispatch.lookups' must be a boolean\")"
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?dispatch.max_count"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?dispatch.max_count"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.max_count"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.max_count"
+msgid "default"
+msgstr "500000"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.max_count"
+msgid "validation"
+msgstr "validate(isint($dispatch.max_count$) AND $dispatch.max_count$>=0, \"Value of argument 'dispatch.max_count' must be a non-negative integer\")"
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?dispatch.max_time"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?dispatch.max_time"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.max_time"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.max_time"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.max_time"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?dispatch.reduce_freq"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?dispatch.reduce_freq"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.reduce_freq"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.reduce_freq"
+msgid "default"
+msgstr "10"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.reduce_freq"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?dispatch.spawn_process"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?dispatch.spawn_process"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.spawn_process"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.spawn_process"
+msgid "default"
+msgstr "1"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.spawn_process"
+msgid "validation"
+msgstr "validate(is_bool($dispatch.spawn_process$), \"Value of argument 'dispatch.spawn_process' must be a boolean\")"
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?dispatch.time_format"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?dispatch.time_format"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.time_format"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.time_format"
+msgid "default"
+msgstr "%FT%T.%Q%:z"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.time_format"
+msgid "validation"
+msgstr "validate(is_time_format($dispatch.time_format$), \"Value of argument 'dispatch.time_format' must be a time format string\")"
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?dispatch.ttl"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?dispatch.ttl"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.ttl"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.ttl"
+msgid "default"
+msgstr "2p"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?dispatch.ttl"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?displayview"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?displayview"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?displayview"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?displayview"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?displayview"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?is_scheduled"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?is_scheduled"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?is_scheduled"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?is_scheduled"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?is_scheduled"
+msgid "validation"
+msgstr "validate(is_bool($is_scheduled$), \"Value of argument 'is_scheduled' must be a boolean\")"
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?is_visible"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?is_visible"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?is_visible"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?is_visible"
+msgid "default"
+msgstr "true"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?is_visible"
+msgid "validation"
+msgstr "validate(is_bool($is_visible$), \"Value of argument 'is_visible' must be a boolean\")"
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?max_concurrent"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?max_concurrent"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?max_concurrent"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?max_concurrent"
+msgid "default"
+msgstr "1"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?max_concurrent"
+msgid "validation"
+msgstr "validate(isint($max_concurrent$) AND $max_concurrent$>=0, \"Value of argument 'max_concurrent' must be a non-negative integer\")"
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?next_scheduled_time"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?next_scheduled_time"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?next_scheduled_time"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?next_scheduled_time"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?next_scheduled_time"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?qualifiedSearch"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?qualifiedSearch"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?qualifiedSearch"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?qualifiedSearch"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?qualifiedSearch"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?realtime_schedule"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?realtime_schedule"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?realtime_schedule"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?realtime_schedule"
+msgid "default"
+msgstr "1"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?realtime_schedule"
+msgid "validation"
+msgstr "validate(is_bool($realtime_schedule$), \"Value of argument 'realtime_schedule' must be a boolean\")"
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?request.ui_dispatch_app"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?request.ui_dispatch_app"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?request.ui_dispatch_app"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?request.ui_dispatch_app"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?request.ui_dispatch_app"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?request.ui_dispatch_view"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?request.ui_dispatch_view"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?request.ui_dispatch_view"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?request.ui_dispatch_view"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?request.ui_dispatch_view"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?restart_on_searchpeer_add"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?restart_on_searchpeer_add"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?restart_on_searchpeer_add"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?restart_on_searchpeer_add"
+msgid "default"
+msgstr "1"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?restart_on_searchpeer_add"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?run_on_startup"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?run_on_startup"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?run_on_startup"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?run_on_startup"
+msgid "default"
+msgstr "0"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?run_on_startup"
+msgid "validation"
+msgstr "validate(is_bool($run_on_startup$), \"Value of argument 'run_on_startup' must be a boolean\")"
+
+# ----------
+
+msgctxt "POST saved/searches/{name}?vsid"
+msgid "datatype"
+msgstr "UNDONE"
+
+msgctxt "POST saved/searches/{name}?vsid"
+msgid "summary"
+msgstr "UNDONE"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?vsid"
+msgid "required"
+msgstr "false"
+
+#.readonly
+msgctxt "POST saved/searches/{name}?vsid"
+msgid "default"
+msgstr ""
+
+#.readonly
+msgctxt "POST saved/searches/{name}?vsid"
+msgid "validation"
+msgstr ""
+
+# ----------
+
+
