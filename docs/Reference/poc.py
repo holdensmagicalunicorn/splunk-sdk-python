@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 #
 # Copyright 2011 Splunk, Inc.
-#
 
 from pprint import pprint # UNDONE
 
