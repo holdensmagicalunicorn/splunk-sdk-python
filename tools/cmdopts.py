@@ -16,6 +16,7 @@
 
 from os import path
 from optparse import OptionParser
+import sys
 
 __all__ = [ "parse", "Parser" ]
 
@@ -44,6 +45,8 @@ SPLUNK_RULES = {
         'flags': ["--config"],
         'action': "callback",
         'callback': config,
+        'type': "string",
+        'nargs': "1",
         'help': "Load options from config file" 
     },
     'scheme': {
@@ -149,7 +152,6 @@ def parser(rules=None, **kwargs):
     return Parser(rules, **kwargs)
         
 if __name__ == "__main__":
-    import sys
     parser = Parser(rules)
     parser.parse(sys.argv[1:])
     from pprint import pprint
