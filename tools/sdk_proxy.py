@@ -264,10 +264,9 @@ def process_content(odata, atomcontent):
                         ## convert parens to dashes and strip the slash
                         ##
 
-                        name = name.replace("(", "-")
-                        name = name.replace(")", "-")
-                        if name.find("/") == 0:
-                            name = name.replace("/", "", 1)
+                        name = name.replace("(", "")
+                        name = name.replace(")", "")
+                        name = name.replace("/", "")
                         value = str(child.firstChild.nodeValue)
                         newelement = odata.createElement("d:"+name)
                         newtext = odata.createTextNode(value)
