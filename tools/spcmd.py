@@ -88,6 +88,7 @@ class Session(InteractiveInterpreter):
             self.context.username, 
             self.context.host, 
             self.context.port)
+            
         while True:
             try:
                 input = raw_input("> ")
