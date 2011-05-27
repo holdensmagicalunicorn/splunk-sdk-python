@@ -176,9 +176,10 @@ def main(argv):
         print "operation requires a name"
         sys.exit(0)
 
-    # remove arg 'name' from passing through to operation builder
-    name = kwargs['name']
-    kwargs.pop('name')
+    # remove arg 'name' from passing through to operation builder, except on create
+    if operation != "create":
+        name = kwargs['name']
+        kwargs.pop('name')
 
     # perform operation on saved search created with args from cli
     if operation == "list":
