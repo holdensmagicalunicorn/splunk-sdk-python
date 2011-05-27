@@ -83,7 +83,7 @@ def get_local_ip():
 ##
 
 def convert_xml_to_atom(xml_text):
-    """ splunk specific XML to Atom coverter """
+    """ splunk specific XML to Atom converter """
 
     ##
     ## Requires elements of <feed>:
