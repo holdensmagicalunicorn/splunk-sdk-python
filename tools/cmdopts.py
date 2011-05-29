@@ -74,6 +74,10 @@ SPLUNK_RULES = {
         'default': None,
         'help': "Password to login with" 
     },
+    'namespace': {
+        'flags': ["--namespace"], 
+        'default': None,
+    }
 }
 
 class Parser(OptionParser):

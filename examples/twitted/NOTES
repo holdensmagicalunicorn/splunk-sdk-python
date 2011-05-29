@@ -1,0 +1,37 @@
+index=twitter * | cassget | top screen_name
+
+# UNDONE
+    * Figure out how to install python packages to Splunk scripts can see
+      them (and so they get propogated in a disributed environment)
+
+    * Splunk + Cassandra startup script
+    * Script to reset Splunk index & Cassandra CFs
+    * Script to report Splunk & Cassandra storage sizes
+    * Configure Splunk to eat Cassandra logs
+    * Follows & unfollows?
+
+## Deployment
+* Create application
+    * Create index
+
+## Charts
+
+Timegraph of mentions
+
+## Queries
+
+Lookup user screen_name, etc
+Lookup status details ..
+Users sortby tweets (count)
+Users sortby followers
+Users sortby retweets
+Users by geo
+
+## Alerts
+...
+
+## Resources
+
+http://twittertoolsbook.com/10-awesome-twitter-analytics-visualization-tools
+http://socialmediatoday.com/index.php?q=SMC/80437
+

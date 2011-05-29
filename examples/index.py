@@ -89,7 +89,7 @@ class Index:
         self.edit(**saved)
 
     def create(self):
-        response = self.post(name=self.name)
+        response = self.context.post("data/indexes", name=self.name)
         check_status(response, 201)
         return response
 
