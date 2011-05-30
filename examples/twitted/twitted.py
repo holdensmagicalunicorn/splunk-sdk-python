@@ -14,6 +14,19 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+"""This utility reads the Twitter 'spritzer' and writes status results 
+   to Cassandra while teeing off a portion of the stream to Splunk for
+   indexing."""
+
+# UNDONE: The code below isnt particularly robust - eg: 
+#   * It doesn't handle resetting the twitter HTTP connection or the Splunk
+#     TCP connection
+#   * Doesn't handle failure to write to Splunk or Cassandra (no transaction)
+#   * Need some way to validate contents of database against contents of the 
+#     index.
+
+# UNDONE: Inestigate alternatives to pycassa
+
 # UNDONE: Command line args - credentials, Splunk port, Cassandra port ...
 # UNDONE: Dynamically construct line-breaking rule for twitter events
 # UNDONE: Is there a better way to store bools in Cassandra?

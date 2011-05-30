@@ -1,0 +1,11 @@
+#!/bin/bash
+
+pushd $SPLUNK_HOME/bin
+./splunk start
+wait $!
+popd
+
+pushd ~/Projects/apache-cassandra-0.7.6-2/bin
+./cassandra -p cassandra.pid
+popd
+

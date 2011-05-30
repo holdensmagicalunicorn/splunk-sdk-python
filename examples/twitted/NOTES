@@ -20,9 +20,9 @@ Timegraph of mentions
 
 ## Queries
 
-Lookup user screen_name, etc
+Lookup user display_name, etc
 Lookup status details ..
-Users sortby tweets (count)
+Users sortby tweets
 Users sortby followers
 Users sortby retweets
 Users by geo

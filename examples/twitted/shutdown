@@ -1,0 +1,20 @@
+#!/bin/bash
+
+pushd $SPLUNK_HOME/bin
+./splunk stop
+wait
+popd
+
+pushd ~/Projects/apache-cassandra-0.7.6-2/bin
+if [ -e cassandra.pid ]
+then 
+    kill `cat cassandra.pid`
+else
+    pids=`pgrep -f cassandra`
+    if [ "$pids" != "" ]
+    then
+        pgrep -f cassandra | xargs kill -9
+        wait
+    fi
+fi
+popd
