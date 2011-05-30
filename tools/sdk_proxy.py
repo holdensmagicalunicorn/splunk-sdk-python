@@ -83,7 +83,7 @@ def get_local_ip():
 ##
 
 def convert_xml_to_atom(xml_text):
-    """ splunk specific XML to Atom coverter """
+    """ splunk specific XML to Atom converter """
 
     ##
     ## Requires elements of <feed>:
@@ -715,7 +715,7 @@ if __name__ == '__main__':
     try:
         # create a simple WSGI server and run the splunk proxy processor
         from wsgiref import simple_server
-        print "splunk proxy: connect to http://localhost:%d/..." % PORT
+        print "splunk proxy: connect to http://%s:%d/..." % (get_local_ip(), PORT)
         HTTPD = simple_server.WSGIServer(('', PORT), 
                                          simple_server.WSGIRequestHandler)
         HTTPD.set_app(application)
