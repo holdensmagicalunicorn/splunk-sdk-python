@@ -14,6 +14,9 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+# UNDONE: A note on debugging - eg: "cat test.csv | ./cassget.py" and use
+# of the Logger class.
+
 from pprint import pprint # UNDONE
 
 import csv
@@ -35,8 +38,27 @@ class Logger:
 
 output = sys.stdout # Logger("log")
 
+# Statuses lookup fields, with optional output field name
+sfields = {
+    'retweeted_status_id': None,
+    'retweeted': None,
+    'source': "status_source",
+}
+
+# Users lookup fields, with optional output field names
+ufields = {
+    'created_at': "user_created_at",
+    'followers_count': "user_followers_count",
+    'friends_count': "user_friends_count",
+    'name': "user_name",
+    'screen_name': "user_screen_name",
+    'statuses_count': "user_statuses_count",
+    'verified': "user_verified",
+}
+
 def main(argv):
     pool = pycassa.connect("twitter", ["localhost:9160"])
+    statuses = pycassa.ColumnFamily(pool, "Statuses")
     users = pycassa.ColumnFamily(pool, "Users")
 
     # UNDONE: Skipping header values for now
@@ -45,14 +67,29 @@ def main(argv):
 
     reader = csv.DictReader(sys.stdin)
     header = reader.fieldnames
-    header.append("screen_name")
-    
+
+    # Extend the resultset with additional status & user fields
+    for fname in sfields.keys():
+        header.append(sfields.get(fname, fname))
+    for fname in ufields.keys():
+        header.append(ufields.get(fname, fname))
+
     writer = csv.DictWriter(output, header)
     writer.writer.writerow(header)
     for item in reader:
-        user_id = item['user_id']
-        details = users.get(str(user_id), columns=['screen_name'])
-        item['screen_name'] = details['screen_name']
+        # Join record with status details
+        status = statuses.get(str(item['id']), columns=sfields)
+        for source in sfields.keys(): 
+            target = sfields.get(source, source)
+            item[target] = status.get(source, None)
+
+        # Join record with user details
+        user = users.get(str(item['user_id']), columns=ufields)
+        for source in ufields.keys(): 
+            target = ufields.get(source, source)
+            item[target] = user.get(source, None)
+
+        # Output the extended record
         writer.writerow(item)
 
 if __name__ == "__main__":
@@ -61,5 +98,5 @@ if __name__ == "__main__":
     except:
         import traceback
         traceback.print_exc(file=output)
-    output.flush()
+    # output.flush()
 
