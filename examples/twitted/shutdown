@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# UNDONE: Don't hardcode Cassandra location
+
 pushd $SPLUNK_HOME/bin
 ./splunk stop
 wait

@@ -1,37 +1,118 @@
-index=twitter * | cassget | top screen_name
+Statuses [keywords] [timespan]
+Retweets [keywords] [timespan]
+
+Top words [timespan] [as histogram|tagcloud]
+
+Top users [timespan]
+
+    index=twitter [earliest=_ latest=_] * | cassget | top screen_name
+
+Sources 
+
+    # Top 20 sources, last 48rs
+    index=twitter earliest=-48hr | cassget | fields status_source | stats count(status_source) as count by status_source | sort -count | head 20
+
+Top retweeted
+Top user_mentions [timespan]
+Top URLs [timespan]
+Top hashtags [timespan]
+Top reply_to [timespan]
+
+Sentiment [realtime, trending]
 
 # UNDONE
-    * Figure out how to install python packages to Splunk scripts can see
-      them (and so they get propogated in a disributed environment)
-
-    * Splunk + Cassandra startup script
+    * Script to install python packages (thrift, pycassa) with Splunk
+        Eg: splunk cmd python setup.py install
     * Script to reset Splunk index & Cassandra CFs
     * Script to report Splunk & Cassandra storage sizes
     * Configure Splunk to eat Cassandra logs
-    * Follows & unfollows?
 
-## Deployment
-* Create application
-    * Create index
+    * Implement job.py - command line utility to retrieve search results
+        - Check that we get all results (eg: that maxresults isnt an issue)
 
-## Charts
+    * Could do a better job of parsing status urls, hashtags & user_mentions
 
-Timegraph of mentions
+    * Twitted app
+        * README
+            - Installing Cassandra (and Splunk)
+            - Running the application
+        * Package as actual splunk app
+            - Saved searches
+            - Dashboard(s)
+            - Realtime?
+        * Configuration for Cassandra & Splunk hostport
+        * Configuration for Twitter & Splunk credentials
 
-## Queries
+    * Script to create, deploy & configure twitted app
+        - Create app
+        - Deploy conf & search command(s)
+            - Input component creates/validates index & cassandra schema
+        - Enable/disable app
 
-Lookup user display_name, etc
-Lookup status details ..
-Users sortby tweets
-Users sortby followers
-Users sortby retweets
-Users by geo
+    * Index consistency
+        - Evaluate approaches for ensuring that index accurately reflects
+          contents of db
 
-## Alerts
-...
+    * Document complete Intersplunk protocol, including conf options and
+      __GETINFO__ & __EXECUTE__ modes.
+
+## CONSIDER
+
+    * Implement input component as scripted input
 
 ## Resources
 
 http://twittertoolsbook.com/10-awesome-twitter-analytics-visualization-tools
 http://socialmediatoday.com/index.php?q=SMC/80437
+
+## Cassandra Schemas
+
+### Users
+contributors_enabled
+created_at
+default_profile
+description
+favourites_count
+followers_count
+friends_count
+geo_enabled
+is_translator
+lang
+listed_count
+location
+name
+profile_background_color
+profile_background_image_url
+profile_background_title
+profile_image_url
+profile_link_color
+profile_sidebar_border_color
+profile_sidebar_fill_color
+profile_text_color
+profile_use_background_image
+protected
+screen_name
+show_all_inline_media
+statuses_count
+time_zone
+utc_offset
+verified
+
+### Statuses
+created_at
+favorited
+hashtags
+in_reply_to_screen_name
+in_reply_to_status_id
+in_reply_to_user_id
+retweet_count
+retweet_status_id
+retweeted
+source
+text
+truncated
+urls
+user_mentions
+user_id
+
 
