@@ -33,7 +33,7 @@ class Logger:
         self.log.write(message)
         sys.stdout.write(message)
 
-output = Logger("cassuser.log" # sys.stdout
+output = Logger("cassuser.log") # sys.stdout
 
 # Users lookup fields, with optional output field names
 ufields = {
@@ -47,9 +47,6 @@ ufields = {
 }
 
 def main(argv):
-
-    pprint(argv, logger.log)
-
     # Field to use for user row key
     kfield = argv[0] if len(argv) > 0 else "user_id"
 
