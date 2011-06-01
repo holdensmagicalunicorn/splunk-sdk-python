@@ -1,17 +1,11 @@
+.. | cassget | stats count(user_id) as user_statuses_seen by user_id | sort -user_statuses_seen
+
+
 Statuses [keywords] [timespan]
 Retweets [keywords] [timespan]
-
 Top words [timespan] [as histogram|tagcloud]
-
 Top users [timespan]
-
-    index=twitter [earliest=_ latest=_] * | cassget | top screen_name
-
-Sources 
-
-    # Top 20 sources, last 48rs
-    index=twitter earliest=-48hr | cassget | fields status_source | stats count(status_source) as count by status_source | sort -count | head 20
-
+Top sources 
 Top retweeted
 Top user_mentions [timespan]
 Top URLs [timespan]
@@ -20,17 +14,28 @@ Top reply_to [timespan]
 
 Sentiment [realtime, trending]
 
+User/Statuses master/detail?
+    * Maybe something like: .. {status} by user_id | sort -status_count
+
 # UNDONE
+
+    * Parameterize cassget, so I can write eg:
+
+        index=twitter | top user_id | cassget user_screen_name=/users/$user_id?screen_name
+
+    * Implement job.py - command line utility to retrieve search results
+        - Check that we get all results (eg: that maxresults isnt an issue)
+
+    * "Users, seen tweets" - enrich with additional fields
+
     * Script to install python packages (thrift, pycassa) with Splunk
         Eg: splunk cmd python setup.py install
     * Script to reset Splunk index & Cassandra CFs
     * Script to report Splunk & Cassandra storage sizes
     * Configure Splunk to eat Cassandra logs
 
-    * Implement job.py - command line utility to retrieve search results
-        - Check that we get all results (eg: that maxresults isnt an issue)
-
     * Could do a better job of parsing status urls, hashtags & user_mentions
+      both for storage in Cassandra and loading as Splunk MV fields.
 
     * Twitted app
         * README
@@ -59,6 +64,7 @@ Sentiment [realtime, trending]
 ## CONSIDER
 
     * Implement input component as scripted input
+    * Implement enrichment as a lookup script
 
 ## Resources
 

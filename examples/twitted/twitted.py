@@ -188,12 +188,14 @@ def index_status(status):
     id = status['id']
     user_id = status['user']['id']
     created_at = status['created_at']
-    text = status['text'].encode("utf8")
-    summary = "id=%d user_id=%d created_at='%s' text=%r\r\n" % (
-        id, user_id, created_at, text)
+    text = status['text'].encode("UTF-8").replace('\n', '\\n')
+    header = "%s id=%d user_id=%d " % (created_at, id, user_id)
     global splunk
-    splunk.send(summary)
-    print summary
+    splunk.send(header)
+    splunk.send("text=\"")
+    splunk.send(text)
+    splunk.send("\"\n")
+    print header
 
 def tostr(value):
     if isinstance(value, unicode):

@@ -1,13 +1,13 @@
 #!/bin/bash
 
+# Shut down Splunk & Cassandra
+
 # UNDONE: Don't hardcode Cassandra location
 
-pushd $SPLUNK_HOME/bin
-./splunk stop
-wait
-popd
+sudo $SPLUNK_HOME/bin/splunk stop
+wait $!
 
-pushd ~/Projects/apache-cassandra-0.7.6-2/bin
+pushd /home/blovering/Projects/apache-cassandra-0.7.6-2/bin
 if [ -e cassandra.pid ]
 then 
     kill `cat cassandra.pid`

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Reload the twitted app
+
+../../tools/spurl.py /services/apps/local/twitted/_reload
+
