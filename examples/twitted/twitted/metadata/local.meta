@@ -1,0 +1,58 @@
+[app/ui]
+owner = admin
+version = 20110524
+
+[app/launcher]
+owner = admin
+version = 20110524
+
+[viewstates/flashtimeline%3Agog49lc6]
+access = read : [ * ]
+owner = nobody
+version = 20110524
+
+[viewstates/flashtimeline%3Agog4blsi]
+access = read : [ * ]
+owner = nobody
+version = 20110524
+
+[savedsearches/Top%20Sources]
+owner = admin
+version = 20110524
+
+[savedsearches/Top%20Words]
+owner = admin
+version = 20110524
+
+[savedsearches/Statuses,%20verified]
+owner = admin
+version = 20110524
+
+[savedsearches/Statuses,%20enriched]
+owner = admin
+version = 20110524
+
+[savedsearches/Statuses]
+owner = admin
+version = 20110524
+
+[savedsearches/Users,%20most%20followers]
+owner = admin
+version = 20110524
+
+[savedsearches/Users,%20most%20tweets]
+owner = admin
+version = 20110524
+
+[savedsearches/Users,%20verified,%20most%20tweets]
+owner = admin
+version = 20110524
+
+[savedsearches/Users,%20verified,%20most%20followers]
+owner = admin
+version = 20110524
+
+[savedsearches/Users,%20most%20seen%20tweets]
+owner = admin
+version = 20110524
+

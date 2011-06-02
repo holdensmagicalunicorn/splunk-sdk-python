@@ -33,7 +33,7 @@ class Logger:
         self.log.write(message)
         sys.stdout.write(message)
 
-output = Logger("cassuser.log") # sys.stdout
+output = sys.stdout # Logger("cassuser.log")
 
 # Users lookup fields, with optional output field names
 ufields = {
