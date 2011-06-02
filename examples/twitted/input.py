@@ -18,17 +18,16 @@
    to Cassandra while teeing off a portion of the stream to Splunk for
    indexing."""
 
-# UNDONE: The code below isnt particularly robust - eg: 
-#   * It doesn't handle resetting the twitter HTTP connection or the Splunk
+# UNDONE: Hardening ..
+#   * Script doesn't handle loss of the twitter HTTP connection or the Splunk
 #     TCP connection
-#   * Doesn't handle failure to write to Splunk or Cassandra (no transaction)
-#   * Need some way to validate contents of database against contents of the 
-#     index.
+#   * Script doesn't handle failure to write to Splunk or Cassandra (no
+#     transaction)
+#   * Need some way to validate contents of database against contents of 
+#     the index.
 
 # UNDONE: Inestigate alternatives to pycassa
-
-# UNDONE: Command line args - credentials, Splunk port, Cassandra port ...
-# UNDONE: Dynamically construct line-breaking rule for twitter events
+# UNDONE: Command line args - Splunk host/port, Cassandra host/port ...
 # UNDONE: Is there a better way to store bools in Cassandra?
 
 from pprint import pprint # UNDONE
@@ -259,7 +258,30 @@ def write_status(status):
     row = torow(status, schema, ignore)
     cassandra_statuses.insert(str(status['id']), row)
 
+def cmdline():
+    from optparse import OptionParser
+    parser = OptionParser()
+    parser.add_option("-u", dest="username", help="Twitter username")
+    parser.add_option("-p", dest="password", help="Twitter password")
+    (kwargs, args) = parser.parse_args()
+    username = getattr(kwargs, "username")
+    if username is None: 
+        username = raw_input("Username: ")
+    password = getattr(kwargs, "password")
+    if password is None: 
+        import getpass
+        password = getpass.getpass()
+    return { 
+        'username': username,
+        'password': password,
+    }
+
 def main():
+    kwargs = cmdline()
+
+    # UNDONE: It would be nice to check that the Twitter credentials
+    # are valid before initializing Cassandra & Splunk.
+
     print "Initializing Cassandra .."
     global cassandra, cassandra_statuses, cassandra_users
     cassandra = Cassandra(CASSANDRA_HOSTPORT)
@@ -277,7 +299,7 @@ def main():
     splunk.send("***SPLUNK*** sourcetype=twitter\n") # Initialize stream
 
     print "Listening .."
-    twitter = Twitter("brad_lovering", "ack00Twitter")
+    twitter = Twitter(kwargs['username'], kwargs['password'])
     twitter.connect(onreceive)
 
 if __name__ == "__main__":
