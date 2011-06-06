@@ -22,3 +22,5 @@ Currently each chunk request contains an event number for that request, as well 
 
 3) cleanup non-CSV output (like XML, etc) to better bound XML syntax (i.e. clean up the preview entries that are not fully parseable XML).
 
+4) make the start/end time more friendly and intuitive -- other than seconds from 1970.
+
