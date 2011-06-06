@@ -1,0 +1,24 @@
+
+export.py is a sample application to export a portion, or all, events in a specific, or all, indeces. 
+
+The CLI arguments for the export are as follows:
+
+-i or --index 		specifies the index to export. Default is all indexes.
+-p or --progress 	prints progress to stdout. Default is no progress shown.
+-s or --starttime	starttime in SECONDS from 1970. Default is start at beginning of index.
+-e or --endtime		endtimt in SECONDS from 1970. Default is end at the end of the index.
+-o or --output		output file name. Default is the current working directory, export.out.
+-f or --format		output file format. Default is CSV.
+-l or --limit		limits the number of events per chunk. The number actually used may be 
+                        smaller than this limit. Deafult is 20,000.
+
+Possible work items:
+
+1) Introduce a restart mechanism.
+Log progress to a file, so that IF something goes awry during download, one can fairly easily restart the process.
+
+2) Optionally post process the return data from the server.
+Currently each chunk request contains an event number for that request, as well as "line 0" contains the event field names/information.
+
+3) cleanup non-CSV output (like XML, etc) to better bound XML syntax (i.e. clean up the preview entries that are not fully parseable XML).
+
