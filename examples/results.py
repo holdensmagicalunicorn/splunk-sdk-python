@@ -14,7 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""A script reads XML search results from stdin and pretty-prints them
+"""A script that reads XML search results from stdin and pretty-prints them
    back to stdout. The script is designed to be used with the search.py 
    example, eg: './search.py "search 404" | ./results.py'"""
  

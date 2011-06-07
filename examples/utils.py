@@ -16,8 +16,16 @@
 
 import tools.cmdopts as cmdopts
 
-def cmdopts(argv):
-    return cmdopts.parser().loadrc(".splunkrc").parse(argv).result
+SPLUNK_RULES = cmdopts.SPLUNK_RULES
+
+def error(message, exitcode=None):
+    cmdopts.error(message, exitcode)
+
+def cmdline(argv, rules={}, config=None, **kwargs):
+    parser = cmdopts.Parser(rules, **kwargs)
+    if config is not None: parser.loadrc(config)
+    parser.parse(argv)
+    return parser.result
 
 
 

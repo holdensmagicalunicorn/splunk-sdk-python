@@ -12,88 +12,81 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+# The purpose of this module is to provide a friendlier domain interface to 
+# various Splunk endpoints. The approach here is to leverage the binding layer
+# to capture endpoint context and provide objects and methods that offer
+# simplified access their corresponding endpoints. The design specifically
+# avoids caching resource state. From the pov of this module, the 'policy' for
+# caching and refreshing resource state belongs in the application or a higher
+# level framework, and its the purpose of this module to provide simplified
+# access to that resource state.
 #
-# UNDONE: Editing of entities
-# UNDONE: Async operations
-# UNDONE: APIs need to take a port in addition to hostname
-# UNDONE: Review exception types
-# UNDONE: Parse results more incrimentally (sax?) .. at least for collection
-#   results we can define an iterator and yield collection members more 
-#   incrimentally.
-# UNDONE: Review all response handlers for consistent use of data utilities
-# UNDONE: Consider moving all current code into splunk.client
-# UNDONE: Consider "Service" (or Session) instead of Connection
-# UNDONE: Method to publish data to index (Index.submit(...) or Index.publish)
-# UNDONE: Service.restart
-# UNDONE: Alerts, figure out how the endpoint(s) work
-#
-# UNDONE: Collections
-#   * Handle paging (?)
-#   * Make collections more data driven, <get, item, ctor, dtor> params
-#   * Figure out how to delay allocation of "service" sub-objects (colls)
-#   * Standardize binding to list-like collections
-#   * ReadOnlyCollection (eg: Licenses)
-#
+# A side note, the objects below that provide helper methods for updating eg:
+# Entity state, are written in a fluent style.
 
 from pprint import pprint # UNDONE
 
-import urllib
-from xml.etree import ElementTree
-from xml.etree.ElementTree import XML
+# UNDONE: Cases below where we need to pass schema to data.load (eg: Collection)
+# UNDONE: Check status needs to attempt to retrive error message from the
+#  the resonse body. Eg: a call to index.disable on the defaultDatabase will
+#  return a 404 (which is a little misleading) but the response body contains
+#  a message indicating that disable cant be called on the default database.
 
-import binding
-from splunk.binding import http
+# NOTES
+# =====
+#
+# Layer 1 -- Entity.read => content, Collection.list => keys
+# Layer ' -- get, put, post, delete
+# Layer 0 -- request
+#
+# Service
+#
+#   * status
+#   * login
+#   * logout
+#   * settings/info
+#   * restart
+#
+#   * Licensing
+#   * Monitoring
+#   * Deployment
+#
+# Access Control - users, roles, capabilities ..
+#
+# Knowledge (conf)
+#   * Stanza?
+#
+# Index
+# Input(s)
+# Output(s)
+#
+# Search
+#   * parse
+#   * jobs
+#   * search (export)
+#   * saved
+#
+# Applications
+#   * ..
+
+from time import sleep
+
+import splunk.binding as binding
+from splunk.binding import Context, HTTPError
 import splunk.data as data
 from splunk.data import record
 
+__all__ = [
+    "Service"
+]
+
 # XML Namespaces
-namespace = record({
-    'atom': "http://www.w3.org/2005/Atom",
-    'rest': "http://dev.splunk.com/ns/rest",
-    'opensearch': "http://a9.com/-/spec/opensearch/1.1",
-})
+# "http://www.w3.org/2005/Atom",
+# "http://dev.splunk.com/ns/rest",
+# "http://a9.com/-/spec/opensearch/1.1",
 
-# Returns an extended name for the given XML namespace & localname
-def _xname(namespcae, localname):
-    return "{%s}%s" % (namespcae, localname)
-
-xname = record({
-    'content': _xname(namespace.atom, "content"),
-    'dict': _xname(namespace.rest, "dict"),
-    'eaitype': _xname(namespace.rest, "eai:type"),
-    'entry': _xname(namespace.atom, "entry"),
-    'id': _xname(namespace.atom, "id"),
-    'item': _xname(namespace.rest, "item"),
-    'key': _xname(namespace.rest, "key"),
-    'link': _xname(namespace.atom, "link"),
-    'list': _xname(namespace.rest, "list"),
-    'title': _xname(namespace.atom, "title"),
-})
-
-# Full resource paths
-_path = record({
-    'login': "/services/auth/login",
-})
-
-# Resource path suffixes
-_suffix = record({
-    'app': "apps/local/%s",
-    'apps': "apps/local",
-    'capabilities': "admin/capabilities",
-    'directory': "admin/directory",
-    'index': "data/indexes/%s",
-    'indexes': "data/indexes",
-    'roles': "admin/roles",
-    'eventtypes': "saved/eventtypes",
-    'search_commands': "search/commands",
-    'search_control': "search/jobs/%s/control",
-    'search_export': "search/jobs/export",
-    'search_fields': "search/fields",
-    'search_job': "search/jobs/%s",
-    'search_jobs': "search/jobs",
-    'search_parser': "search/parser",
-    'users': "admin/users",
-})
+PATH_INDEX = "data/indexes/%s"
+PATH_INDEXES = "data/indexes"
 
 # Ensure that this is a syntactically valid Splunk namespace.
 # The namespace must be of the form <username>:<appname> where both username
@@ -102,12 +95,6 @@ _suffix = record({
 def _check_namespace(namespace):
     if len(namespace) < 3 or namespace.count(':') != 1:
         raise SplunkError("Invalid namespace: '%s'" % namespace)
-
-# Check the response code in the given response message and raise an HTTPError
-# as appropriate.
-def _check_response(response):
-    if response.status >= 400:
-        raise HTTPError(response.status, response.reason)
 
 # Combine the given host & path to create a fully-formed URL.
 def _mkurl(host, path):
@@ -124,523 +111,142 @@ def _mkpath(suffix, namespace = None):
     if appname == "*": appname = '-'
     return "/servicesNS/%s/%s/%s" % (username, appname, suffix)
 
-def login(host, username, password):
-    """Login at the given host using given credentials and return sessionKey"""
-    url = _mkurl(host, _path.login)
-    response = http.post(url, username=username, password=password)
-    _check_response(response)
-    body = response.body.read()
-    return XML(body).findtext("./sessionKey")
+def check_status(response, *args):
+    """Checks that the given HTTP response is one of the expected values."""
+    if response.status not in args:
+        raise HTTPError(response.status, response.reason)
 
-class Connection:
-    def __enter__(self):
-        return self.open()
+# Response utilities
+def load(response):
+    return data.load(response.body.read())
 
-    def __del__(self):
-        self.close()
+class Service(Context):
+    def __init__(self, **kwargs):
+        Context.__init__(self, **kwargs)
 
-    def __exit__(self, type, value, traceback):
-        self.close()
+    @property
+    def indexes(self):
+        return Indexes(self)
 
-    def __init__(self, host, username, password, namespace = None):
-        self._server = None
-        self.token = None # The session (aka authn) token
-        self.host = host
-        self.username = username
-        self.password = password
-        self.namespace = namespace
-        self.applications = Applications(self)
-        self.eventtypes = Eventtypes(self)
-        self.indexes = Indexes(self)
-        self.inputs = Inputs(self)
-        self.jobs = Jobs(self)
-        self.licenses = Licenses(self)
-        self.objects = Objects(self)
-        self.roles = Roles(self)
-        self.users = Users(self)
+class Endpoint:
+    def __init__(self, service, path):
+        self.service = service
+        self.path = path
+        self.get = service.bind(path, "get")
+        self.post = service.bind(path, "post")
 
-    def close(self):
-        self.token = None
+    def invoke(self, action, **kwargs):
+        """Invoke a custom action on the Endpoint."""
+        response = self.service.post(self.path + '/' + action, **kwargs)
+        check_status(response, 200)
         return self
 
-    def isclosed(self):
-        return self.token is None
-
-    def isopen(self):
-        return self.token is not None
-
-    def login(self):
-        self.token = "Splunk " + login(self.host, self.username, self.password)
-        return self
-
-    def open(self): # Idempotent
-        self.login()
-        return self
-
-    def _checked_delete(self, path, **kwargs):
-        response = self.delete(path, **kwargs)
-        _check_response(response)
-        return response
-
-    def _checked_get(self, path, **kwargs):
-        response = self.get(path, **kwargs)
-        _check_response(response)
-        return response
-
-    def _checked_post(self, path, **kwargs):
-        response = self.post(path, **kwargs)
-        _check_response(response)
-        return response
-
-    # Returns request headers for this connection
-    def _headers(self):
-        return [("Authorization", self.token)]
-
-    def delete(self, path, timeout = None, **kwargs):
-        url = _mkurl(self.host, path)
-        return http.delete(url, self._headers(), timeout, **kwargs)
-
-    def get(self, path, timeout = None, **kwargs):
-        url = _mkurl(self.host, path)
-        return http.get(url, self._headers(), timeout, **kwargs)
-
-    def post(self, path, timeout = None, **kwargs):
-        url = _mkurl(self.host, path)
-        return http.post(url, self._headers(), timeout, **kwargs)
-
-    # List
-    def commands(self):
-        path = _mkpath(_suffix.search_commands, self.namespace)
-        response = self._checked_get(path, count=-1)
-        return _parse_titles(response.body.read())
-
-    # List
-    def capabilities(self):
-        path = _mkpath(_suffix.capabilities)
-        response = self._checked_get(path)
-        xpath = "%s/%s" % (xname.entry, xname.content)
-        return data.load(response.body.read(), xpath).capabilities
-
-    # List
-    def fields(self, **kwargs):
-        """Returns a list of search fields."""
-        path = _mkpath(_suffix.search_fields, self.namespace)
-        response = self._checked_get(path, **kwargs)
-        return _parse_titles(response.body.read())
-
-    def info(self):
-        response = self._checked_get("/services/server/info")
-        return _parse_content(response.body.read())
-
-    def parse(self, query):
-        path = _mkpath(_suffix.search_parser)
-        response = self.get(path, q=query)
-        if response.status == 200:
-            return data.load(response.body.read())
-        message = "Syntax Error"
-        messages = _parse_messages(response.body.read()) # Grab error messages
-        if len(messages) > 0: message = messages[0].get("$text", message)
-        raise SyntaxError(message)
-
-    def restart(self):
-        pass # UNDONE
-
-    def search(self, query = None, **kwargs):
-        """Execute an immediate search."""
-        path = _mkpath(_suffix.search_export, self.namespace)
-        if query is not None: kwargs['search'] = "search %s" % query 
-        response = self.post(path, **kwargs)
-        return response.body.read()
-
-    def status(self):
-        return "closed" if self.token is None else "open"
-
-def connect(**kwargs):
-    """Create and open a connection to the given host"""
-    host = kwargs.get("host")
-    username = kwargs.get("username")
-    password = kwargs.get("password")
-    namespace = kwargs.get("namespace")
-    return Connection(host, username, password, namespace).open()
-
-class Collection: # Abstract
-    def __init__(self, cn):
-        self._cn = cn
-        self._items = None
-
-    def __call__(self, name = None):
-        return self.keys() if name is None else self[name]
+# UNDONE: Common create & delete options?
+class Collection(Endpoint):
+    def __init__(self, service, path):
+        Endpoint.__init__(self, service, path)
 
     def __getitem__(self, key):
-        self.ensure()
-        return self._items.__getitem__(key)
-        
-    def __iter__(self):
-        self.ensure()
-        return self._items.__iter__()
+        pass # Abstract
 
-    def __len__(self):
-        self.ensure()
-        return self._items.__len__()
+    def itemmeta(self):
+        """Returns collection item metadata."""
+        response = self.service.get(self.path + "/_new")
+        check_status(response, 200)
+        content = load(response).entry.content
+        return record({
+            'eai:acl': content['eai:acl'],
+            'eai:attributes': content['eai:attributes']
+        })
 
-    def create(self, **kwargs):
-        raise # Abstract
+    def list(self): # UNDONE: keys?
+        pass # Abstract
 
-    def delete(self, **kwargs):
-        raise # Abstract
+class Entity(Endpoint):
+    """Abstract base class that implements the Splunk 'entity' protocol."""
 
-    def ensure(self):
-        if self._items is None: self.refresh()
+    def __init__(self, service, path):
+        Endpoint.__init__(self, service, path)
+        # UNDONE: The following should be derived by reading entity links
+        self.delete = lambda: self.service.delete(self.path)
+        self.disable = lambda: self.invoke("disable")
+        self.enable = lambda: self.invoke("enable")
+        self.reload = lambda: self.invoke("_reload")
 
-    def get(self, name, default = None):
-        self.ensure()
-        return self._items.get(key, default)
+    def __getitem__(self, key):
+        return self.read()[key]
 
-    def has_key(self):
-        self.ensure()
-        return self._items.has_key()
+    def __setitem__(self, key, value):
+        self.update(key=value)
 
-    def items(self):
-        self.ensure()
-        return self._items.items()
+    def read(self, *args):
+        """Read and return the current entity value, optionally returning
+           only the requested fields, if specified."""
+        response = self.get()
+        check_status(response, 200)
+        content = load(response).entry.content
+        if len(args) > 0: # We have filter args
+            result = record({})
+            for key in args: result[key] = content[key]
+        else:
+            # Eliminate some noise by default
+            result = content
+            del result['eai:acl']
+            del result['eai:attributes']
+            del result['type']
+        return result
 
-    def iteritems(self):
-        self.ensure()
-        return self._items.iteritems()
+    def readmeta(self):
+        """Return the entity's metadata."""
+        return self.read('eai:acl', 'eai:attributes')
 
-    def iterkeys(self):
-        self.ensure()
-        return self._items.iterkeys()
+    def update(self, **kwargs):
+        response = self.service.post(self.path, **kwargs)
+        check_status(response, 200)
+        return self
 
-    def itervalues(self):
-        self.ensure()
-        return self._items.itervalues()
+# UNDONE: Index should not have a delete method (currently inherited)
+class Index(Entity):
+    def __init__(self, service, name):
+        Entity.__init__(self, service, PATH_INDEX % name)
+        self.name = name
+        self.roll_hot_buckets = lambda: self.invoke("roll-hot-buckets")
 
-    def keys(self):
-        self.ensure()
-        return self._items.keys()
-
-    def refresh(self):
-        raise # Abstract
-
-    def values(self):
-        self.ensure()
-        return self._items.values()
-
-class Applications(Collection):
-    def create(self, name, **kwargs):
-        path = _mkpath(_suffix.apps, self._cn.namespace)
-        self._cn._checked_post(path, name=name, **kwargs)
-        self.refresh()
-
-    def delete(self, name):
-        path = _mkpath(_suffix.app % name, self._cn.namespace)
-        self._cn._checked_delete(path)
-        self.refresh()
-
-    def refresh(self):
-        path = _mkpath(_suffix.apps, self._cn.namespace)
-        response = self._cn._checked_get(path, count=-1)
-        self._items = _parse_entries(response.body.read())
-
-class Eventtypes(Collection):
-    def create(self): pass # UNDONE
-
-    def delete(self): pass # UNDONE
-
-    def refresh(self):
-        path = _mkpath(_suffix.eventtypes, self._cn.namespace)
-        response = self._cn._checked_get(path, count=-1)
-        self._items = _parse_entries(response.body.read())
+    def clean(self):
+        """Delete the contents of the index."""
+        saved = self.read('maxTotalDataSizeMB', 'frozenTimePeriodInSecs')
+        self.update(maxTotalDataSizeMB=1, frozenTimePeriodInSecs=1)
+        self.roll_hot_buckets()
+        while True: # Wait until event count goes to zero
+            sleep(1)
+            if self['totalEventCount'] == '0': break
+        self.update(**saved)
 
 class Indexes(Collection):
+    def __init__(self, service):
+        Collection.__init__(self, service, PATH_INDEXES)
+
+    def __getitem__(self, key):
+        return Index(self.service, key)
+
+    def __iter__(self):
+        names = self.list()
+        for name in names: yield Index(self.service, name)
+
+    def contains(self, name):
+        """Answers if an index with the given name exists."""
+        return name in self.list()
+
     def create(self, name, **kwargs):
-        path = _mkpath(_suffix.indexes, self._cn.namespace)
-        self._cn._checked_post(path, name=name, **kwargs)
-        self.refresh()
+        response = self.post(name=name, **kwargs)
+        check_status(response, 201)
+        return Index(self.service, name)
 
-    # UNDONE: See http://jira.splunk.com:8080/browse/SPL-35023 for how to 
-    # implement!
-    def clear(self, name):
-        """Clear the named index."""
-        raise # UNDONE
-
-    # It's not possible to delete an index
-    def delete(self, name):
-        raise # UNDONE: IllegalOperationError?
-
-    def refresh(self):
-        path = _mkpath(_suffix.indexes, self._cn.namespace)
-        response = self._cn._checked_get(path, count=-1)
-        self._items = _parse_entries(response.body.read())
-
-class Inputs(Collection):
-    def create(self): raise # UNDONE
-
-    def delete(self): raise # UNDONE
-
-    # data/inputs/monitor
-    # UNDONE: data/inputs/oneshot ?
-    # UNDONE: data/inputs/script
-    # UNDONE: data/inputs/tcp/raw
-    # UNDONE: data/inputs/tcp/cooked
-    # UNDONE: data/inputs/tcp/ssl
-    # UNDONE: data/inputs/udp
-    # UNDONE: data/inputs/win-event-log-collections
-    # UNDONE: data/inputs/win-wmi-collections
-    def refresh(self):
-        path = _mkpath("data/inputs/monitor")
-        response = self._cn._checked_get(path, count=-1)
-        self._items = _parse_entries(response.body.read())
-
-class Jobs(Collection):
-    # UNDONE: Finish implementation
-    #def create(self, query = None, **kwargs):
-    #    kwargs['exec_mode'] = "normal"
-    #    if query is not None: kwargs['search'] = query
-    #    path = _mkpath(_suffix.search_jobs, self.namespace)
-    #    response = self.post(path, **kwargs)
-    #    if response.status == 200: # oneshot
-    #        return response.body
-    #    if response.status == 201: # Created
-    #        return XML(response.body).findtext("sid").strip()
-    #    raise HTTPError(response.status, response.reason)
-
-    def delete(self): raise # UNDONE
-
-    def refresh(self):
-        path = _mkpath(_suffix.search_jobs, self._cn.namespace)
-        response = self._cn._checked_get(path, count=0)
-        self._items = _parse_jobs(response.body.read())
-
-class Licenses(Collection):
-    def create(self): raise # UNDONE
-
-    def delete(self): raise # UNDONE
-
-    def refresh(self):
-        path = _mkpath("licenser/licenses")
-        response = self._cn._checked_get(path, count=-1)
-        self._items = _parse_entries(response.body.read())
-
-class Objects(Collection):
-    def create(self): raise # UNDONE
-
-    def delete(self): raise # UNDONE
-
-    def refresh(self):
-        path = _mkpath(_suffix.directory);
-        response = self._cn._checked_get(path, count=-1)
-        self._items = _parse_entries(response.body.read())
-
-class Roles(Collection):
-    def create(self): pass # UNDONE
-
-    def delete(self): pass # UNDONE
-
-    def refresh(self):
-        path = _mkpath(_suffix.roles);
-        response = self._cn._checked_get(path, count=-1)
-        self._items = _parse_entries(response.body.read())
-    
-class Users(Collection):
-    def create(self): pass # UNDONE
-
-    def delete(self): pass # UNDONE
-
-    def refresh(self):
-        path = _mkpath(_suffix.users);
-        response = self._cn._checked_get(path, count=-1)
-        self._items = _parse_entries(response.body.read())
-    
-#
-# Jobs collection
-#
-
-# Convert the given job response message to a job state value
-def _jobstate(message):
-    if response.isDone:
-        return "done"
-    if response.isPaused:
-        return "paused"
-    if response.error is not None:
-        return "failed"
-    return "running"
-
-# A Splunk search job
-class Job:
-    def __init__(self, cn, id):
-        self._cn = cn
-        self._id = id
-        self.age = 0
-        self.ttl = 0
-        self.progress = 0.0
-        self.state = "none"
-        self.updated = None
-
-    def _control(self, action):
-        path = _mkpath(_suffix.search_control % self.id, self._cn.namespace)
-        return self._post(path, action=action)
-
-    # Retrieve the status of the current job
-    def _get(self, path):
-        path = _mkpath(_suffix.search_job % self.id, self._cn.namespace)
-        return self._cn._checked_get(path)
-    
-    # Issue a post against the current job
-    def _post(self, path, **kwargs):
-        return self._cn._checked_post(path, **kwargs)
-
-    # Refresh the state of the job object with the given response message
-    def _update(self, message = None):
-        if message is None: 
-            message = data.load(self._get(self._path)) # UNDONE
-        # UNDONE: check and make sure the id matches
-        self.state = self._jobstate(message)
-        self.age = data.runDuration
-        self.progress = data.doneProgress
-        date.updated = now() # UNDONE
-
-    def cancel(self):
-        self._control("cancel")
-
-    def pause(self):
-        self._control("pause")
-
-    def refresh(self):
-        self._update()
-
-    def touch(self):
-        self._control("touch")
-
-    def resume(self):
-        self._control("unpause")
-
-    def finalize(self):
-        self._control("finalize")
-
-#
-# Response handlers
-#
-
-# Parse a generic atom feed into a dict
-def _parse_entries(body):
-    entries = data.load(body, xname.entry)
-    if not isinstance(entries, list): entries = [entries] # Normalize schema
-    result = {}
-    for entry in entries:
-        name = entry.title
-        value = entry.content
-        value['name'] = name
-        del value['type']
-        result[name] = value
-    return result
-
-# Basically the same as _parse_entries, but the job key is the sid which
-# is not in the title  element
-def _parse_jobs(body):
-    entries = data.load(body, xname.entry)
-    if not isinstance(entries, list): entries = [entries] # Normalize schema
-    result = {}
-    for entry in entries:
-        value = entry.content
-        name = value.sid
-        value['name'] = name
-        del value['type']
-        result[name] = value
-    return result
-
-# Exteract title element of each entry into a list
-def _parse_titles(body):
-    entries = XML(body).findall(xname.entry)
-    return [ entry.findtext(xname.title) for entry in entries ]
-
-def _parse_content(body):
-    content = XML(body).find("./*/%s" % xname.content)
-    return data.load_element(content)
-    
-# /response/messages/msg*
-def _parse_messages(body):
-    # We expect to see /response/messages/msg*
-    msgs = XML(body).findall("messages/msg")
-    return map(msgs, _load_leaf)
-
-# Load the contents of the given element into a dict. This routine assumes 
-# that the contents are either a string, a <list> or a <dict> element, so this
-# can only be called in specific contexts, for example recursively within the 
-# content element of a splunk atom <entry> element.
-def _load_content(element):
-    if element is None:
-        return ""
-    kids = list(element) 
-    count = len(kids) 
-    assert count in [0, 1]
-    if count == 0: 
-        return element.text
-    child = kids[0]
-    if child.tag == xname.dict: 
-        return _load_dict(child)
-    if child.tag == xname.list: 
-        return _load_list(child)
-    assert False # Unexpected
-    return None
-
-# Parse a <dict> element and return a Python dict
-def _load_dict(element):
-    assert element.tag == xname.dict
-    keys = element.findall(xname.key)
-    result = {}
-    for key in keys: result[key.attrib["name"]] = _load_content(key)
-    return record(result)
-
-# Load a leaf element into
-def _load_leaf(element):
-    assert len(list(element)) == 0 # No kids
-    result = { '$text': element.text }
-    for k, v in element.attrib.items(): result[k] = v
-    return result
-
-# Parse a <list> element and return a Python list
-def _load_list(element):
-    assert element.tag == xname.list
-    map(element.findall(xname.item), _load_content)
-
-def map(list, fn): 
-    return [fn(item) for item in list] if list is not None else []
-
-# Parse the result from a jobs request into a pythonic form.
-def find1(match):
-    """Returns a singleton finder for the given match expression"""
-    return lambda element: element.find(match)
-
-def findn(match):
-    """Returns an 'all" finder for the given match expression"""
-    return lambda element: element.findall(match)
-
-def select(element, rules):
-    """Returns a record consisting of items selected from the given element 
-       using the given rules. A rule may be a simple selection string, or a
-       lambda."""
-    result = {}
-    for name in rules.keys():
-        rule = rules[name]
-        if isinstance(rule, str):
-            result[name] = element.findtext(rule)
-        else:
-            result[name] = rule(element)
-    return record(result)
-
-def selector(rules):
-    """Construct a selector based on the given set of selection rules."""
-    return lambda element: select(element, rules)
-
-#
-# Exceptions
-#
-    
-class SplunkError(Exception):
-    pass
-
-class SyntaxError(SplunkError):
-    pass
+    def list(self):
+        """Returns a list of index names."""
+        response = self.get(count=-1)
+        check_status(response, 200)
+        entry = load(response).entry
+        if not isinstance(entry, list): entry = [entry] # UNDONE
+        return [item.title for item in entry]
 

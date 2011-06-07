@@ -25,8 +25,22 @@ class ExamplesTestCase(unittest.TestCase):
         self.assertEquals(result, 0)
 
     def test_index(self):
-        result = os.system("python index.py > __stdout__")
-        self.assertEquals(result, 0)
+        # Ignore result, it might already exist
+        os.system("python index.py create sdk-examples > __stdout__")
+
+        commands = [
+            "python index.py --help > __stdout__",
+            "python index.py > __stdout__",
+            "python index.py list > __stdout__",
+            "python index.py list sdk-examples > __stdout__",
+            "python index.py disable sdk-examples > __stdout__",
+            "python index.py enable sdk-examples > __stdout__",
+            "python index.py clean sdk-examples > __stdout__",
+        ]
+
+        for command in commands:
+            result = os.system(command)
+            self.assertEquals(result, 0)
 
     def test_info(self):
         result = os.system("python info.py > __stdout__")

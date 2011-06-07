@@ -48,15 +48,6 @@ XNAME_ENTRY = XNAMEF_ATOM % "entry"
 
 opts = None # Command line options
 
-# UNDONE: Finish testing package namespaces
-class PackageTestCase(unittest.TestCase):
-    def test_names(self):
-        import splunk
-        names = dir(splunk)
-
-        import splunk.binding
-        # ...
-
 def entry_titles(text):
     """Returns list of atom entry titles from the given atom text."""
     entry = data.load(text).entry
@@ -66,6 +57,43 @@ def entry_titles(text):
 def uname():
     """Creates a unique name."""
     return str(uuid.uuid1())
+
+# UNDONE: Finish testing package namespaces
+class PackageTestCase(unittest.TestCase):
+    def test_names(self):
+        import splunk
+        names = dir(splunk)
+
+        import splunk.binding
+        # ...
+
+# Verify that the protocol looks like what we expect
+ATOM = "http://www.w3.org/2005/Atom"
+AUTHOR = "{%s}author" % ATOM
+ENTRY = "{%s}entry" % ATOM
+FEED = "{%s}feed" % ATOM
+ID = "{%s}id" % ATOM
+TITLE = "{%s}title" % ATOM
+
+class ProtocolTestCase(unittest.TestCase):
+    def setUp(self):
+        global opts
+        self.context = connect(**opts.kwargs)
+
+    def tearDown(self):
+        pass
+
+    def test(self):
+        paths = ["/services"]
+        for path in paths:
+            body = self.context.get(path).body.read()
+            root = XML(body)
+            self.assertTrue(root.tag == FEED)
+            self.assertTrue(root.find(AUTHOR) is not None)
+            self.assertTrue(root.find(ID) is not None)
+            self.assertTrue(root.find(TITLE) is not None)
+            self.assertTrue(root.findall(ENTRY) is not None)
+
     
 class BindingTestCase(unittest.TestCase): # Base class
     def setUp(self):

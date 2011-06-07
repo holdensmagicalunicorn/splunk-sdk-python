@@ -12,10 +12,11 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# UNDONE: Support for _new endpoints (metadata)
-# UNDONE: Validate Context.get|post|delete path args are paths and not urls
 # UNDONE: HTTP POST does not support file upload
+# UNDONE: Validate Context.get|post|delete path args are paths and not urls
 # UNDONE: self.namespace should default to actual string and not None
+# UNDONE: CONSIDER: __del__ on Context
+# UNDONE: CONSIDER: __enter__/__exit__ on Context
 
 """Low-level bindings to the Splunk REST API."""
 
@@ -25,10 +26,8 @@ from xml.etree.ElementTree import XML
 from splunk.data import record
 
 __all__ = [
-    "Collection",
     "connect",
     "Context",
-    "Entity",
     "HTTPError",
     "login",
 ]
@@ -132,34 +131,6 @@ def login(**kwargs):
         prefix(**kwargs) + "/services/auth/login",
         username=kwargs.get("username", ""),
         password=kwargs.get("password", ""))
-
-class Entity:
-    """Implements the protocol for interacting with 'entity' resources."""
-    def __init__(self, context, path, verbs = "get,update"):
-        if "get" in verbs:
-            self.get = context.bind(path, "get")
-        if "update" in verbs:
-            self.update = context.bind(path, "post")
-
-    def __call__(self, *args, **kwargs):
-        return self.get(*args, **kwargs)
-
-class Collection:
-    """Implements the protocol for interacting with a collection resource."""
-    def __init__(self, context, path, verbs = "get,item,create,delete"):
-        verbs = verbs.split(',')
-        itempath = "%s/{0}" % path
-        if "get" in verbs:
-            self.get = context.bind(path, "get")
-        if "item" in verbs:
-            self.item = context.bind(itempath, "get")
-        if "create" in verbs:
-            self.create = context.bind(path, "post")
-        if "delete" in verbs:
-            self.delete = context.bind(itempath, "delete")
-
-    def __call__(self, *args, **kwargs):
-        return self.get(*args, **kwargs)
 
 #
 # The HTTP interface below, used by the Splunk binding layer, abstracts the 
@@ -308,3 +279,4 @@ class HTTPError(Exception):
         Exception.__init__(self, "HTTP %d %s" % (status, reason)) 
         self.reason = reason
         self.status = status
+

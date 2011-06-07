@@ -17,18 +17,16 @@
    binds to a sampling of endpoints showing how to access collections,
    entities and 'method-like' endpoints."""
 
-from splunk.binding import connect, Collection, Entity
+from splunk.binding import connect
 
 import tools.cmdopts as cmdopts
 
 class Service:
     def __init__(self, context):
-        self.apps = Collection(context, "apps/local")
-        self.roles = Collection(context, "authorization/roles")
-        self.users = Collection(context, "authentication/users")
-        self.indexes = Collection(context, "data/indexes")
-        self.info = context.bind("server/info", "get")
-        self.settings = Entity(context, "server/settings")
+        self.apps = context.bind("apps/local")
+        self.indexes = context.bind("data/indexes")
+        self.info = context.bind("server/info")
+        self.settings = context.bind("server/settings")
         self.export = context.bind("search/jobs/export", "post")
 
     def search(self, query, **kwargs):
@@ -38,8 +36,6 @@ def main(argv):
     opts = cmdopts.parser().loadrc(".splunkrc").parse(sys.argv[1:]).result
     service = Service(connect(**opts.kwargs))
     assert service.apps().status == 200
-    assert service.roles().status == 200
-    assert service.users().status == 200
     assert service.indexes().status == 200
     assert service.info().status == 200
     assert service.settings().status == 200

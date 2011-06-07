@@ -14,7 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""A command line utility for manipulataing saved searches (create/list/delete them) ."""
+"""A command line utility for manipulating saved searches (create/list/delete)."""
 
 import sys
 import splunk
