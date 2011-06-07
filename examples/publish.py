@@ -19,6 +19,9 @@
    will be published to the index as a separate event. If no event arguments
    are provided, the event data will be read from stdin."""
 
+# UNDONE: Simplify the Stanza class below (most is not used by this sample)
+# and move the rest to the conf.py sample.
+
 import sys
 
 from splunk.binding import *
@@ -80,10 +83,10 @@ class Stanza:
         return self
 
 def create_stanza(context):
-    pass
+    pass # UNDONE: Sample-specific stanza code
 
 def delete_stanza(context):
-    pass
+    pass # UNDONE: Sample specific stanza code
             
 def publish(context, index, events):
     # Create the sourcetype rule used for the published event

@@ -25,9 +25,9 @@ def config(option, opt, value, parser):
     parser.load(value)
 
 # Print the given message to stderr, and optionally exit
-def error(message, exitCode = None):
+def error(message, exitcode = None):
     print >> sys.stderr, "Error: %s" % message
-    if not exitCode is None: sys.exit(exitCode)
+    if not exitcode is None: sys.exit(exitcode)
 
 class record(dict):
     def __getattr__(self, name):
