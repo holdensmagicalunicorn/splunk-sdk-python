@@ -1,34 +1,38 @@
 #!/usr/bin/env python
+#
+# Copyright 2011 Splunk, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"): you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
 """
 This software exports a splunk index using the streaming export endpoint
 using a parameterized chunking mechanism.
-
- Copyright 2011 Splunk, Inc.
-
- Licensed under the Apache License, Version 2.0 (the "License"): you may
- not use this file except in compliance with the License. You may obtain
- a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- License for the specific language governing permissions and limitations
- under the License.
-
 """
+
 # installation support files
 from optparse import OptionParser
 import sys
 import operator
 import time
+import os
 
 # splunk support files
 import tools.cmdopts as cmdopts
 import splunk.binding as binding
 from splunk.binding import connect
 
+# hidden file
+RESTART_FILE = "./.export_restart_log"
 
 def parse_args():
     """ parse cli arguments """
@@ -70,6 +74,11 @@ def parse_args():
               default="20000",
               help="Number of events to limit per chunk (defaults to 7500)",
               dest="limit")
+
+    opt.add_option("-r", "--restart", 
+              default=False,
+              help="restart an existing export that was prematurely ended",
+              dest="restart")
 
     return opt.parse_args()
 
@@ -187,8 +196,45 @@ def normalize_export_buckets(options, context):
 
     return buckets
 
-def export(options, context, bucket_list):
-    """ given the buckets, export the events """
+def sanitize_restart_bucket_list(options, bucket_list):
+    """ clean up bucket list for an export already in progress """
+
+    sane = True
+
+    # run through the entries we have already processed found in the restart
+    # file and remove them from the live bucket list.
+    # 
+    # NOTE: we will also check for corroboration between live and processed
+    # lists
+
+    # read restart file into a new list
+    rfd = open(RESTART_FILE, "r")
+    rslist = []
+    for line in rfd:
+        line = line[:-1].split(",")
+        rslist.append((int(line[0]), int(line[1]), int(line[2])))
+    rfd.close()
+
+    fslist_final = []
+
+    for entry in rslist:
+        # throw away empty buckets, until a non-empty bucket
+        while bucket_list[0][0] == 0:
+            bucket_list.pop(0)
+
+        if bucket_list[0] != entry:
+            print "Warning: live list contains: %s, restart list contains: %s" \
+                 % (str(bucket_list[0]), str(rslist[0]))
+            sane = False
+
+        if options.progress:
+            print "restart skipping already handled bucket: %s" % str(entry)
+        bucket_list.pop(0)
+
+    return (bucket_list, sane)
+
+def report_banner(bucket_list):
+    """ output banner for export operation """
 
     eventcount = 0
     requests = 0
@@ -200,6 +246,20 @@ def export(options, context, bucket_list):
 
     print "Events exported: %d, requiring %d splunk fetches" % \
                                             (eventcount, requests)
+
+def export(options, context, bucket_list):
+    """ given the buckets, export the events """
+
+    if options.restart:
+        (bucket_list, sane) = sanitize_restart_bucket_list(options, bucket_list)
+        if not sane:
+            print "Mismatch between restart and live event list, exiting"
+            sys.exit(1)
+
+    report_banner(bucket_list)
+
+    # (re)open restart file appending to the end if it exists
+    rfd = open(RESTART_FILE, "a")
 
     for bucket in bucket_list:
         if bucket[0] == 0:
@@ -232,16 +292,33 @@ def export(options, context, bucket_list):
     
                 if result.status != 200:
                     # TODO: retry on failure, sleep and retry?
+                    # at sme point, maybe give up... and the user can
+                    # attempt a restart export
                     print "HTTP status: %d, sleep and retry..." % \
                           result.status
                     time.sleep(10)
                 else:
                     success = True
 
+            # write export file 
+            # N.B.: atomic writes in python don't seem to exist. In order
+            # *really* make this robust, we need to atomically write the 
+            # body of the event returned AND update the restart file and
+            # guarantee both commited.
+
+            # atomic write start
             options.fd.write(result.body.read())
+            options.fd.flush()
+            rfd.write(str(bucket).strip("(").strip(")").replace(" ",""))
+            rfd.write("\n")
+            rfd.flush()
+            # atomic write commit
+
+    return True
 
 def main():
     """ main entry """
+
 
     # perform idempotent login/connect -- get login creds from ~/.splunkrc
     # TODO: allow for credential supplied via CLI args
@@ -260,7 +337,33 @@ def main():
         sys.exit(1)
 
     # open output file
-    options.fd = open(options.output, "w")
+    try:
+        options.fd = open(options.output, "w")
+    except IOError:
+        print "Failed to open output file %s for writing" % options.output
+        sys.exit(1)
+
+    # open restart file
+    rfd = None
+    try:
+        rfd = open(RESTART_FILE, "r")
+    except IOError:
+        pass
+
+    # check request and environment for sanity
+    if options.restart is not False and rfd is None:
+        print "Failed to open restart file %s for reading" % RESTART_FILE
+        sys.exit(1)
+    elif options.restart is False and rfd is not None:
+        print "Warning: restart file %s exists." % RESTART_FILE
+        print "         manually remove this file to continue complete export"
+        sys.exit(1)
+    else:
+        pass
+
+    # close restart file 
+    if rfd is not None:
+        rfd.close()
 
     # normalize buckets to contain no more than "limit" events per bucket
     # however, there may be a situation where there will be more events in 
@@ -268,8 +371,9 @@ def main():
     # to do about it
     bucket_list = normalize_export_buckets(options, context)
 
-    # chunk through each bucket
-    export(options, context, bucket_list)
+    # chunk through each bucket, and on success, remove the restart file
+    if export(options, context, bucket_list) is True:
+        os.remove(RESTART_FILE)
 
 if __name__ == '__main__':
     main()
