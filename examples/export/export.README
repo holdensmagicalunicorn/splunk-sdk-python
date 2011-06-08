@@ -11,16 +11,32 @@ The CLI arguments for the export are as follows:
 -f or --format		output file format. Default is CSV.
 -l or --limit		limits the number of events per chunk. The number actually used may be 
                         smaller than this limit. Deafult is 20,000.
+-r or --restart         restarts the export if terminated prematurely.
 
 Possible work items:
 
-1) Introduce a restart mechanism.
-Log progress to a file, so that IF something goes awry during download, one can fairly easily restart the process.
-
-2) Optionally post process the return data from the server.
+1) Optionally post process the return data from the server.
 Currently each chunk request contains an event number for that request, as well as "line 0" contains the event field names/information.
 
-3) cleanup non-CSV output (like XML, etc) to better bound XML syntax (i.e. clean up the preview entries that are not fully parseable XML).
+2) cleanup non-CSV output (like XML, etc) to better bound XML syntax (i.e. clean up the preview entries that are not fully parseable XML).
 
-4) make the start/end time more friendly and intuitive -- other than seconds from 1970.
+3) make the start/end time more friendly and intuitive -- other than seconds from 1970.
+
+NOTES: The "time chunking" algorithm tries to put as many events, up to the limit specified in a "bucket".
+We start out by breaking the index into buckets of 86400 seconds, or one day. If the number of events in
+this bucket is more than our limit, we split the day into 24 buckets of one our each. If any of the hour 
+buckets contain more events than our limit, the hour is split into 60 buckets of one minute each. If any 
+of the minute buckets contain more events than our limit, the minute is split into 60 buckets of one second 
+each. A second bucket is the smallest granular size.
+
+The code has a downsample map:
+
+ { 86400 : 3600, 3600 : 60, 60 : 1 }
+
+This maps the current "bucket length in seconds" to "next bucket length in seconds" if the current bucket 
+contains more events than our limit.
+
+The goal of export.py is NOT to optimize the number of requests to splunk, rather to optimize the size of
+the return request from splunk so that in the cases of very large indeces, robustness and restart is 
+paramount.
 
