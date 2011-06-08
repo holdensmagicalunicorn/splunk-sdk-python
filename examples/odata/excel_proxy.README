@@ -1,4 +1,4 @@
-How to use the sdk_proxy shim to connect Microsoft Office's Excel + Powerpivot.
+How to use the excel_proxy shim to connect Microsoft Office's Excel + Powerpivot.
 
 1) Office 2010 is required. Dowload the free powerpivot plugin for excel from www.powerpivot.com
 2) Install and run plunkd on whatever platform you see fit. 
@@ -11,9 +11,9 @@ host=127.0.0.1
 user=admin
 password=changed
 
-6) run the sdk_proxy.py -- you should see something like:
+6) run the excel_proxy.py -- you should see something like:
 
-splunk proxy: connect to http://localhost:8086/...
+splunk proxy: connect to http://192.168.242.179:8086/...
 
 7) From excel, launch the powerpivot window.
 8) From the powerpivot window, select "From data feed" which will launch a dialog.
