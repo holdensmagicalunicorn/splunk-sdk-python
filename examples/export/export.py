@@ -307,6 +307,7 @@ def export(options, context, bucket_list):
             # guarantee both commited.
 
             # atomic write start
+            # TODO: post process results before writing?
             options.fd.write(result.body.read())
             options.fd.flush()
             rfd.write(str(bucket).strip("(").strip(")").replace(" ",""))
