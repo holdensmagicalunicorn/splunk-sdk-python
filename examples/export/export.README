@@ -24,7 +24,7 @@ Currently each chunk request contains an event number for that request, as well 
 
 NOTES: The "time chunking" algorithm tries to put as many events, up to the limit specified in a "bucket".
 We start out by breaking the index into buckets of 86400 seconds, or one day. If the number of events in
-this bucket is more than our limit, we split the day into 24 buckets of one our each. If any of the hour 
+this bucket is more than our limit, we split the day into 24 buckets of one hour each. If any of the hour 
 buckets contain more events than our limit, the hour is split into 60 buckets of one minute each. If any 
 of the minute buckets contain more events than our limit, the minute is split into 60 buckets of one second 
 each. A second bucket is the smallest granular size.
