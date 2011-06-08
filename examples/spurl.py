@@ -21,7 +21,8 @@
 import sys
 
 import splunk
-import cmdopts
+
+from utils import cmdopts
 
 # Invoke the url using the given opts parameters
 def invoke(path, **kwargs):
@@ -40,7 +41,7 @@ def print_response(response):
         print body
 
 def main():
-    opts = cmdopts.parser().loadrc(".splunkrc").parse(sys.argv[1:]).result
+    opts = cmdopts.parse(sys.argv[1:], {}, ".splunkrc")
     for arg in opts.args: 
         print_response(invoke(arg, **opts.kwargs))
 

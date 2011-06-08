@@ -25,7 +25,7 @@ import textwrap
 import splunk.binding as binding
 import splunk.data as data
 
-import tools.cmdopts as cmdopts
+from utils import cmdopts
 
 class HTTPError(Exception): pass
 
@@ -371,7 +371,7 @@ def dump(cx):
     out.writeln()
 
 def main():
-    opts = cmdopts.parser().loadrc(".splunkrc").parse(sys.argv[1:]).result
+    opts = cmdopts.parse(sys.argv[1:], {}, ".splunkrc")
     dump(binding.connect(**opts.kwargs))
 
 if __name__ == "__main__":

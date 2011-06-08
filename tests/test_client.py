@@ -17,7 +17,8 @@ import unittest
 from xml.etree.ElementTree import XML
 
 import splunk
-import tools.cmdopts as cmdopts
+
+from utils import cmdopts
 
 opts = None # Command line options
 
@@ -87,7 +88,7 @@ class ServiceTestCase(unittest.TestCase):
 
 def main(argv):
     global opts
-    opts = cmdopts.parser().loadrc(".splunkrc").parse(argv).result
+    opts = cmdopts.parse(argv, {}, ".splunkrc")
     unittest.main()
 
 if __name__ == "__main__":

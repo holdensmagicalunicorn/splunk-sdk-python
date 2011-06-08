@@ -16,7 +16,6 @@
 
 """A command line utility for interacting with Splunk indexes."""
 
-#
 # UNDONE: Improve command line help to show the following commands:
 #
 #     clean [<index>]+
@@ -37,7 +36,7 @@ import sys
 import splunk
 from splunk.client import Service
 
-from utils import error, cmdline, SPLUNK_RULES
+from utils.cmdopts import cmdline, error, parse
 
 service = None
 
@@ -159,7 +158,7 @@ def main():
         command = argv[cmdix]
         cmdargv = argv[cmdix+1:]
 
-    opts = cmdline(appargv, SPLUNK_RULES, ".splunkrc", usage=usage)
+    opts = parse(appargv, {}, ".splunkrc", usage=usage)
 
     global service
     service = Service(**opts.kwargs)

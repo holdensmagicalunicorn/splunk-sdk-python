@@ -116,6 +116,11 @@ def check_status(response, *args):
     if response.status not in args:
         raise HTTPError(response.status, response.reason)
 
+# kwargs: scheme, host, port, username, password, namespace
+def connect(**kwargs):
+    """Establishes an authenticated connection to the specified service."""
+    return Service(**kwargs).login()
+
 # Response utilities
 def load(response):
     return data.load(response.body.read())

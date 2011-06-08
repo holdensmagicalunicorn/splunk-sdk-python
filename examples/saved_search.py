@@ -17,9 +17,11 @@
 """A command line utility for manipulating saved searches (create/list/delete)."""
 
 import sys
-import splunk
-import tools.cmdopts as cmdopts
 import urllib
+
+import splunk
+
+from utils import cmdopts
 
 # these 'rules' allow for setting parameters primarily for creating saved searches
 rules = {
@@ -150,8 +152,7 @@ rules = {
 
 def main(argv):
     usage = 'usage: %prog --help for options'
-    parser = cmdopts.parser(rules, usage=usage)
-    opts = parser.loadrc(".splunkrc").parse(argv).result
+    opts = cmdopts.parse(argv, rules, ".splunkrc", usage=usage)
 
     context = splunk.binding.connect(**opts.kwargs)
     operation = "list" # defaults to list

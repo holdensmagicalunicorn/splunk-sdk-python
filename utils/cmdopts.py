@@ -146,8 +146,17 @@ class Parser(OptionParser):
                 self.result['kwargs'][dest] = value
         return self
 
-def parse(argv):
-    return parser().parse(argv).result
+def cmdline(argv, rules=None, config=None, **kwargs):
+    """Simplified cmdopts interface that does not default any parsing rules."""
+    parser = Parser(rules, **kwargs)
+    if config is not None: parser.loadrc(config)
+    return parser.parse(argv).result
+
+def parse(argv, rules=None, config=None, **kwargs):
+    """Parse the given arg vector with the default Splunk cmdline rules."""
+    parser_ = parser(rules, **kwargs)
+    if config is not None: parser_.loadrc(config)
+    return parser_.parse(argv).result
 
 def parser(rules=None, **kwargs):
     """Instantiate a parser with the default rule set and optional extensions
@@ -160,4 +169,5 @@ if __name__ == "__main__":
     parser.parse(sys.argv[1:])
     from pprint import pprint
     pprint(parser.result)
+
 

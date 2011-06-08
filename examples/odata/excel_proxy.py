@@ -30,9 +30,10 @@ import xml.dom.minidom
 import socket
 
 # splunk support files
-import tools.cmdopts as cmdopts
 import splunk.binding as binding
 from splunk.binding import connect
+
+from utils import cmdopts
 
 DEBUG = True
 
@@ -56,7 +57,7 @@ except NameError:
 
 FD = None
 if DEBUG:
-    FD = open('./sdk_proxy.debug', 'w')
+    FD = open('./excel_proxy.debug', 'w')
 
 def trace(string):
     """ trace something to the log file, if debug is on """
@@ -614,8 +615,9 @@ def application(environ, start_response):
     query = environ["QUERY_STRING"]
 
     # perform idempotent login/connect -- get login creds from ~/.splunkrc
-    connection = connect(**(cmdopts.parser().loadrc(".splunkrc")
-                            .parse(sys.argv[1:]).result).kwargs)
+    opts = cmdopts.parse(sys.argv[1:], {}, ".splunkrc")
+    connection = connect(**opts.kwargs)
+
     # get lower level context
     context = binding.connect( host=connection.host, 
                                username=connection.username,

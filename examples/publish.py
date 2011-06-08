@@ -26,7 +26,7 @@ import sys
 
 from splunk.binding import *
 
-import tools.cmdopts as cmdopts
+from utils import cmdopts
 
 def check_status(response, *args):
     """Checks that the given HTTP response is one of the expected values."""
@@ -112,9 +112,8 @@ def publish_event(context, index, event):
 
 def main(argv):
     usage = 'usage: %prog [options] <index> [<events>]'
-    parser = cmdopts.parser(usage=usage)
-    opts = parser.loadrc(".splunkrc").parse(argv).result
-    if len(opts.args) == 0: parser.error("Index name rquired")
+    opts = cmdopts.parse(argv, {}, ".splunkrc", usage=usage)
+    if len(opts.args) == 0: cmdopts.error("Index name required", 2)
     index = opts.args[0]
     events = opts.args[1:] if len(opts.args) > 1 else [sys.stdin.read()]
     context = connect(**opts.kwargs)

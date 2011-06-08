@@ -20,7 +20,7 @@ import sys
 
 import splunk
 
-import tools.cmdopts as cmdopts
+from utils import cmdopts
 
 rules = {
     "earliest_time": { 'flags': ["--earliest_time"] },
@@ -32,11 +32,10 @@ rules = {
 
 def main(argv):
     usage = 'usage: %prog [options] "query"'
-    parser = cmdopts.parser(rules, usage=usage)
-    opts = parser.loadrc(".splunkrc").parse(argv).result
+    opts = cmdopts.parse(argv, rules, ".splunkrc", usage=usage)
 
     if len(opts.args) != 1:
-        parser.error("Single query argument required")
+        cmdopts.error("Single query argument required", 2)
 
     context = splunk.binding.connect(**opts.kwargs)
 

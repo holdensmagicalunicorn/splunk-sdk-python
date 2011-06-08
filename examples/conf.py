@@ -23,7 +23,7 @@ import sys
 
 from splunk.binding import *
 
-import tools.cmdopts as cmdopts
+from utils import cmdopts
 
 def check_status(response, *args):
     """Checks that the given HTTP response is one of the expected values."""

@@ -34,7 +34,8 @@ import readline # Activate readline editing
 import sys
 
 import splunk
-import cmdopts
+
+from utils import cmdopts
 
 # Ambient search arguments
 _search_args = [
@@ -166,7 +167,7 @@ def actions(opts):
         or opts.kwargs.has_key('search')
 
 def main():
-    opts = cmdopts.parser(rules).loadrc(".splunkrc").parse(sys.argv[1:]).result
+    opts = cmdopts.parse(sys.argv[1:], rules, ".splunkrc")
 
     # Connect and initialize the command session
     session = Session(**opts.kwargs)

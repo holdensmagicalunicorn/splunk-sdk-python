@@ -27,9 +27,10 @@ import time
 import os
 
 # splunk support files
-import tools.cmdopts as cmdopts
 import splunk.binding as binding
 from splunk.binding import connect
+
+from utils import cmdopts
 
 # hidden file
 RESTART_FILE = "./.export_restart_log"
@@ -322,8 +323,8 @@ def main():
 
     # perform idempotent login/connect -- get login creds from ~/.splunkrc
     # TODO: allow for credential supplied via CLI args
-    connection = connect(**(cmdopts.parser().loadrc(".splunkrc")
-                                      .parse([]).result).kwargs)
+    opts = cmdopts.parse([], {}, ".splunkrc")
+    connection = connect(**opts.kwargs)
 
     # get lower level context
     context = binding.connect( host=connection.host, 

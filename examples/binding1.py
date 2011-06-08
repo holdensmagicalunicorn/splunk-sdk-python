@@ -19,7 +19,7 @@
 
 from splunk.binding import connect
 
-import tools.cmdopts as cmdopts
+from utils import cmdopts
 
 class Service:
     def __init__(self, context):
@@ -33,7 +33,7 @@ class Service:
         return self.export(search=query, **kwargs)
 
 def main(argv):
-    opts = cmdopts.parser().loadrc(".splunkrc").parse(sys.argv[1:]).result
+    opts = cmdopts.parse(sys.argv[1:], {}, ".splunkrc")
     service = Service(connect(**opts.kwargs))
     assert service.apps().status == 200
     assert service.indexes().status == 200

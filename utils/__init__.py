@@ -12,20 +12,5 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""Utility functions shared by the SDK examples."""
-
-import tools.cmdopts as cmdopts
-
-SPLUNK_RULES = cmdopts.SPLUNK_RULES
-
-def error(message, exitcode=None):
-    cmdopts.error(message, exitcode)
-
-def cmdline(argv, rules={}, config=None, **kwargs):
-    parser = cmdopts.Parser(rules, **kwargs)
-    if config is not None: parser.loadrc(config)
-    parser.parse(argv)
-    return parser.result
-
-
-
+"""Utility module shared by the SDK examples & unit tests."""
+import cmdopts

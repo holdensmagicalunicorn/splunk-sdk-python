@@ -26,7 +26,8 @@ from xml.etree.ElementTree import XML
 
 from splunk.binding import *
 import splunk.data as data
-import tools.cmdopts as cmdopts
+
+from utils import cmdopts
 
 # splunkd endpoint paths
 PATH_USERS = "authentication/users"
@@ -289,7 +290,7 @@ class UsersTestCase(BindingTestCase):
         
 def main(argv):
     global opts
-    opts = cmdopts.parser().loadrc(".splunkrc").parse(argv).result
+    opts = cmdopts.parse(argv, {}, ".splunkrc")
     unittest.main()
 
 if __name__ == "__main__":
