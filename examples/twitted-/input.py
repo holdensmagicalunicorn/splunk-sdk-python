@@ -32,7 +32,7 @@ SPLUNK_HOST = "localhost"
 SPLUNK_PORT = 9001
 
 ingest = None       # The splunk ingest socket
-verbose = True
+verbose = 1
 
 class Twitter:
     def __init__(self, username, password):
@@ -148,7 +148,7 @@ def listen(username, password):
 def output(record):
     global splunk, verbose
 
-    if verbose: print_record(record)
+    if verbose > 0: print_record(record)
 
     for k in sorted(record.keys()):
         if k.endswith("_str"): 
@@ -170,20 +170,19 @@ def output(record):
             format = "%s=%r "
         result = format % (k, v)
 
-        if verbose: sys.stdout.write(result)
+        if verbose > 1: sys.stdout.write(result)
         ingest.send(result)
 
     end = "\r\n---end-status---\r\n"
-    if verbose: sys.stdout.write(end)
     ingest.send(end)
 
 def print_record(record):
     if record.has_key('delete_status_id'):
-        print "#### delete %d %d" % (
+        print "delete %d %d" % (
             record['delete_status_id'],
             record['delete_status_user_id'])
     else:
-        print "#### status %s %d %d" % (
+        print "status %s %d %d" % (
             record['created_at'], 
             record['id'], 
             record['user_id'])
