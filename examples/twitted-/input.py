@@ -8,15 +8,7 @@
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
-
-"""This utility reads the Twitter 'spritzer' and writes status results 
-   (aka tweets) to Splunk for indexing."""
-
+# Unless required by applicable law or agreed to in writing, software # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the # License for the specific language governing permissions and limitations # under the License.  """This utility reads the Twitter 'spritzer' and writes status results (aka tweets) to Splunk for indexing.""" 
 # UNDONE: Hardening ..
 #   * Script doesn't handle loss of the twitter HTTP connection or the Splunk
 #     TCP connection
@@ -119,7 +111,7 @@ def flatten(value, prefix=None):
         if issimple(value): return value
         offset = 0
         result = {}
-        prefix = "%d" if prefix is None else "%s.%%d" % prefix
+        prefix = "%d" if prefix is None else "%s_%%d" % prefix
         for item in value:
             k = prefix % offset
             v = flatten(item, k)
@@ -130,7 +122,7 @@ def flatten(value, prefix=None):
 
     if isinstance(value, dict):
         result = {}
-        prefix = "%s" if prefix is None else "%s.%%s" % prefix
+        prefix = "%s" if prefix is None else "%s_%%s" % prefix
         for k,v in value.iteritems():
             k = prefix % str(k)
             v = flatten(v, k)
@@ -158,32 +150,43 @@ def output(record):
 
     if verbose: print_record(record)
 
-    for k, v in record.iteritems():
-        if v is None or k.endswith("_str"):
+    for k in sorted(record.keys()):
+        if k.endswith("_str"): 
+            continue # Ignore
+
+        v = record[k]
+
+        if v is None:
             continue # Ignore
 
         if isinstance(v, list):
             if len(v) == 0: continue
             v = ','.join([str(item) for item in v])
 
-        format = '%s:"%s" ' if isinstance(v, str) else "%s:%r "
+        if isinstance(v, str):
+            format = '%s="%s" '
+            v = v.replace('"', '\\"')
+        else:
+            format = "%s=%r "
         result = format % (k, v)
 
-        #print result
+        if verbose: sys.stdout.write(result)
         ingest.send(result)
 
-    ingest.send("\r\n")
+    end = "\r\n---end-status---\r\n"
+    if verbose: sys.stdout.write(end)
+    ingest.send(end)
 
 def print_record(record):
-    if record.has_key('delete.status.id'):
-        print "delete %d %d" % (
-            record['delete.status.id'],
-            record['delete.status.user_id'])
+    if record.has_key('delete_status_id'):
+        print "#### delete %d %d" % (
+            record['delete_status_id'],
+            record['delete_status_user_id'])
     else:
-        print "status %s %d %d" % (
+        print "#### status %s %d %d" % (
             record['created_at'], 
             record['id'], 
-            record['user.id'])
+            record['user_id'])
 
 def process(status):
     status = json.loads(status)
@@ -192,6 +195,9 @@ def process(status):
 
 def main():
     kwargs = cmdline()
+
+    # Force the namespace
+    kwargs['namespace'] = "%s:twitted" % kwargs['username']
 
     print "Initializing Splunk .."
     service = splunk.client.connect(**kwargs)
@@ -207,7 +213,7 @@ def main():
     global ingest
     ingest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ingest.connect((SPLUNK_HOST, SPLUNK_PORT))
-    ingest.send("***SPLUNK*** sourcetype=twitter\n") # Initialize stream
+    #ingest.send("***SPLUNK*** sourcetype=twitter\n") # Initialize stream
 
     print "Listening .."
     listen(kwargs['tusername'], kwargs['tpassword'])
