@@ -73,7 +73,7 @@ def parse_args():
 
     opt.add_option("-l", "--limit", 
               default="20000",
-              help="Number of events to limit per chunk (defaults to 7500)",
+              help="Number of events to limit per chunk (defaults to 20000)",
               dest="limit")
 
     opt.add_option("-r", "--restart", 
