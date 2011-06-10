@@ -33,7 +33,7 @@ class Service:
         return self.export(search=query, **kwargs)
 
 def main(argv):
-    opts = cmdopts.parse(sys.argv[1:], {}, ".splunkrc")
+    opts = cmdopts.parse(argv, {}, ".splunkrc")
     service = Service(connect(**opts.kwargs))
     assert service.apps().status == 200
     assert service.indexes().status == 200

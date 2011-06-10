@@ -20,6 +20,8 @@
 
 """Low-level bindings to the Splunk REST API."""
 
+from pprint import pprint # debug
+
 # UNDONE: Can we retrieve the sessionKey without instantiating this? regex?
 from xml.etree.ElementTree import XML
 
@@ -99,8 +101,8 @@ class Context:
             raise HTTPError(response.status, response.reason)
         # assert response.status == 200
         body = response.body.read()
-        sessionKey = XML(body).findtext("./sessionKey")
-        self.token = "Splunk %s" % sessionKey
+        session = XML(body).findtext("./sessionKey")
+        self.token = "Splunk %s" % session
         return self
 
     def fullpath(self, path):
@@ -161,16 +163,14 @@ def login(**kwargs):
 import httplib
 import urllib
 
-debug = False # UNDONE
+debug = False
 
 def _print_request(method, url, head, body):
-    from pprint import pprint # UNDONE
     print "** %s %s" % (method, url)
     pprint(head)
     print body
 
 def _print_response(response):
-    from pprint import pprint # UNDONE
     print "=> %d %s" % (response.status, response.reason)
     pprint(response.headers)
     print response.body
@@ -211,7 +211,8 @@ class http:
         return None # UNDONE: Raise an invalid scheme exception
 
     @staticmethod
-    def delete(url, headers = [], timeout = None, **kwargs):
+    def delete(url, headers = None, timeout = None, **kwargs):
+        if headers is None: headers = []
         if kwargs: url = url + '?' + encode(**kwargs)
         message = {
             'method': "DELETE",
@@ -220,12 +221,14 @@ class http:
         return http.request(url, message, timeout)
 
     @staticmethod
-    def get(url, headers = [], timeout = None, **kwargs):
+    def get(url, headers = None, timeout = None, **kwargs):
+        if headers is None: headers = []
         if kwargs: url = url + '?' + encode(**kwargs)
         return http.request(url, { "headers": headers }, timeout)
 
     @staticmethod
-    def post(url, headers = [], timeout = None, **kwargs):
+    def post(url, headers = None, timeout = None, **kwargs):
+        if headers is None: headers = []
         headers.append(("Content-Type", "application/x-www-form-urlencoded")),
         message = {
             "method": "POST",

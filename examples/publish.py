@@ -24,7 +24,8 @@
 
 import sys
 
-from splunk.binding import *
+from splunk.binding import connect, HTTPError
+import splunk.data as data
 
 from utils import cmdopts
 
@@ -82,12 +83,6 @@ class Stanza:
         if len(kwargs) > 0: self._post(self.path, **kwargs)
         return self
 
-def create_stanza(context):
-    pass # UNDONE: Sample-specific stanza code
-
-def delete_stanza(context):
-    pass # UNDONE: Sample specific stanza code
-            
 def publish(context, index, events):
     # Create the sourcetype rule used for the published event
     stanza = Stanza(context, "props", "__insert__")

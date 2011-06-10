@@ -20,11 +20,11 @@
  
 from pprint import pprint
 import sys
+import time
 
 import splunk.results as results
 
 def pretty():
-    from xml.etree import ElementTree
     reader = results.ResultsReader(sys.stdin)
     while True:
         kind = reader.read()
@@ -43,27 +43,26 @@ def summary():
             print
             break
         if kind == results.RESULTS:
-            if last == RESULT: print
+            if last == results.RESULT: print
             print "# Results: preview = %s" % reader.value['preview']
         elif kind == results.MESSAGE:
-            if last == RESULT: print
+            if last == results.RESULT: print
             print "# Messasge: %s" % reader.value['message']
         elif kind == results.RESULT:
             count += 1
-            if last != RESULT or count % 1 == 0: 
+            if last != results.RESULT or count % 1 == 0: 
                 sys.stdout.write(".")
                 sys.stdout.flush()
         last = kind
 
 def timeit():
-    import time
     start = time.time()
     reader = results.ResultsReader(sys.stdin)
     count = 0
     while True:
         kind = reader.read()
         if kind == None: break
-        if kind == RESULT: count += 1
+        if kind == results.RESULT: count += 1
     delta = time.time() - start
     print "%d results in %f secs = %f results/sec" % (count, delta, count/delta)
 

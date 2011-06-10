@@ -24,8 +24,6 @@
 # A side note, the objects below that provide helper methods for updating eg:
 # Entity state, are written in a fluent style.
 
-from pprint import pprint # UNDONE
-
 # UNDONE: Cases below where we need to pass schema to data.load (eg: Collection)
 # UNDONE: Check status needs to attempt to retrive error message from the
 #  the resonse body. Eg: a call to index.disable on the defaultDatabase will
@@ -254,4 +252,7 @@ class Indexes(Collection):
         entry = load(response).entry
         if not isinstance(entry, list): entry = [entry] # UNDONE
         return [item.title for item in entry]
+
+class SplunkError(Exception): 
+    pass
 

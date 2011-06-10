@@ -29,110 +29,124 @@
 # UNDONE: Implement a delete command: clean, remove stanzas from indexes.conf,
 #  restart server, delete db files.
 
-from pprint import pprint # UNDONE
-
 import sys
 
-import splunk
-from splunk.client import Service
+from splunk.client import connect
 
 from utils.cmdopts import cmdline, error, parse
 
-service = None
+class Program:
+    def __init__(self, service):
+        self.service = service
 
-def clean(argv):
-    foreach(argv, lambda index: index.clean())
+    def clean(self, argv):
+        self.foreach(argv, lambda index: index.clean())
 
-def create(argv):
-    """Create an index according to the given argument vector."""
+    def create(self, argv):
+        """Create an index according to the given argument vector."""
 
-    if len(argv) == 0: 
-        error("Command requires an index name", 2)
+        if len(argv) == 0: 
+            error("Command requires an index name", 2)
 
-    name = argv[0]
+        name = argv[0]
 
-    if service.indexes.contains(name):
-        print "Index '%s' already exists" % name
-        return
+        if self.service.indexes.contains(name):
+            print "Index '%s' already exists" % name
+            return
 
-    # Read item metadata and construct command line parser rules that 
-    # correspond to each editable field.
+        # Read item metadata and construct command line parser rules that 
+        # correspond to each editable field.
 
-    # Request editable fields
-    fields = service.indexes.itemmeta()['eai:attributes'].optionalFields
+        # Request editable fields
+        itemmeta = self.service.indexes.itemmeta()
+        fields = itemmeta['eai:attributes'].optionalFields
 
-    # Build parser rules
-    rules = dict([(field, {'flags': ["--%s" % field]}) for field in fields])
+        # Build parser rules
+        rules = dict([(field, {'flags': ["--%s" % field]}) for field in fields])
 
-    # Parse the argument vector
-    opts = cmdline(argv, rules)
+        # Parse the argument vector
+        opts = cmdline(argv, rules)
 
-    # Execute the edit request
-    service.indexes.create(name, **opts.kwargs)
+        # Execute the edit request
+        self.service.indexes.create(name, **opts.kwargs)
 
-def disable(argv):
-    foreach(argv, lambda index: index.disable())
+    def disable(self, argv):
+        self.foreach(argv, lambda index: index.disable())
 
-def enable(argv):
-    foreach(argv, lambda index: index.enable())
+    def enable(self, argv):
+        self.foreach(argv, lambda index: index.enable())
 
-def list(argv):
-    """List available indexes if no names provided, otherwise list the
-       properties of the named indexes."""
-    if len(argv) == 0:
-        for index in service.indexes:
-            count = index['totalEventCount']
-            print "%s (%s)" % (index.name, count)
-    else:
-        foreach(argv, read)
+    def list(self, argv):
+        """List available indexes if no names provided, otherwise list the
+           properties of the named indexes."""
 
-def read(index):
-    """List the properties of the given index."""
-    print index.name
-    for k,v in index.read().iteritems(): 
-        print "    %s: %s" % (k,v)
+        def read(index):
+            print index.name
+            for key, value in index.read().iteritems(): 
+                print "    %s: %s" % (key, value)
 
-def reload(argv):
-    foreach(argv, lambda index: index.reload())
+        if len(argv) == 0:
+            for index in self.service.indexes:
+                count = index['totalEventCount']
+                print "%s (%s)" % (index.name, count)
+        else:
+            self.foreach(argv, read)
 
-def foreach(argv, fn):
-    """Apply the given function to each index named in the argument vector."""
-    opts = cmdline(argv)
-    if len(opts.args) == 0:
-        error("Command requires an index name", 2)
-    for name in opts.args:
-        if not service.indexes.contains(name):
+    def run(self, command, argv):
+        # Dispatch the command
+        commands = { 
+            'clean': self.clean,
+            'create': self.create,
+            'disable': self.disable,
+            'enable': self.enable,
+            'list': self.list,
+            'reload': self.reload,
+            'update': self.update,
+        }
+        if command not in commands.keys():
+            error("Unrecognized command: %s" % command, 2)
+        commands[command](argv)
+
+    def reload(self, argv):
+        self.foreach(argv, lambda index: index.reload())
+
+    def foreach(self, argv, func):
+        """Apply the function to each index named in the argument vector."""
+        opts = cmdline(argv)
+        if len(opts.args) == 0:
+            error("Command requires an index name", 2)
+        for name in opts.args:
+            if not self.service.indexes.contains(name):
+                error("Index '%s' does not exist" % name, 2)
+            index = self.service.indexes[name]
+            func(index)
+
+    def update(self, argv):
+        """Update an index according to the given argument vector."""
+
+        if len(argv) == 0: 
+            error("Command requires an index name", 2)
+        name = argv[0]
+        if not self.service.indexes.contains(name):
             error("Index '%s' does not exist" % name, 2)
-        index = service.indexes[name]
-        fn(index)
+        index = self.service.indexes[name]
 
-def update(argv):
-    """Update an index according to the given argument vector."""
+        # Read entity metadata and construct command line parser rules that 
+        # correspond to each editable field.
 
-    if len(argv) == 0: 
-        error("Command requires an index name", 2)
-    name = argv[0]
-    if not service.indexes.contains(name):
-        error("Index '%s' does not exist" % name, 2)
-    index = service.indexes[name]
+        # Request editable fields
+        fields = index.readmeta()['eai:attributes'].optionalFields
 
-    # Read entity metadata and construct command line parser rules that 
-    # correspond to each editable field.
+        # Build parser rules
+        rules = dict([(field, {'flags': ["--%s" % field]}) for field in fields])
 
-    # Request editable fields
-    fields = index.readmeta()['eai:attributes'].optionalFields
+        # Parse the argument vector
+        opts = cmdline(argv, rules)
 
-    # Build parser rules
-    rules = dict([(field, {'flags': ["--%s" % field]}) for field in fields])
-
-    # Parse the argument vector
-    opts = cmdline(argv, rules)
-
-    # Execute the edit request
-    index.update(**opts.kwargs)
+        # Execute the edit request
+        index.update(**opts.kwargs)
 
 def main():
-    import sys
     usage = "usage: %prog [options] <command> [<args>]"
 
     # Split the command line into 3 parts, the apps arguments, the command
@@ -159,24 +173,9 @@ def main():
         cmdargv = argv[cmdix+1:]
 
     opts = parse(appargv, {}, ".splunkrc", usage=usage)
-
-    global service
-    service = Service(**opts.kwargs)
-    service.login()
-
-    # Dispatch the command
-    commands = { 
-        'clean': clean,
-        'create': create,
-        'disable': disable,
-        'enable': enable,
-        'list': list,
-        'reload': reload,
-        'update': update,
-    }
-    if command not in commands.keys():
-        error("Unrecognized command: %s" % command, 2)
-    commands[command](cmdargv)
+    service = connect(**opts.kwargs)
+    program = Program(service)
+    program.run(command, cmdargv)
 
 if __name__ == "__main__":
     main()

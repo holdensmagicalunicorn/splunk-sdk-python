@@ -50,18 +50,19 @@ class ListStream:
 # a well-formed XML document by injecting a root element into the stream.
 # This is basically an annoying hack and I'd love a better idea.
 class XMLStream:
-    def __init__(self, file):
-        self.file = self.prepare(file)
+    def __init__(self, file_):
+        self.file = XMLStream.prepare(file_)
 
     # Prepare the stream by scanning the head of the stream until we find 
     # the first XML element so that we know where to inject the artificial 
     # document wrapper.
-    def prepare(self, file):
+    @staticmethod
+    def prepare(file_):
         head = ""
         start = 0
         headsize = 0
         while True:
-            chunk = file.read(180)
+            chunk = file_.read(180)
             chunksize = len(chunk)
             if chunksize == 0: return
             head += chunk
@@ -76,13 +77,13 @@ class XMLStream:
                 # read next chunk
                 start = index
                 continue
-            next = head[index+1]
-            if next == '!' or next == '?':
+            next_ = head[index+1]
+            if next_ == '!' or next_ == '?':
                 start = index+1
                 continue
             # Splice the doc wrapper elements in to place
             return ListStream(
-                head[:index], "<doc>", head[index:], file, "</doc>\n")
+                head[:index], "<doc>", head[index:], file_, "</doc>\n")
 
     def read(self, size):
         return self.file.read(size)
@@ -96,8 +97,8 @@ TAG = "TAG"         # kind, name, attrs
 END = "END"         # kind, name
 VAL = "VAL"         # kind, value
 class XMLReader:
-    def __init__(self, input):
-        self._items = pulldom.parse(XMLStream(input))
+    def __init__(self, stream):
+        self._items = pulldom.parse(XMLStream(stream))
         self._item = None   # The current item
         self._next = None   # 1 item pushback buffer
         self.kind = None
@@ -213,10 +214,8 @@ RESULT = "RESULT"
 RESULTS = "RESULTS"
 class ResultsReader:
     """A forward-only, streaming search results reader."""
-    # input : str | file
-    def __init__(self, input):
-        self._input = input
-        self._reader = XMLReader(input)
+    def __init__(self, stream):
+        self._reader = XMLReader(stream)
         self.kind = None
         self.value = None
         self.fields = None
@@ -246,11 +245,11 @@ class ResultsReader:
         return self._reader.isval()
 
     def _read_message(self):
-        type = self._reader.attrs["type"]
+        type_ = self._reader.attrs["type"]
         message = self._scanval()
         self._scanend("msg")
         self.kind = MESSAGE
-        self.value = {'type': type, 'message': message }
+        self.value = {'type': type_, 'message': message }
         return MESSAGE
 
     def _read_meta(self):

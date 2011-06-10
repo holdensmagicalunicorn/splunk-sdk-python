@@ -19,6 +19,7 @@
 # UNDONE: Support for POST
 
 import sys
+from xml.etree import ElementTree
 
 import splunk
 
@@ -37,7 +38,7 @@ def print_response(response):
     try:
         root = ElementTree.XML(body)
         print ElementTree.tostring(root)
-    except:
+    except Exception:
         print body
 
 def main():

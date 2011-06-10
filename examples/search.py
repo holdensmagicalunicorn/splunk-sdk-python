@@ -22,7 +22,7 @@ import splunk
 
 from utils import cmdopts
 
-rules = {
+RULES = {
     "earliest_time": { 'flags': ["--earliest_time"] },
     "latest_time": { 'flags': ["--latest_time"] },
     "output_mode": { 'flags': ["--output_mode"] },
@@ -32,7 +32,7 @@ rules = {
 
 def main(argv):
     usage = 'usage: %prog [options] "query"'
-    opts = cmdopts.parse(argv, rules, ".splunkrc", usage=usage)
+    opts = cmdopts.parse(argv, RULES, ".splunkrc", usage=usage)
 
     if len(opts.args) != 1:
         cmdopts.error("Single query argument required", 2)
@@ -41,7 +41,7 @@ def main(argv):
 
     # Extract search options
     kwargs = {}
-    for key in rules.keys():
+    for key in RULES.keys():
         if opts.kwargs.has_key(key):
             kwargs[key] = opts.kwargs[key]
 

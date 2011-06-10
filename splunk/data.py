@@ -17,7 +17,9 @@
 # UNDONE: Figure out what to do with examples like: <a>foo<b>bar</b></a>, seems
 #  like we should at least detect and error on less 'well-formed' sdata inputs
 
-from xml.etree import ElementTree
+from pprint import pprint # UNDONE
+
+import sys
 from xml.etree.ElementTree import XML
 
 XNAMEF_REST = "{http://dev.splunk.com/ns/rest}%s"
@@ -72,7 +74,7 @@ def load_element(element, nametable = None):
         attrs["$text"] = value
         return attrs
     # Both attrs & value are complex, merge the two dicts
-    for k,v in attrs.items():
+    for k, v in attrs.items():
         #assert not value.has_key(k) # Assume no collisions
         value[k] = v
     return value
@@ -160,16 +162,16 @@ class Record(dict):
     def __setattr__(self, name, value):
         self[name] = value
 
-def record(dict = {}): 
-    return Record(dict)
+def record(value = None): 
+    if value is None: value = {}
+    return Record(value)
+
+def main():
+    def isxml(text): return text.strip().startswith('<')
+    text = sys.stdin.read()
+    if isxml(text):
+        value = load(text)
+        pprint(value)
 
 if __name__ == "__main__":
-    def isxml(text): return text.strip().startswith('<')
-    import sys
-    from pprint import pprint
-    input = sys.stdin.read()
-    if isxml(input):
-        value = load(input)
-        pprint(value)
-    else:
-        print input
+    main()

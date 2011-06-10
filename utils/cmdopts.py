@@ -165,9 +165,5 @@ def parser(rules=None, **kwargs):
     return Parser(rules, **kwargs)
         
 if __name__ == "__main__":
-    parser = Parser(rules)
-    parser.parse(sys.argv[1:])
     from pprint import pprint
-    pprint(parser.result)
-
-
+    pprint(parse(sys.argv[1:]))

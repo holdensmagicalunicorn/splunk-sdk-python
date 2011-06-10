@@ -15,15 +15,16 @@
 # UNDONE: Command line args - Splunk host/port
 # UNDONE: Basic auth will be disabled in August/2010 .. need to support OAuth2
 
-from pprint import pprint # UNDONE
-
 import base64
+from getpass import getpass
 import httplib
 import json
 import socket
 import sys
 
 import splunk
+
+from utils.cmdopts import parse
 
 TWITTER_STREAM_HOST = "stream.twitter.com"
 TWITTER_STREAM_PATH = "/1/statuses/sample.json"
@@ -73,9 +74,6 @@ RULES = {
 }
 
 def cmdline():
-    from getpass import getpass
-    from utils.cmdopts import parse
-
     kwargs = parse(sys.argv[1:], RULES, ".splunkrc").kwargs
 
     # Prompt for Twitter username/password if not provided on command line
@@ -123,7 +121,7 @@ def flatten(value, prefix=None):
     if isinstance(value, dict):
         result = {}
         prefix = "%s" if prefix is None else "%s_%%s" % prefix
-        for k,v in value.iteritems():
+        for k, v in value.iteritems():
             k = prefix % str(k)
             v = flatten(v, k)
             if not isinstance(v, dict): v = {k:v}
@@ -146,8 +144,6 @@ def listen(username, password):
         buffer += stream.read(2048)
 
 def output(record):
-    global splunk, verbose
-
     if verbose > 0: print_record(record)
 
     for k in sorted(record.keys()):
@@ -212,11 +208,10 @@ def main():
     global ingest
     ingest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ingest.connect((SPLUNK_HOST, SPLUNK_PORT))
-    #ingest.send("***SPLUNK*** sourcetype=twitter\n") # Initialize stream
 
     print "Listening .."
     listen(kwargs['tusername'], kwargs['tpassword'])
         
 if __name__ == "__main__":
-	main()
+    main()
 

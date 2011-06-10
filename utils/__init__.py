@@ -13,4 +13,5 @@
 # under the License.
 
 """Utility module shared by the SDK examples & unit tests."""
-import cmdopts
+
+import utils.cmdopts

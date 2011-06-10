@@ -29,8 +29,7 @@
 """An interactive command shell for Splunk.""" 
 
 from code import compile_command, InteractiveInterpreter
-from os import path
-import readline # Activate readline editing
+import readline # Activates readline editing
 import sys
 
 import splunk
@@ -38,7 +37,7 @@ import splunk
 from utils import cmdopts
 
 # Ambient search arguments
-_search_args = [
+SEARCH_ARGS = [
     "earliest_time",
     "enable_lookups",
     "exec_mode",
@@ -109,7 +108,7 @@ class Session(InteractiveInterpreter):
                     co = compile_command(input)
                     if co is not None: break
                     input = input + '\n' + raw_input(". ") # Keep trying
-            except SyntaxError, e:
+            except SyntaxError:
                 self.showsyntaxerror()
                 continue
             except Exception, e:
@@ -130,7 +129,7 @@ class Session(InteractiveInterpreter):
             
         # Pick up ambient search args from environment that do not already
         # exist in explicitly passed kwargs.
-        for arg in _search_args:
+        for arg in SEARCH_ARGS:
             if self.locals.has_key(arg) and not kwargs.has_key(arg): 
                 kwargs[arg] = self.locals[arg]
         kwargs['search'] = query
@@ -142,7 +141,7 @@ class Session(InteractiveInterpreter):
         return response.body
 
 # Additional cmdopts parser rules
-rules = {
+RULES = {
     "eval": {
         'flags': ["-e", "--eval"],
         'action': "append",
@@ -167,7 +166,7 @@ def actions(opts):
         or opts.kwargs.has_key('search')
 
 def main():
-    opts = cmdopts.parse(sys.argv[1:], rules, ".splunkrc")
+    opts = cmdopts.parse(sys.argv[1:], RULES, ".splunkrc")
 
     # Connect and initialize the command session
     session = Session(**opts.kwargs)
