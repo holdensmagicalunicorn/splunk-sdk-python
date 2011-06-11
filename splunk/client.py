@@ -59,9 +59,11 @@
 # Output(s)
 #
 # Search
-#   * parse
 #   * jobs
-#   * search (export)
+#
+#   * export
+#   * parse
+#
 #   * saved
 #
 # Applications
@@ -85,6 +87,9 @@ __all__ = [
 
 PATH_INDEX = "data/indexes/%s"
 PATH_INDEXES = "data/indexes"
+
+PATH_JOB = "search/jobs/%s"
+PATH_JOBS = "search/jobs"
 
 # Ensure that this is a syntactically valid Splunk namespace.
 # The namespace must be of the form <username>:<appname> where both username
@@ -131,16 +136,22 @@ class Service(Context):
     def indexes(self):
         return Indexes(self)
 
+    @property
+    def jobs(self):
+        return Jobs(self)
+
 class Endpoint:
     def __init__(self, service, path):
         self.service = service
         self.path = path
-        self.get = service.bind(path, "get")
-        self.post = service.bind(path, "post")
 
-    def invoke(self, action, **kwargs):
-        """Invoke a custom action on the Endpoint."""
-        response = self.service.post(self.path + '/' + action, **kwargs)
+    def get(self, relpath="", **kwargs):
+        response = self.service.get("%s/%s" % (self.path, relpath), **kwargs)
+        check_status(response, 200)
+        return response
+
+    def post(self, relpath="", **kwargs):
+        response = self.service.post("%s/%s" % (self.path, relpath), **kwargs)
         check_status(response, 200)
         return self
 
@@ -165,6 +176,21 @@ class Collection(Endpoint):
     def list(self): # UNDONE: keys?
         pass # Abstract
 
+def _filter_content(content, *args):
+    if len(args) > 0: # We have filter args
+        result = record({})
+        for key in args: result[key] = content[key]
+    else:
+        # Eliminate some noise by default
+        result = content
+        if result.has_key('eai:acl'):
+            del result['eai:acl']
+        if result.has_key('eai:attributes'):
+            del result['eai:attributes']
+        if result.has_key('type'):
+            del result['type']
+    return result
+
 class Entity(Endpoint):
     """Abstract base class that implements the Splunk 'entity' protocol."""
 
@@ -172,9 +198,9 @@ class Entity(Endpoint):
         Endpoint.__init__(self, service, path)
         # UNDONE: The following should be derived by reading entity links
         self.delete = lambda: self.service.delete(self.path)
-        self.disable = lambda: self.invoke("disable")
-        self.enable = lambda: self.invoke("enable")
-        self.reload = lambda: self.invoke("_reload")
+        self.disable = lambda: self.post("disable")
+        self.enable = lambda: self.post("enable")
+        self.reload = lambda: self.post("_reload")
 
     def __getitem__(self, key):
         return self.read()[key]
@@ -188,24 +214,14 @@ class Entity(Endpoint):
         response = self.get()
         check_status(response, 200)
         content = load(response).entry.content
-        if len(args) > 0: # We have filter args
-            result = record({})
-            for key in args: result[key] = content[key]
-        else:
-            # Eliminate some noise by default
-            result = content
-            del result['eai:acl']
-            del result['eai:attributes']
-            del result['type']
-        return result
+        return _filter_content(content, *args)
 
     def readmeta(self):
         """Return the entity's metadata."""
         return self.read('eai:acl', 'eai:attributes')
 
     def update(self, **kwargs):
-        response = self.service.post(self.path, **kwargs)
-        check_status(response, 200)
+        self.post(**kwargs)
         return self
 
 # UNDONE: Index should not have a delete method (currently inherited)
@@ -213,7 +229,7 @@ class Index(Entity):
     def __init__(self, service, name):
         Entity.__init__(self, service, PATH_INDEX % name)
         self.name = name
-        self.roll_hot_buckets = lambda: self.invoke("roll-hot-buckets")
+        self.roll_hot_buckets = lambda: self.post("roll-hot-buckets")
 
     def clean(self):
         """Delete the contents of the index."""
@@ -229,8 +245,8 @@ class Indexes(Collection):
     def __init__(self, service):
         Collection.__init__(self, service, PATH_INDEXES)
 
-    def __getitem__(self, key):
-        return Index(self.service, key)
+    def __getitem__(self, name):
+        return Index(self.service, name)
 
     def __iter__(self):
         names = self.list()
@@ -253,6 +269,78 @@ class Indexes(Collection):
         if not isinstance(entry, list): entry = [entry] # UNDONE
         return [item.title for item in entry]
 
+# The Splunk Job is not an enity, but we are able to make the interface look
+# a lot like one.
+class Job(Endpoint): 
+    def __init__(self, service, sid):
+        Endpoint.__init__(self, service, PATH_JOB % sid)
+        self.sid = sid
+        self.cancel = lambda: self.post("cancel")
+        self.finalize = lambda: self.post("finalize")
+        self.pause = lambda: self.post("pause")
+        self.touch = lambda: self.post("touch")
+        self.unpause = lambda: self.post("unpause")
+
+    def __getitem__(self, key):
+        return self.read()[key]
+
+    def __setitem__(self, key, value):
+        self.update(key=value)
+
+    def events(self, **kwargs):
+        return self.get("events", **kwargs).body
+
+    def preview(self, **kwargs):
+        return self.get("results_preview", **kwargs).body
+
+    def read(self, *args):
+        """Read and return the current entity value, optionally returning
+           only the requested fields, if specified."""
+        response = self.get()
+        check_status(response, 200)
+        content = load(response).content
+        return _filter_content(content, *args)
+
+    def results(self, **kwargs):
+        return self.get("results", **kwargs).body
+
+    def searchlog(self, **kwargs):
+        return self.get("search.log", **kwargs).body
+
+    def timeline(self, **kwargs):
+        return self.get("timeline", **kwargs).body
+
+    def update(self, **kwargs):
+        self.post(**kwargs)
+        return self
+
+class Jobs(Collection):
+    def __init__(self, service):
+        Collection.__init__(self, service, PATH_JOBS)
+
+    def __getitem__(self, sid):
+        return Job(self.service, sid)
+
+    def __iter__(self):
+        sids = self.list()
+        for sid in sids: yield Job(self.service, sid)
+
+    def contains(self, sid):
+        return sid in self.list()
+
+    def create(self, query, **kwargs):
+        response = self.post(search=query, **kwargs)
+        check_status(response, 201)
+        sid = load(response).sid
+        return Job(self.service, sid)
+
+    def list(self):
+        response = self.get()
+        check_status(response, 200)
+        entry = load(response).entry
+        if not isinstance(entry, list): entry = [entry] # UNDONE
+        return [item.content.sid for item in entry]
+    
 class SplunkError(Exception): 
     pass
 

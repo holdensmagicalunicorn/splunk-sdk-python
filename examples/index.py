@@ -92,9 +92,10 @@ class Program:
         else:
             self.foreach(argv, read)
 
-    def run(self, command, argv):
-        # Dispatch the command
-        commands = { 
+    def run(self, argv):
+        """Dispatch the given command & args."""
+        command = argv[0]
+        handlers = { 
             'clean': self.clean,
             'create': self.create,
             'disable': self.disable,
@@ -103,9 +104,10 @@ class Program:
             'reload': self.reload,
             'update': self.update,
         }
-        if command not in commands.keys():
+        handler = handlers.get(command, None)
+        if handler is None:
             error("Unrecognized command: %s" % command, 2)
-        commands[command](argv)
+        handler(argv[1:])
 
     def reload(self, argv):
         self.foreach(argv, lambda index: index.reload())
@@ -149,34 +151,24 @@ class Program:
 def main():
     usage = "usage: %prog [options] <command> [<args>]"
 
-    # Split the command line into 3 parts, the apps arguments, the command
-    # and the arguments to the command. The app arguments are used to
-    # establish the binding context and the command arguments are command
-    # specific.
-
     argv = sys.argv[1:]
 
-    # Find the index of the command argument (the first non-kwarg)
-    cmdix = -1
-    for i in xrange(len(argv)):
-        if not argv[i].startswith('-'):
-            cmdix = i
-            break
+    # Locate the command
+    index = next((i for i, v in enumerate(argv) if not v.startswith('-')), -1)
 
-    if cmdix == -1: # No command
-        appargv = argv
-        command = "list"
-        cmdargv = []
+    if index == -1: # No command
+        options = argv
+        command = ["list"]
     else:
-        appargv = argv[:cmdix]
-        command = argv[cmdix]
-        cmdargv = argv[cmdix+1:]
+        options = argv[:index]
+        command = argv[index:]
 
-    opts = parse(appargv, {}, ".splunkrc", usage=usage)
+    opts = parse(options, {}, ".splunkrc", usage=usage)
     service = connect(**opts.kwargs)
     program = Program(service)
-    program.run(command, cmdargv)
+    program.run(command)
 
 if __name__ == "__main__":
     main()
+
 

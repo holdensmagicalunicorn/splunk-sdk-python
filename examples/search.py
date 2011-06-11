@@ -62,3 +62,17 @@ def main(argv):
 
 if __name__ == "__main__":
     main(sys.argv[1:])
+
+#    opts = parse(sys.argv, None, ".splunkrc")
+#    service = connect(**opts.kwargs)
+#    job = service.jobs.create("search index=twitter *")
+#    try:
+#        while True:
+#            sleep(2)
+#            status = job.read('isDone', 'doneProgress')
+#            pprint(status)
+#            if status.isDone == '1':
+#                break
+#    except Exception:
+#        job.cancel()
+    
