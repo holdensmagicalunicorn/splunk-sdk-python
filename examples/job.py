@@ -27,7 +27,46 @@ import sys
 
 from splunk.client import connect
 
-from utils.cmdopts import cmdline, error, parse
+import utils.cmdopts as cmdopts
+from utils.cmdopts import error
+
+FLAGS_CREATE = [
+    "search", "earliest_time", "latest_time", "now", "time_format",
+    "exec_mode", "search_mode", "rt_blocking", "rt_queue_size",
+    "rt_maxblocksecs", "rt_indexfilter", "id", "status_buckets",
+    "max_count", "max_time", "timeout", "auto_finalize_ec", "enable_lookups",
+    "reload_macros", "reduce_freq", "spawn_process", "required_field_list",
+    "rf", "auto_cancel", "auto_pause",
+]
+
+FLAGS_EVENTS = [
+    "offset", "count", "earliest_time", "latest_time", "search",
+    "time_format", "output_time_format", "field_list", "f", "max_lines",
+    "truncation_mode", "output_mode", "segmentation"
+]
+
+FLAGS_RESULTS = [
+    "offset", "count", "search", "field_list", "f", "output_mode"
+]
+
+FLAGS_TIMELINE = [
+    "time_format", "output_time_format"
+]
+
+FLAGS_SEARCHLOG = [
+    "attachment"
+]
+
+FLAGS_SUMMARY = [
+    "earliest_time", "latest_time", "time_format", "output_time_format",
+    "field_list", "f", "search", "top_count", "min_freq"
+]
+
+def cmdline(argv, flags):
+    """A cmdopts wrapper that takes a list of flags and builds the
+       corresponding cmdopts rules to match those flags."""
+    rules = dict([(flag, {'flags': ["--%s" % flag]}) for flag in flags])
+    return cmdopts.cmdline(argv, rules)
 
 def output(stream):
     """Write the contents of the given stream to stdout."""
@@ -45,48 +84,31 @@ class Program:
 
     def create(self, argv):
         """Create a search job."""
-
-        if len(argv) == 0: 
-            error("Command requires an index name", 2)
-
-        name = argv[0]
-
-        if self.service.indexes.contains(name):
-            print "Index '%s' already exists" % name
-            return
-
-        # Read item metadata and construct command line parser rules that 
-        # correspond to each editable field.
-
-        # Request editable fields
-        itemmeta = self.service.indexes.itemmeta()
-        fields = itemmeta['eai:attributes'].optionalFields
-
-        # Build parser rules
-        rules = dict([(field, {'flags': ["--%s" % field]}) for field in fields])
-
-        # Parse the argument vector
-        opts = cmdline(argv, rules)
-
-        # Execute the edit request
-        self.service.indexes.create(name, **opts.kwargs)
+        opts = cmdline(argv, FLAGS_CREATE)
+        if len(opts.args) != 1:
+            error("Command requires a search expression", 2)
+        query = opts.args[0]
+        job = self.service.jobs.create(opts.args[0], **opts.kwargs)
+        print job.sid
 
     def events(self, argv):
-        opts = cmdline(argv, {})
-        self.foreach(opts.args, lambda job: output(job.events()))
+        """Retrieve events for the specified search jobs."""
+        opts = cmdline(argv, FLAGS_EVENTS)
+        self.foreach(opts.args, lambda job: 
+            output(job.events(**opts.kwargs)))
 
     def finalize(self, argv):
+        """Finalize the specified search jobs."""
         self.foreach(argv, lambda job: job.finalize())
 
     def foreach(self, argv, func):
         """Apply the function to each job specified in the argument vector."""
-        opts = cmdline(argv)
-        if len(opts.args) == 0:
-            error("Command requires a search-id (sid)", 2)
-        for sid in opts.args:
-            job = self.lookup(sid)
+        if len(argv) == 0:
+            error("Command requires a search specifier.", 2)
+        for item in argv:
+            job = self.lookup(item)
             if job is None:
-                error("Search job '%s' does not exist" % sid, 2)
+                error("Search job '%s' does not exist" % item, 2)
             func(job)
 
     def list(self, argv):
@@ -94,11 +116,12 @@ class Program:
            list the properties of the specified jobs."""
 
         def read(job):
-            for key, value in job.read().iteritems(): 
+            entity = job.read()
+            for key in sorted(entity.keys()):
                 # Ignore some fields that make the output hard to read and
                 # that are available via other commands.
                 if key in ["performance"]: continue
-                print "%s: %s" % (key, value)
+                print "%s: %s" % (key, entity[key])
 
         if len(argv) == 0:
             index = 0
@@ -110,12 +133,16 @@ class Program:
         self.foreach(argv, read)
 
     def preview(self, argv):
-        opts = cmdline(argv, {})
-        self.foreach(opts.args, lambda job: output(job.preview()))
+        """Retrieve the preview for the specified search jobs."""
+        opts = cmdline(argv, FLAGS_RESULTS)
+        self.foreach(opts.args, lambda job: 
+            output(job.preview(**opts.kwargs)))
 
     def results(self, argv):
-        opts = cmdline(argv, {})
-        self.foreach(opts.args, lambda job: output(job.results()))
+        """Retrieve the results for the specified search jobs."""
+        opts = cmdline(argv, FLAGS_RESULTS)
+        self.foreach(opts.args, lambda job: 
+            output(job.results(**opts.kwargs)))
 
     def sid(self, spec):
         """Convert the given search specifier into a serch-id (sid)."""
@@ -131,13 +158,15 @@ class Program:
         return self.service.jobs[self.sid(spec)]
 
     def pause(self, argv):
+        """Pause the specified search jobs."""
         self.foreach(argv, lambda job: job.pause())
 
     def perf(self, argv):
+        """Retrive performance info for the specified search jobs."""
         self.foreach(argv, lambda job: pprint(job['performance']))
 
     def run(self, argv):
-        """Dispatch the given command & args."""
+        """Dispatch the given command."""
         command = argv[0]
         handlers = { 
             'cancel': self.cancel,
@@ -149,12 +178,11 @@ class Program:
             'preview': self.preview,
             'results': self.results,
             'searchlog': self.searchlog,
+            'summary': self.summary,
             'perf': self.perf,
-            'status': self.status,
             'timeline': self.timeline,
             'touch': self.touch,
             'unpause': self.unpause,
-            'update': self.update,
         }
         handler = handlers.get(command, None)
         if handler is None:
@@ -162,46 +190,26 @@ class Program:
         handler(argv[1:])
 
     def searchlog(self, argv):
-        opts = cmdline(argv, {})
-        self.foreach(opts.args, lambda job: output(job.searchlog()))
+        """Retrieve the searchlog for the specified search jobs."""
+        opts = cmdline(argv, FLAGS_SEARCHLOG)
+        self.foreach(opts.args, lambda job: 
+            output(job.searchlog(**opts.kwargs)))
 
-    def status(self, argv):
-        pass # UNDONE
+    def summary(self, argv):
+        opts = cmdline(argv, FLAGS_SUMMARY)
+        self.foreach(opts.args, lambda job: 
+            output(job.summary(**opts.kwargs)))
 
     def timeline(self, argv):
-        opts = cmdline(argv, {})
-        self.foreach(opts.args, lambda job: output(job.timeline()))
+        opts = cmdline(argv, FLAGS_TIMELINE)
+        self.foreach(opts.args, lambda job: 
+            output(job.timeline(**opts.kwargs)))
 
     def touch(self, argv):
         self.foreach(argv, lambda job: job.touch())
 
     def unpause(self, argv):
         self.foreach(argv, lambda job: job.unpause())
-
-    def update(self, argv):
-        """Update a search job according to the given argument vector."""
-
-        if len(argv) == 0: 
-            error("Command requires an index name", 2)
-        name = argv[0]
-        if not self.service.indexes.contains(name):
-            error("Index '%s' does not exist" % name, 2)
-        index = self.service.indexes[name]
-
-        # Read entity metadata and construct command line parser rules that 
-        # correspond to each editable field.
-
-        # Request editable fields
-        fields = index.readmeta()['eai:attributes'].optionalFields
-
-        # Build parser rules
-        rules = dict([(field, {'flags': ["--%s" % field]}) for field in fields])
-
-        # Parse the argument vector
-        opts = cmdline(argv, rules)
-
-        # Execute the edit request
-        index.update(**opts.kwargs)
 
 def main():
     usage = "usage: %prog [options] <command> [<args>]"
@@ -218,7 +226,7 @@ def main():
         options = argv[:index]
         command = argv[index:]
 
-    opts = parse(options, {}, ".splunkrc", usage=usage)
+    opts = cmdopts.parse(options, {}, ".splunkrc", usage=usage)
     service = connect(**opts.kwargs)
     program = Program(service)
     program.run(command)
