@@ -73,7 +73,7 @@ def parse_args():
 
     opt.add_option("-l", "--limit", 
               default="20000",
-              help="Number of events to limit per chunk (defaults to 7500)",
+              help="Number of events to limit per chunk (defaults to 20000)",
               dest="limit")
 
     opt.add_option("-r", "--restart", 
@@ -97,9 +97,16 @@ def query(context, start, end, span, index):
         squery = squery + "endtime=%d " % end
 
     # span is in seconds for buckets
-    squery = squery + "| timechart span=%ds count" % span
+    squery = squery + "| timechart "
 
-    # issue query to splunkd, always CSV
+    if span == 86400:
+        # force splunk into 12:00:00AM start time for buckets.
+        squery = squery + "span=1d "
+    else:
+        squery = squery + "span=%ds " % span
+
+    squery = squery + "count"
+
     result = context.get('search/jobs/export', search=squery, output_mode="csv")
     if result.status != 200:
         print "Failed to collect summary event buckets"
@@ -251,6 +258,8 @@ def report_banner(bucket_list):
 def export(options, context, bucket_list):
     """ given the buckets, export the events """
 
+    header = False
+
     if options.restart:
         (bucket_list, sane) = sanitize_restart_bucket_list(options, bucket_list)
         if not sane:
@@ -272,7 +281,7 @@ def export(options, context, bucket_list):
                 if options.progress:
                     print "PROCESSING BUCKET:-------- %s" % str(bucket)
                 # generate a search
-                squery = "search %s " % options.index
+                squery = "search * index=%s " % options.index
                 squery = squery + "timeformat=%s "
 
                 start = bucket[1]
@@ -288,8 +297,12 @@ def export(options, context, bucket_list):
                 # on the export endpoint
                 result = context.get('search/jobs/export', 
                                  search=squery, 
-                                 output_mode=options.format,
-                                 max_count=0)
+                                 output_mode=options.format)
+                                 #max_count=0)  ## max_count appears to be broken
+
+                #result = context.post('/services/search/jobs/oneshot',
+                #                  search=squery,
+                #                  output_mode=options.format)
     
                 if result.status != 200:
                     # TODO: retry on failure, sleep and retry?
@@ -305,12 +318,28 @@ def export(options, context, bucket_list):
             # N.B.: atomic writes in python don't seem to exist. In order
             # *really* make this robust, we need to atomically write the 
             # body of the event returned AND update the restart file and
-            # guarantee both commited.
+            # guarantee both committed.
 
             # atomic write start
             # TODO: post process results before writing?
-            options.fd.write(result.body.read())
-            options.fd.flush()
+
+            data = result.body.read()
+            data = data.splitlines()
+            if len(data) > 0:
+                firstline = data[0]
+                data.pop(0)
+
+                if not header:
+                    options.fd.write(firstline)
+                    options.fd.write("\n")
+                    header = True
+
+                for line in data:
+                    options.fd.write(line)
+                    options.fd.write("\n")
+
+                options.fd.flush()
+
             rfd.write(str(bucket).strip("(").strip(")").replace(" ",""))
             rfd.write("\n")
             rfd.flush()
@@ -331,7 +360,6 @@ def main():
     context = binding.connect( host=connection.host, 
                                username=connection.username,
                                password=connection.password)
-
     # check for extraneous cli arguments
     (options, args) = parse_args()
     if args:
