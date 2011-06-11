@@ -329,19 +329,17 @@ def export(options, context, bucket_list):
                 firstline = data[0]
                 data.pop(0)
 
-            if len(data) != bucket[0]:
-                print "warning: %d events expected, found %d" % (bucket[0], len(data))
+                if not header:
+                    options.fd.write(firstline)
+                    options.fd.write("\n")
+                    header = True
 
-            if not header:
-                options.fd.write(firstline)
-                options.fd.write("\n")
-                header = True
+                for line in data:
+                    options.fd.write(line)
+                    options.fd.write("\n")
 
-            for line in data:
-                options.fd.write(line)
-                options.fd.write("\n")
-          
-            options.fd.flush()
+                options.fd.flush()
+
             rfd.write(str(bucket).strip("(").strip(")").replace(" ",""))
             rfd.write("\n")
             rfd.flush()
