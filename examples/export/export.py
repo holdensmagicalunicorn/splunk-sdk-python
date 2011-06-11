@@ -297,8 +297,8 @@ def export(options, context, bucket_list):
                 # on the export endpoint
                 result = context.get('search/jobs/export', 
                                  search=squery, 
-                                 output_mode=options.format)
-                                 #max_count=0)  ## max_count appears to be broken
+                                 output_mode=options.format,
+                                 max_count=int(bucket[0])+1)
 
                 #result = context.post('/services/search/jobs/oneshot',
                 #                  search=squery,
