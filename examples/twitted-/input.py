@@ -15,6 +15,8 @@
 # UNDONE: Command line args - Splunk host/port
 # UNDONE: Basic auth will be disabled in August/2010 .. need to support OAuth2
 
+from pprint import pprint
+
 import base64
 from getpass import getpass
 import httplib
@@ -33,7 +35,7 @@ SPLUNK_HOST = "localhost"
 SPLUNK_PORT = 9001
 
 ingest = None       # The splunk ingest socket
-verbose = 1
+verbose = 0
 
 class Twitter:
     def __init__(self, username, password):
@@ -63,14 +65,18 @@ class Twitter:
 RULES = {
     'tusername': {
         'flags': ["--twitter:username"],
-        #'default': None,
         'help': "Twitter username",
     },
     'tpassword': { 
         'flags': ["--twitter:password"],
-        #'default': None,
         'help': "Twitter password",
     },
+    'verbose': {
+        'flags': ["--verbose"],
+        'default': 0,
+        'type': "int",
+        'help': "Verbosity level (0-3, default 0)",
+    }
 }
 
 def cmdline():
@@ -144,7 +150,8 @@ def listen(username, password):
         buffer += stream.read(2048)
 
 def output(record):
-    if verbose > 0: print_record(record)
+    if verbose == 1: print_record(record)
+    if verbose == 2: pprint(record)
 
     for k in sorted(record.keys()):
         if k.endswith("_str"): 
@@ -159,14 +166,16 @@ def output(record):
             if len(v) == 0: continue
             v = ','.join([str(item) for item in v])
 
+        # Field renames
+        k = { 'source': "status_source" }.get(k, k)
+
         if isinstance(v, str):
             format = '%s="%s" '
-            v = v.replace('"', '\\"')
+            v = v.replace('"', "'") # UNDONE: better ideas?
         else:
             format = "%s=%r "
         result = format % (k, v)
 
-        if verbose > 1: sys.stdout.write(result)
         ingest.send(result)
 
     end = "\r\n---end-status---\r\n"
@@ -190,6 +199,11 @@ def process(status):
 
 def main():
     kwargs = cmdline()
+
+    global verbose
+    verbose = kwargs['verbose']
+
+    print "verbose=%d" % verbose
 
     # Force the namespace
     kwargs['namespace'] = "%s:twitted" % kwargs['username']
