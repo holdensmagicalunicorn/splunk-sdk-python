@@ -2,12 +2,10 @@
 
 # Startup up Splunk & Cassandra
 
-# UNDONE: Don't hardcode Cassandra location
-
 sudo $SPLUNK_HOME/bin/splunk start
 wait $!
 
-pushd /home/blovering/Projects/apache-cassandra-0.7.6-2/bin
+pushd $CASSANDRA_HOME/bin
 ./cassandra -p cassandra.pid
 popd
 
