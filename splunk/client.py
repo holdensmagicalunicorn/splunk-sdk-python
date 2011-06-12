@@ -77,6 +77,7 @@ import splunk.data as data
 from splunk.data import record
 
 __all__ = [
+    "connect",
     "Service"
 ]
 
@@ -152,8 +153,8 @@ class Endpoint:
 
     def post(self, relpath="", **kwargs):
         response = self.service.post("%s/%s" % (self.path, relpath), **kwargs)
-        check_status(response, 200)
-        return self
+        check_status(response, 200, 201)
+        return response
 
 # UNDONE: Common create & delete options?
 class Collection(Endpoint):
@@ -165,8 +166,7 @@ class Collection(Endpoint):
 
     def itemmeta(self):
         """Returns collection item metadata."""
-        response = self.service.get(self.path + "/_new")
-        check_status(response, 200)
+        response = self.get("/_new")
         content = load(response).entry.content
         return record({
             'eai:acl': content['eai:acl'],
@@ -212,7 +212,6 @@ class Entity(Endpoint):
         """Read and return the current entity value, optionally returning
            only the requested fields, if specified."""
         response = self.get()
-        check_status(response, 200)
         content = load(response).entry.content
         return _filter_content(content, *args)
 
@@ -258,13 +257,11 @@ class Indexes(Collection):
 
     def create(self, name, **kwargs):
         response = self.post(name=name, **kwargs)
-        check_status(response, 201)
         return Index(self.service, name)
 
     def list(self):
         """Returns a list of index names."""
         response = self.get(count=-1)
-        check_status(response, 200)
         entry = load(response).entry
         if not isinstance(entry, list): entry = [entry] # UNDONE
         return [item.title for item in entry]
@@ -275,11 +272,6 @@ class Job(Endpoint):
     def __init__(self, service, sid):
         Endpoint.__init__(self, service, PATH_JOB % sid)
         self.sid = sid
-        self.cancel = lambda: self.post("cancel")
-        self.finalize = lambda: self.post("finalize")
-        self.pause = lambda: self.post("pause")
-        self.touch = lambda: self.post("touch")
-        self.unpause = lambda: self.post("unpause")
 
     def __getitem__(self, key):
         return self.read()[key]
@@ -287,17 +279,35 @@ class Job(Endpoint):
     def __setitem__(self, key, value):
         self.update(key=value)
 
+    def cancel(self):
+        self.post("control", action="cancel")
+        return self
+
+    def disable_preview(self):
+        self.post("control", action="disablepreview")
+        return self
+
     def events(self, **kwargs):
         return self.get("events", **kwargs).body
+
+    def enable_preview(self):
+        self.post("control", action="enablepreview")
+        return self
+
+    def finalize(self):
+        self.post("control", action="finalize")
+        return self
+
+    def pause(self):
+        self.post("control", action="pause")
+        return self
 
     def preview(self, **kwargs):
         return self.get("results_preview", **kwargs).body
 
     def read(self, *args):
-        """Read and return the current entity value, optionally returning
-           only the requested fields, if specified."""
+        """Read and return the jobs entity value."""
         response = self.get()
-        check_status(response, 200)
         content = load(response).content
         return _filter_content(content, *args)
 
@@ -307,11 +317,25 @@ class Job(Endpoint):
     def searchlog(self, **kwargs):
         return self.get("search.log", **kwargs).body
 
+    def setpriority(self, value):
+        self.post('control', action="setpriority", priority=value)
+        return self
+
+    def summary(self, **kwargs):
+        return self.get("summary", **kwargs).body
+
     def timeline(self, **kwargs):
         return self.get("timeline", **kwargs).body
 
-    def update(self, **kwargs):
-        self.post(**kwargs)
+    def touch(self,):
+        self.post("control", action="touch")
+        return self
+
+    def setttl(self, value):
+        self.post("control", action="setttl", ttl=value)
+
+    def unpause(self):
+        self.post("control", action="unpause")
         return self
 
 class Jobs(Collection):
@@ -330,13 +354,11 @@ class Jobs(Collection):
 
     def create(self, query, **kwargs):
         response = self.post(search=query, **kwargs)
-        check_status(response, 201)
         sid = load(response).sid
         return Job(self.service, sid)
 
     def list(self):
         response = self.get()
-        check_status(response, 200)
         entry = load(response).entry
         if not isinstance(entry, list): entry = [entry] # UNDONE
         return [item.content.sid for item in entry]
