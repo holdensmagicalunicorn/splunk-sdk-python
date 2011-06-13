@@ -20,7 +20,6 @@ using a parameterized chunking mechanism.
 """
 
 # installation support files
-from optparse import OptionParser
 import sys
 import operator
 import time
@@ -29,59 +28,56 @@ import os
 # splunk support files
 import splunk.binding as binding
 from splunk.binding import connect
-
 from utils import cmdopts
 
 # hidden file
 RESTART_FILE = "./.export_restart_log"
+OUTPUT_FILE = "./export.out"
+OUTPUT_FORMAT = "csv"
+REQUEST_LIMIT = 100000
 
-def parse_args():
-    """ parse cli arguments """
-
-    opt = OptionParser("usage: <TBD>", version="0.0")
-
-    ## dynamically build the cli args
-    opt.add_option("-i", "--index", 
-              default="*",
-              help="Index to export (default is all indexes)",
-              dest="index")
-
-    opt.add_option("-p", "--progress", 
-              default=False,
-              help="display bucket processing progress",
-              dest="progress")
-
-    opt.add_option("-s", "--starttime", 
-              default=0,
-              help="Start time of export (default is start of index)",
-              dest="start")
-
-    opt.add_option("-e", "--endtime", 
-              default=0,
-              help="End time of export (default is end of index)",
-              dest="end")
-
-    opt.add_option("-o", "--output", 
-              default="export.out",
-              help="export output file (defaults to export.out)",
-              dest="output")
-
-    opt.add_option("-f", "--format", 
-              default="csv",
-              help="export output format (defaults to csv)",
-              dest="format")
-
-    opt.add_option("-l", "--limit", 
-              default="20000",
-              help="Number of events to limit per chunk (defaults to 20000)",
-              dest="limit")
-
-    opt.add_option("-r", "--restart", 
-              default=False,
-              help="restart an existing export that was prematurely ended",
-              dest="restart")
-
-    return opt.parse_args()
+CLIRULES = {
+   'index': {
+        'flags': ["--index"],
+        'default': "*",
+        'help': "Index ro export (default is all user defined indices"
+    },
+   'progress': {
+        'flags': ["--progress"],
+        'default': False,
+        'help': "display processing progress"
+    },
+   'start': {
+        'flags': ["--starttime"],
+        'default': 0,
+        'help': "Start time of export (default is start of index)"
+    },
+   'end': {
+        'flags': ["--endtime"],
+        'default': 0,
+        'help': "Start time of export (default is start of index)"
+    },
+   'output': {
+        'flags': ["--output"],
+        'default': OUTPUT_FILE,
+        'help': "Output file name (default is %s)" % OUTPUT_FILE
+    },
+   'format': {
+        'flags': ["--format"],
+        'default': OUTPUT_FORMAT,
+        'help': "Export format (default is %s)" % OUTPUT_FORMAT
+    },
+   'limit': {
+        'flags': ["--limit"],
+        'default': REQUEST_LIMIT,
+        'help': "Events per request limit (default is %d)" % REQUEST_LIMIT
+    },
+   'restart': {
+        'flags': ["--restart"],
+        'default': False,
+        'help': "Restarts an existing export that was prematurely terminated"
+    },
+}
 
 def query(context, start, end, span, index):
     """ query the server for a specific range of events """
@@ -107,10 +103,16 @@ def query(context, start, end, span, index):
 
     squery = squery + "count"
 
-    result = context.get('search/jobs/export', search=squery, output_mode="csv")
-    if result.status != 200:
-        print "Failed to collect summary event buckets"
-        return []
+    retry = True
+    while retry:
+        result = context.get('search/jobs/export', search=squery, 
+                              output_mode="csv")
+        if result.status != 200:
+            print "Failed to get event count summary, HTTP status=%d, retrying"\
+                   % result.status
+            time.sleep(10)
+        else:
+            retry = False
 
     # generate a list of lines from teh csv return data
     lines = result.body.read().splitlines()
@@ -195,8 +197,11 @@ def normalize_export_buckets(options, context):
     # properly
 
     # start with a bucket size of one day: 86400 seconds
-    buckets = get_buckets(context, int(options.start), int(options.end), 
-                          options.index, int(options.limit), 86400)
+    buckets = get_buckets(context, int(options.kwargs['start']), 
+                          int(options.kwargs['end']), 
+                          options.kwargs['index'], 
+                          int(options.kwargs['limit']), 
+                          86400)
 
     # sort on start time: tuples are (events, starttime, quantum)
     # necessary? probably not
@@ -223,8 +228,6 @@ def sanitize_restart_bucket_list(options, bucket_list):
         rslist.append((int(line[0]), int(line[1]), int(line[2])))
     rfd.close()
 
-    fslist_final = []
-
     for entry in rslist:
         # throw away empty buckets, until a non-empty bucket
         while bucket_list[0][0] == 0:
@@ -235,7 +238,7 @@ def sanitize_restart_bucket_list(options, bucket_list):
                  % (str(bucket_list[0]), str(rslist[0]))
             sane = False
 
-        if options.progress:
+        if options.kwargs['progress']:
             print "restart skipping already handled bucket: %s" % str(entry)
         bucket_list.pop(0)
 
@@ -260,7 +263,7 @@ def export(options, context, bucket_list):
 
     header = False
 
-    if options.restart:
+    if options.kwargs['restart']:
         (bucket_list, sane) = sanitize_restart_bucket_list(options, bucket_list)
         if not sane:
             print "Mismatch between restart and live event list, exiting"
@@ -273,15 +276,15 @@ def export(options, context, bucket_list):
 
     for bucket in bucket_list:
         if bucket[0] == 0:
-            if options.progress:
+            if options.kwargs['progress']:
                 print "SKIPPING BUCKET:-------- %s" % str(bucket)
         else:
-            success = False
-            while not success:
-                if options.progress:
-                    print "PROCESSING BUCKET:-------- %s" % str(bucket)
+            retry = True
+            while retry:
+                if options.kwargs['progress']:
+                    print "PROCESSING BUCKET:------ %s" % str(bucket)
                 # generate a search
-                squery = "search * index=%s " % options.index
+                squery = "search * index=%s " % options.kwargs['index']
                 squery = squery + "timeformat=%s "
 
                 start = bucket[1]
@@ -297,22 +300,25 @@ def export(options, context, bucket_list):
                 # on the export endpoint
                 result = context.get('search/jobs/export', 
                                  search=squery, 
-                                 output_mode=options.format,
+                                 output_mode=options.kwargs['format'],
                                  max_count=int(bucket[0])+1)
 
+                # search version (doesn't support max_count)
+                #
                 #result = context.post('/services/search/jobs/oneshot',
                 #                  search=squery,
-                #                  output_mode=options.format)
+                #                  output_mode=options.kwargs['format'])
     
                 if result.status != 200:
-                    # TODO: retry on failure, sleep and retry?
+                    # TODO: retry on failure, sleep and retry
                     # at sme point, maybe give up... and the user can
                     # attempt a restart export
-                    print "HTTP status: %d, sleep and retry..." % \
-                          result.status
+                    if options.kwargs['progress']:
+                        print "HTTP status: %d, sleep and retry..." % \
+                              result.status
                     time.sleep(10)
                 else:
-                    success = True
+                    retry = False
 
             # write export file 
             # N.B.: atomic writes in python don't seem to exist. In order
@@ -330,15 +336,15 @@ def export(options, context, bucket_list):
                 data.pop(0)
 
                 if not header:
-                    options.fd.write(firstline)
-                    options.fd.write("\n")
+                    options.kwargs['fd'].write(firstline)
+                    options.kwargs['fd'].write("\n")
                     header = True
 
                 for line in data:
-                    options.fd.write(line)
-                    options.fd.write("\n")
+                    options.kwargs['fd'].write(line)
+                    options.kwargs['fd'].write("\n")
 
-                options.fd.flush()
+                options.kwargs['fd'].flush()
 
             rfd.write(str(bucket).strip("(").strip(")").replace(" ",""))
             rfd.write("\n")
@@ -350,28 +356,15 @@ def export(options, context, bucket_list):
 def main():
     """ main entry """
 
-
-    # perform idempotent login/connect -- get login creds from ~/.splunkrc
-    # TODO: allow for credential supplied via CLI args
-    opts = cmdopts.parse([], {}, ".splunkrc")
-    connection = connect(**opts.kwargs)
+    # perform idmpotent login/connect -- get login creds from ~/.splunkrc
+    # if not specified in the command line arguments
+    options = cmdopts.parse(sys.argv[1:], CLIRULES, ".splunkrc")
+    connection = connect(**options.kwargs)
 
     # get lower level context
     context = binding.connect( host=connection.host, 
                                username=connection.username,
                                password=connection.password)
-    # check for extraneous cli arguments
-    (options, args) = parse_args()
-    if args:
-        print "Unknown argument found: %s" % args
-        sys.exit(1)
-
-    # open output file
-    try:
-        options.fd = open(options.output, "w")
-    except IOError:
-        print "Failed to open output file %s for writing" % options.output
-        sys.exit(1)
 
     # open restart file
     rfd = None
@@ -381,10 +374,10 @@ def main():
         pass
 
     # check request and environment for sanity
-    if options.restart is not False and rfd is None:
+    if options.kwargs['restart'] is not False and rfd is None:
         print "Failed to open restart file %s for reading" % RESTART_FILE
         sys.exit(1)
-    elif options.restart is False and rfd is not None:
+    elif options.kwargs['restart'] is False and rfd is not None:
         print "Warning: restart file %s exists." % RESTART_FILE
         print "         manually remove this file to continue complete export"
         sys.exit(1)
@@ -400,6 +393,27 @@ def main():
     # our smallest bucket (one second) -- but there is not much we are going
     # to do about it
     bucket_list = normalize_export_buckets(options, context)
+
+    # TODO:
+    # if we have a restart in progress, we should spend some time to validate
+    # the export by examining the last bit of the exported file versus the 
+    # restart log we have so far
+    #
+    # if options.kwargs['restart'] is not False:
+    #     validate_export(options, context)
+
+    # open export for writing, unless we are restarting the export,
+    # In which case we append to the export
+    mode = "w"
+    if options.kwargs['restart'] is not False:
+        mode = "a"
+
+    try:
+        options.kwargs['fd'] = open(options.kwargs['output'], mode)
+    except IOError:
+        print "Failed to open output file %s w/ mode %s" % \
+                             (options.kwargs['output'], mode)
+        sys.exit(1)
 
     # chunk through each bucket, and on success, remove the restart file
     if export(options, context, bucket_list) is True:

@@ -15,7 +15,7 @@ The CLI arguments for the export are as follows:
 Possible work items:
 
 1) Optionally post process the return data from the server.
-Currently each chunk request contains an event number for that request, as well as "line 0" contains the event field names/information.
+Currently each chunk request contains an event number for that request
 
 2) cleanup non-CSV output (like XML, etc) to better bound XML syntax (i.e. clean up the preview entries that are not fully parseable XML).
 
