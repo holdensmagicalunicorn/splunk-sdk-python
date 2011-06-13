@@ -40,7 +40,7 @@ CLIRULES = {
    'index': {
         'flags': ["--index"],
         'default': "*",
-        'help': "Index ro export (default is all user defined indices"
+        'help': "Index to export (default is all user defined indices)"
     },
    'progress': {
         'flags': ["--progress"],
@@ -108,7 +108,7 @@ def query(context, start, end, span, index):
         result = context.get('search/jobs/export', search=squery, 
                               output_mode="csv")
         if result.status != 200:
-            print "Failed to get event count summary, HTTP status=%d, retrying"\
+            print "Failed to get event counts, HTTP status=%d, retrying"\
                    % result.status
             time.sleep(10)
         else:
