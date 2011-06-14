@@ -294,14 +294,15 @@ def export(options, context, bucket_list):
                 squery = squery + "endtime=%d " % (start+quantum)
     
                 # issue query to splunkd
-                # max_count=0 overrides the maximum number of events
+                # count=0 overrides the maximum number of events
                 # returned (normally 50K) regardless of what the .conf
                 # file for splunkd says. Note that this is only effective
                 # on the export endpoint
                 result = context.get('search/jobs/export', 
                                  search=squery, 
                                  output_mode=options.kwargs['format'],
-                                 max_count=int(bucket[0])+1)
+                                 count=0)
+                                 #count=int(bucket[0])+1)
 
                 # search version (doesn't support max_count)
                 #
