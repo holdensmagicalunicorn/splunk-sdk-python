@@ -33,7 +33,6 @@ from utils import cmdopts
 # hidden file
 RESTART_FILE = "./.export_restart_log"
 OUTPUT_FILE = "./export.out"
-OUTPUT_FORMAT = "csv"
 REQUEST_LIMIT = 100000
 
 CLIRULES = {
