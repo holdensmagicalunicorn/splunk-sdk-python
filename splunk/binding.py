@@ -173,7 +173,9 @@ def _print_request(method, url, head, body):
 def _print_response(response):
     print "=> %d %s" % (response.status, response.reason)
     pprint(response.headers)
-    print response.body
+    # UNDONE: Dont consume the body here .. figure out a better way to show
+    # contents without consuming body or reading an arbitrary response stream.
+    # print response.body
 
 def _spliturl(url):
     """Split the given url into (scheme, host, port, path)."""
