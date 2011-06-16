@@ -33,7 +33,6 @@ from utils import cmdopts
 # hidden file
 RESTART_FILE = "./.export_restart_log"
 OUTPUT_FILE = "./export.out"
-OUTPUT_FORMAT = "csv"
 REQUEST_LIMIT = 100000
 
 CLIRULES = {
@@ -61,11 +60,6 @@ CLIRULES = {
         'flags': ["--output"],
         'default': OUTPUT_FILE,
         'help': "Output file name (default is %s)" % OUTPUT_FILE
-    },
-   'format': {
-        'flags': ["--format"],
-        'default': OUTPUT_FORMAT,
-        'help': "Export format (default is %s)" % OUTPUT_FORMAT
     },
    'limit': {
         'flags': ["--limit"],
@@ -131,12 +125,12 @@ def get_buckets(context, start, end, index, limit, span):
     # as necessary to minutes and then to seconds.
     #
     # We do this to make a reasonable amount of data transfer for each
-    # request when we export the data. It allows for fine grained 
-    # restart on errors
+    # request when we export the data and it allows for fine grained 
+    # restart on errors.
     # 
     # also because splunk "snaps" events based on the span size, this
     # behavior requires span and start/end times to be fully in phase
-    # (i.e. modulo 0)
+    # (i.e. starttime modulo span == 0).
     downsample = { 86400 : 3600, 3600 : 60, 60 : 1 }
 
     # trace/debug
@@ -165,25 +159,25 @@ def get_buckets(context, start, end, index, limit, span):
         espan = int(elements[2])
 
         # if the numnber of events in this bucket is larger than
-        # our limit, we need to break them up (cut in half)
+        # our limit, we need to break them up (cut in half).
         if enumevents > limit:
-            # only split down to one second
+            # only split down to one second.
             if span > 1:
-                # get next smaller chunk
+                # get next smaller chunk.
                 newspan = downsample[span]
 
-                # make smaller buckets, recurse with smaller span
+                # make smaller buckets, recurse with smaller span.
                 endtime = estarttime + span
                 expanded = get_buckets(context, estarttime, endtime, 
                                        index, limit, newspan)
-                # flatten list and put into current list
+                # flatten list and put into current list.
                 for bucket in expanded:
                     buckets.append(bucket)
             else:
-                # can't get any smaller than 1 second interval
+                # can't get any smaller than 1 second interval.
                 buckets.append((enumevents, estarttime, espan))
         else:
-            # add to our list
+            # add to our list.
             buckets.append((enumevents, estarttime, espan))
 
     return buckets
@@ -191,20 +185,20 @@ def get_buckets(context, start, end, index, limit, span):
 def normalize_export_buckets(options, context):
     """ query splunk to get the buckets of events and attempt to normalize """
 
-    # TODO: figure out time conversion format for user-friendliness,
-    # but for now, for now use seconds -- start/end time should also
-    # start on a day boundary for the downsampling chunking to work
-    # properly
+    ## TODO: figure out time conversion format for user-friendliness,
+    ## but for now, for now use seconds -- start/end time should also
+    ## start on a day boundary for the downsampling chunking to work
+    ## properly.
 
-    # start with a bucket size of one day: 86400 seconds
+    # start with a bucket size of one day: 86400 seconds.
     buckets = get_buckets(context, int(options.kwargs['start']), 
                           int(options.kwargs['end']), 
                           options.kwargs['index'], 
                           int(options.kwargs['limit']), 
                           86400)
 
-    # sort on start time: tuples are (events, starttime, quantum)
-    # necessary? probably not
+    # sort on start time: tuples are (events, starttime, quantum).
+    # necessary? probably not...
     buckets = sorted(buckets, key=operator.itemgetter(1)) 
 
     return buckets
@@ -214,22 +208,20 @@ def sanitize_restart_bucket_list(options, bucket_list):
 
     sane = True
 
-    # run through the entries we have already processed found in the restart
-    # file and remove them from the live bucket list.
-    # 
-    # NOTE: we will also check for corroboration between live and processed
-    # lists
+    ## run through the entries we have already processed found in the restart
+    ## file and remove them from the live bucket list.
 
-    # read restart file into a new list
+    # read restart file into a new list.
     rfd = open(RESTART_FILE, "r")
     rslist = []
+    plist = []
     for line in rfd:
         line = line[:-1].split(",")
         rslist.append((int(line[0]), int(line[1]), int(line[2])))
     rfd.close()
 
     for entry in rslist:
-        # throw away empty buckets, until a non-empty bucket
+        # throw away empty buckets, until a non-empty bucket.
         while bucket_list[0][0] == 0:
             bucket_list.pop(0)
 
@@ -240,9 +232,107 @@ def sanitize_restart_bucket_list(options, bucket_list):
 
         if options.kwargs['progress']:
             print "restart skipping already handled bucket: %s" % str(entry)
-        bucket_list.pop(0)
 
-    return (bucket_list, sane)
+        # append the buckets we have already processed.
+        plist.append(bucket_list.pop(0))
+
+    return (plist, bucket_list, sane)
+
+def validate_export(options, bucket_list):
+    """ validate an existing export for consistency """
+
+    # open restart file:
+    # pbl is processed bucket list, abl is adjusted bucket list.
+    (pbl, abl, sane) = sanitize_restart_bucket_list(options, bucket_list)
+    if not sane:
+        print "Mismatch between restart and live event list"
+        return ([], False)
+
+    # open main export for reading
+    try:
+        efd = open(options.kwargs['output'], 'r')
+    except IOError:
+        return ([], False)
+
+    ##
+    ## abl contains the adjusted bucket list: the things we have 
+    ## left to process. What we do now is read the end of the export 
+    ## file and validate that it matches the bucket prior to the start 
+    ## of the restart file, which is in pbl. 
+    ##
+    ## pbl is the processed bucket list: the things thart should already 
+    ## have been processed and in the export file.
+    ##
+
+    # seek to end, read minimum of 64K backwards (?big enough?), or from start
+    # (whichever is smaller) of file to get the last bit of the previous 
+    # exported file.
+    efd.seek(0, 2)
+    bytestoread = min(65536, efd.tell())
+    efd.seek(efd.tell()-bytestoread)
+    endofdata = efd.read(bytestoread)
+    efd.close()
+
+    # get the last bucket processed.
+    pcount = -1
+    ptime = -1
+    pdelta = -1
+    if len(pbl) != 0:
+        pcount = pbl[len(pbl)-1][0]
+        ptime = pbl[len(pbl)-1][1]
+        pdelta = pbl[len(pbl)-1][2]
+
+    # check the tail end of the data, (in reverse order from the end) in 
+    # particular we are looking for the FIRST two fields at the beginning 
+    # of a line that matches:
+    #  <num>,"time",...
+    #
+    # N.B.: This may not guarantee a real event boundary and may have to be 
+    # revisited with a better heuristic.
+    #
+    dcount = -1
+    dtime = -1
+    for line in reversed(endofdata.split("\n")):
+        csvdata = line.split(",")
+        if len(csvdata) > 1:
+            try:
+                dcount = int(csvdata[0])
+                dtime = int(float(csvdata[1].strip('"')))
+                # found last one
+                break
+            except ValueError:
+                # skip and keep walking backwards
+                pass
+     
+    # didn't find any events in exported data, but no processed 
+    # buckets either, we are OK.
+    if dcount == -1 and pcount == -1:
+        return (abl, True)
+    # didn't find any events in exported data, but we have at 
+    # least one processed bucket, we are not sane.
+    elif dcount == -1 and  pcount != -1:
+        sane = False
+    # found at least one event in exported data, but we have not
+    # processed any buckets, we are not sane.
+    elif dcount != -1 and pcount == -1:
+        sane = False
+
+    if not sane:
+        return (abl, False)
+
+    # at this point we have some exported data and we have processed some
+    # buckets, make sure that the last event in the exported data, 
+    # is the same as the number of events processed in the bucket AND
+    # that its event time is within the time range of the processed bucket.
+    # If we succeed, then we are sane.
+    #
+    # note, events in exported data are 0 based in count, and 1 based in 
+    # processed count.
+    if (dcount + 1) == pcount and dtime <= (ptime + pdelta):
+        return (abl, True)
+
+    # not sane.
+    return (abl, False)
 
 def report_banner(bucket_list):
     """ output banner for export operation """
@@ -263,15 +353,9 @@ def export(options, context, bucket_list):
 
     header = False
 
-    if options.kwargs['restart']:
-        (bucket_list, sane) = sanitize_restart_bucket_list(options, bucket_list)
-        if not sane:
-            print "Mismatch between restart and live event list, exiting"
-            sys.exit(1)
-
     report_banner(bucket_list)
 
-    # (re)open restart file appending to the end if it exists
+    # (re)open restart file appending to the end if it exists.
     rfd = open(RESTART_FILE, "a")
 
     for bucket in bucket_list:
@@ -283,7 +367,7 @@ def export(options, context, bucket_list):
             while retry:
                 if options.kwargs['progress']:
                     print "PROCESSING BUCKET:------ %s" % str(bucket)
-                # generate a search
+                # generate a search.
                 squery = "search * index=%s " % options.kwargs['index']
                 squery = squery + "timeformat=%s "
 
@@ -294,25 +378,19 @@ def export(options, context, bucket_list):
                 squery = squery + "endtime=%d " % (start+quantum)
     
                 # issue query to splunkd
-                # max_count=0 overrides the maximum number of events
+                # count=0 overrides the maximum number of events
                 # returned (normally 50K) regardless of what the .conf
-                # file for splunkd says. Note that this is only effective
-                # on the export endpoint
+                # file for splunkd says. 
                 result = context.get('search/jobs/export', 
                                  search=squery, 
-                                 output_mode=options.kwargs['format'],
-                                 max_count=int(bucket[0])+1)
+                                 output_mode='csv',
+                                 count=0)
+                                 #count=int(bucket[0])+1)
 
-                # search version (doesn't support max_count)
-                #
-                #result = context.post('/services/search/jobs/oneshot',
-                #                  search=squery,
-                #                  output_mode=options.kwargs['format'])
-    
                 if result.status != 200:
                     # TODO: retry on failure, sleep and retry
                     # at sme point, maybe give up... and the user can
-                    # attempt a restart export
+                    # attempt a restart export.
                     if options.kwargs['progress']:
                         print "HTTP status: %d, sleep and retry..." % \
                               result.status
@@ -357,53 +435,57 @@ def main():
     """ main entry """
 
     # perform idmpotent login/connect -- get login creds from ~/.splunkrc
-    # if not specified in the command line arguments
+    # if not specified in the command line arguments.
     options = cmdopts.parse(sys.argv[1:], CLIRULES, ".splunkrc")
     connection = connect(**options.kwargs)
 
-    # get lower level context
+    # get lower level context.
     context = binding.connect( host=connection.host, 
                                username=connection.username,
                                password=connection.password)
 
-    # open restart file
+    # open restart file.
     rfd = None
     try:
         rfd = open(RESTART_FILE, "r")
     except IOError:
         pass
 
-    # check request and environment for sanity
+    # check request and environment for sanity.
     if options.kwargs['restart'] is not False and rfd is None:
         print "Failed to open restart file %s for reading" % RESTART_FILE
         sys.exit(1)
     elif options.kwargs['restart'] is False and rfd is not None:
         print "Warning: restart file %s exists." % RESTART_FILE
         print "         manually remove this file to continue complete export"
+        print "         or use --restart=1 to continue export"
         sys.exit(1)
     else:
         pass
 
-    # close restart file 
+    # close restart file.
     if rfd is not None:
         rfd.close()
 
     # normalize buckets to contain no more than "limit" events per bucket
     # however, there may be a situation where there will be more events in 
     # our smallest bucket (one second) -- but there is not much we are going
-    # to do about it
+    # to do about it.
     bucket_list = normalize_export_buckets(options, context)
 
-    # TODO:
+    #
     # if we have a restart in progress, we should spend some time to validate
     # the export by examining the last bit of the exported file versus the 
-    # restart log we have so far
+    # restart log we have so far.
     #
-    # if options.kwargs['restart'] is not False:
-    #     validate_export(options, context)
+    if options.kwargs['restart'] is not False:
+        (bucket_list, sane) = validate_export(options, bucket_list)
+        if sane is False:
+            print "Failed to validate export, consistency check failed"
+            sys.exit(1)
 
     # open export for writing, unless we are restarting the export,
-    # In which case we append to the export
+    # In which case we append to the export.
     mode = "w"
     if options.kwargs['restart'] is not False:
         mode = "a"
@@ -415,7 +497,7 @@ def main():
                              (options.kwargs['output'], mode)
         sys.exit(1)
 
-    # chunk through each bucket, and on success, remove the restart file
+    # chunk through each bucket, and on success, remove the restart file.
     if export(options, context, bucket_list) is True:
         os.remove(RESTART_FILE)
 
