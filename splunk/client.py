@@ -138,8 +138,18 @@ class Service(Context):
         return Indexes(self)
 
     @property
+    def info(self):
+        response = self.get("server/info")
+        check_status(response, 200)
+        return _filter_content(load(response).entry.content)
+
+    @property
     def jobs(self):
         return Jobs(self)
+
+    @property
+    def settings(self):
+        return Entity(self, "server/settings")
 
 class Endpoint:
     def __init__(self, service, path):
