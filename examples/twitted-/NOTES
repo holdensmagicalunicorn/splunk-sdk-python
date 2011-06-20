@@ -1,23 +1,6 @@
-Statuses [keywords] [timespan]
-Retweets [keywords] [timespan]
-Top words [timespan] [as histogram|tagcloud]
-Top users [timespan]
-Top sources 
-Top retweeted
-Top user_mentions [timespan]
-Top URLs [timespan]
-Top hashtags [timespan]
-Top reply_to [timespan]
-
-Sentiment [realtime, trending]
-
-User/Statuses master/detail?
-    * Maybe something like: .. {status} by user_id | sort -status_count
-
 # UNDONE
 
-    * Implement job.py - command line utility to retrieve search results
-        - Check that we get all results (eg: that maxresults isnt an issue)
+MV fields for: mentions, urls, etc
 
 # Deployment
 
@@ -32,67 +15,57 @@ User/Statuses master/detail?
         - Running the application
     * Saved searches (more)
     * Dashboards
-
-        * Configuration for Cassandra & Splunk hostport
-        * Configuration for Twitter & Splunk credentials
+    * Configuration for Twitter & Splunk credentials
 
 ## CONSIDER
 
     * Implement input component as scripted input
 
+# Queries
+
+Statuses [keywords] [timespan]
+Statuses, most retweeted
+Statuses, verified
+Top terms [timespan] [as histogram|tagcloud]
+Top sources 
+Top Mentions [timespan]
+Top urls [timespan]
+Top hashtags [timespan]
+Top reply_to [timespan]
+
+Users [verified] with most deletes
+Users [verified] with most followers
+Users [verified] with most seen statuses
+Users [verified] with most statuses
+
+Users
+    * Account age (histogram)
+    * followers_count (histogram)
+    * friend_count (histogram)
+    * statuses_count (histogram)
+    * Location (??)
+
+User
+    * Mentions
+    * Follows & unfllows
+
+Trending
+    * Terms (topics?)
+
+Graph
+    * Friends
+    * Followers
+    * Reply-to
+
+Geo ..
+
+Sentiment [realtime, trending]
+
+User/Statuses master/detail?
+    * Maybe something like: .. {status} by user_id | sort -status_count
+
 ## Resources
 
 http://twittertoolsbook.com/10-awesome-twitter-analytics-visualization-tools
 http://socialmediatoday.com/index.php?q=SMC/80437
-
-## Cassandra Schemas
-
-### Users
-contributors_enabled
-created_at
-default_profile
-description
-favourites_count
-followers_count
-friends_count
-geo_enabled
-is_translator
-lang
-listed_count
-location
-name
-profile_background_color
-profile_background_image_url
-profile_background_title
-profile_image_url
-profile_link_color
-profile_sidebar_border_color
-profile_sidebar_fill_color
-profile_text_color
-profile_use_background_image
-protected
-screen_name
-show_all_inline_media
-statuses_count
-time_zone
-utc_offset
-verified
-
-### Statuses
-created_at
-favorited
-hashtags
-in_reply_to_screen_name
-in_reply_to_status_id
-in_reply_to_user_id
-retweet_count
-retweet_status_id
-retweeted
-source
-text
-truncated
-urls
-user_mentions
-user_id
-
 

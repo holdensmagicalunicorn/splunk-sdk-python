@@ -1,22 +1,3 @@
-.. | cassget | stats count(user_id) as user_statuses_seen by user_id | sort -user_statuses_seen
-
-
-Statuses [keywords] [timespan]
-Retweets [keywords] [timespan]
-Top words [timespan] [as histogram|tagcloud]
-Top users [timespan]
-Top sources 
-Top retweeted
-Top user_mentions [timespan]
-Top URLs [timespan]
-Top hashtags [timespan]
-Top reply_to [timespan]
-
-Sentiment [realtime, trending]
-
-User/Statuses master/detail?
-    * Maybe something like: .. {status} by user_id | sort -status_count
-
 # UNDONE
 
     * Parameterize cassget, so I can write eg:
@@ -65,11 +46,6 @@ User/Statuses master/detail?
 
     * Implement input component as scripted input
     * Implement enrichment as a lookup script
-
-## Resources
-
-http://twittertoolsbook.com/10-awesome-twitter-analytics-visualization-tools
-http://socialmediatoday.com/index.php?q=SMC/80437
 
 ## Cassandra Schemas
 
