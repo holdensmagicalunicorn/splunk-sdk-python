@@ -14,17 +14,17 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""A command line utility for manipulating saved searches (create/list/delete)."""
+"""A command line utility for manipulating saved searches 
+   (list-all/create/list/delete)."""
 
 import sys
 import urllib
 
-import splunk
-
+import splunk.binding as binding
 from utils import cmdopts
 
 # these 'rules' allow for setting parameters primarily for creating saved searches
-rules = {
+RULES = {
     "name": { 
         'flags': ["--name"],
         'help': "<required for all> name of search name to be created" 
@@ -146,44 +146,56 @@ rules = {
     ##
     "operation": { 
         'flags': ["--operation"],
-        'help': "<optional for create> type of splunk operation: list, create, delete (defaults to list)"
+        'help': "<optional for create> type of splunk operation: list-all, list, create, delete (defaults to list-all)"
     }
 } 
 
 def main(argv):
+    """ main entry """
     usage = 'usage: %prog --help for options'
-    opts = cmdopts.parse(argv, rules, ".splunkrc", usage=usage)
+    opts = cmdopts.parse(argv, RULES, ".splunkrc", usage=usage)
 
-    context = splunk.binding.connect(**opts.kwargs)
-    operation = "list" # defaults to list
+    context = binding.connect(**opts.kwargs)
+    operation = None
 
     # splunk.binding.debug = True # for verbose information (helpful for debugging)
 
-    # Extract from command likne and build into variable args
+    # Extract from command line and build into variable args
     kwargs = {}
-    for key in rules.keys():
+    for key in RULES.keys():
         if opts.kwargs.has_key(key):
             if key == "operation":
                 operation = opts.kwargs[key]
             else:
                 kwargs[key] = urllib.quote(opts.kwargs[key])
 
+    # no operation? if name present, default to list, otherwise list-all
+    if not operation:
+        if kwargs.has_key('name'):
+            operation = 'list'
+        else:
+            operation = 'list-all'
+
     # pre-sanitize
-    if (operation != "list" and operation != "create" and operation != "delete"):
-        print "operation %s not one of list, create, delete" % operation
+    if (operation != "list" and operation != "create" 
+                            and operation != "delete"
+                            and operation != "list-all"):
+        print "operation %s not one of list-all, list, create, delete" % operation
         sys.exit(0)
 
-    if not kwargs.has_key('name'):
+    if not kwargs.has_key('name') and operation != "list-all":
         print "operation requires a name"
         sys.exit(0)
 
     # remove arg 'name' from passing through to operation builder, except on create
-    if operation != "create":
+    if operation != "create" and operation != "list-all":
         name = kwargs['name']
         kwargs.pop('name')
 
     # perform operation on saved search created with args from cli
-    if operation == "list":
+    if operation == "list-all":
+        result = context.get("saved/searches",  **kwargs)
+    elif operation == "list":
         result = context.get("saved/searches/%s" % name,  **kwargs)
     elif operation == "create":
         result = context.post("saved/searches",  **kwargs)

@@ -84,11 +84,12 @@ class Session(InteractiveInterpreter):
 
     # Run the interactive interpreter
     def run(self):
+        print "'context' variable has been established"
         print "%s connected to %s:%s" % (
             self.context.username, 
             self.context.host, 
             self.context.port)
-            
+
         while True:
             try:
                 input = raw_input("> ")
