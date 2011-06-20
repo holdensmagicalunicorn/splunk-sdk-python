@@ -35,13 +35,13 @@ class ServiceTestCase(unittest.TestCase):
     def tearDown(self):
         pass
 
-    #def test_info(self):
-    #    info = self.cn.info()
-    #    keys = [
-    #        "build", "cpu_arch", "guid", "isFree", "isTrial", "licenseKeys",
-    #        "licenseSignature", "licenseState", "master_guid", "mode", 
-    #        "os_build", "os_name", "os_version", "serverName", "version" ]
-    #    for key in keys: self.assertTrue(info.has_key(key))
+    def test_info(self):
+        info = self.service.info
+        keys = [
+            "build", "cpu_arch", "guid", "isFree", "isTrial", "licenseKeys",
+            "licenseSignature", "licenseState", "master_guid", "mode", 
+            "os_build", "os_name", "os_version", "serverName", "version" ]
+        for key in keys: self.assertTrue(key in info.keys())
 
     def test_indexes(self):
         if not "sdk-examples" in self.service.indexes.list():
@@ -50,13 +50,13 @@ class ServiceTestCase(unittest.TestCase):
         index = self.service.indexes['sdk-examples']
 
         entity = index.read()
-        self.assertTrue(index['disabled'] == entity.disabled)
+        self.assertEqual(index['disabled'], entity.disabled)
 
         index.disable()
-        self.assertTrue(index['disabled'] == '1')
+        self.assertEqual(index['disabled'], '1')
 
         index.enable()
-        self.assertTrue(index['disabled'] == '0')
+        self.assertEqual(index['disabled'], '0')
             
         # Restore
         index.disable() if entity.disabled else entity.enable()
@@ -85,6 +85,16 @@ class ServiceTestCase(unittest.TestCase):
     #    for role in roles.values():
     #        for capability in role.capabilities:
     #            self.assertTrue(capability in capabilities)
+
+    def test_settings(self):
+        settings = self.service.settings.read()
+        keys = [
+            "SPLUNK_DB", "SPLUNK_HOME", "enableSplunkWebSSL", "host",
+            "httpport", "mgmtHostPort", "minFreeSpace", "pass4SymmKey",
+            "serverName", "sessionTimeout", "startwebserver", "trustedIP"
+        ]
+        for key in keys: self.assertTrue(key in settings.keys())
+        
 
 def main(argv):
     global opts
