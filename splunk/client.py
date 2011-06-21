@@ -151,6 +151,10 @@ class Service(Context):
     def parse(self, query, **kwargs):
         return self.get("search/parser", q=query, **kwargs)
 
+    def restart(self):
+        """Restart the service."""
+        return self.get("server/control/restart")
+
     @property
     def settings(self):
         return Entity(self, "server/settings")

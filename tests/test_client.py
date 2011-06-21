@@ -13,6 +13,7 @@
 # under the License.
 
 import sys
+from time import sleep
 import unittest
 from xml.etree.ElementTree import XML
 
@@ -74,13 +75,33 @@ class ServiceTestCase(unittest.TestCase):
 
     def test_parse(self):
         response = self.service.parse("search *")
-        self.assertEquals(response.status, 200)
+        self.assertEqual(response.status, 200)
 
         response = self.service.parse("search index=twitter status_count=* | stats count(status_source) as count by status_source | sort -count | head 20")
-        self.assertEquals(response.status, 200)
+        self.assertEqual(response.status, 200)
 
         response = self.service.parse("xyzzy")
-        self.assertEquals(response.status, 400)
+        self.assertEqual(response.status, 400)
+
+    def test_restart(self):
+        response = self.service.restart()
+        self.assertEqual(response.status, 200)
+
+        sleep(5) # Wait for server to notice restart
+
+        retry = 10
+        restarted = False
+        while retry > 0:
+            retry -= 1
+            try:
+                self.service.login() # Awake yet?
+                response = self.service.get('server')
+                self.assertEqual(response.status, 200)
+                restarted = True
+                break
+            except:
+                sleep(5)
+        self.assertTrue(restarted)
 
     #def test_roles(self):
     #    roles = self.cn.roles
