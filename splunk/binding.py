@@ -244,7 +244,7 @@ class http:
         scheme, host, port, path = _spliturl(url)
         body = message.get("body", "")
         head = { 
-            "Content-Length": len(body),
+            "Content-Length": str(len(body)),
             "Host": host,
             "User-Agent": "http.py/1.0",
             "Accept": "*/*",
