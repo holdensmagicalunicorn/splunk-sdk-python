@@ -147,6 +147,10 @@ class Service(Context):
     def jobs(self):
         return Jobs(self)
 
+    # kwargs: enable_lookups, reload_macros, parse_only, output_mode
+    def parse(self, query, **kwargs):
+        return self.get("search/parser", q=query, **kwargs)
+
     @property
     def settings(self):
         return Entity(self, "server/settings")
