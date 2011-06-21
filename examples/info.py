@@ -14,7 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""Prints Splunk service info & settings."""
+"""An example that prints Splunk service info & settings."""
 
 import sys
 

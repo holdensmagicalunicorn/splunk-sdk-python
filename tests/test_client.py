@@ -72,12 +72,15 @@ class ServiceTestCase(unittest.TestCase):
             self.assertTrue(metadata.has_key('eai:acl'))
             self.assertTrue(metadata.has_key('eai:attributes'))
 
-    #def test_users(self):
-    #    users = self.cn.users
-    #    roles = self.cn.roles
-    #    for user in users.values():
-    #        for role in user.roles:
-    #            self.assertTrue(role in roles.keys())
+    def test_parse(self):
+        response = self.service.parse("search *")
+        self.assertEquals(response.status, 200)
+
+        response = self.service.parse("search index=twitter status_count=* | stats count(status_source) as count by status_source | sort -count | head 20")
+        self.assertEquals(response.status, 200)
+
+        response = self.service.parse("xyzzy")
+        self.assertEquals(response.status, 400)
 
     #def test_roles(self):
     #    roles = self.cn.roles
@@ -85,6 +88,13 @@ class ServiceTestCase(unittest.TestCase):
     #    for role in roles.values():
     #        for capability in role.capabilities:
     #            self.assertTrue(capability in capabilities)
+
+    #def test_users(self):
+    #    users = self.cn.users
+    #    roles = self.cn.roles
+    #    for user in users.values():
+    #        for role in user.roles:
+    #            self.assertTrue(role in roles.keys())
 
     def test_settings(self):
         settings = self.service.settings.read()
