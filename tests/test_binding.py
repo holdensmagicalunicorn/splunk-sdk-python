@@ -140,6 +140,18 @@ class BindingTestCase(unittest.TestCase): # Base class
         # Just check to make sure the service is alive
         self.assertEqual(self.get("/services").status, 200)
 
+    def test_logout(self):
+        response = self.context.get("/services")
+        self.assertEqual(response.status, 200)
+
+        self.context.logout()
+        response = self.context.get("/services")
+        self.assertEqual(response.status, 401)
+
+        self.context.login()
+        response = self.context.get("/services")
+        self.assertEqual(response.status, 200)
+
 class UsersTestCase(BindingTestCase):
     def eqroles(self, username, roles):
         """Answer if the given user is in exactly the given roles."""

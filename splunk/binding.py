@@ -105,6 +105,10 @@ class Context:
         self.token = "Splunk %s" % session
         return self
 
+    def logout(self):
+        self.token = None
+        return self
+
     def fullpath(self, path):
         """If the given path is a fragment, qualify with segments corresponding
            to the binding context's namespace."""
