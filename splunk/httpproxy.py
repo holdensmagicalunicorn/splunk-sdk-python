@@ -1,4 +1,4 @@
-# net.py -- Connection, HttpProxyConnection classes
+# httpproxy.py -- Connection, HttpProxyConnection classes
 #
 # Copyright (C) 2003 Manish Jethani (manish_jethani AT yahoo.com)
 #
@@ -16,32 +16,40 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+""" support for proxy through hhtps """
+
 import socket
 import httplib
 import ssl
 
-from string import split, join
+#from string import split, join
 
-class Connection:  # generic tcp connection wrapper
+class Connection:
+    """ Generic TCP connection wrapper """
+
     def __init__(self, server):
         self.socket = None
         self.server = server
 
     def establish(self):
+        """ establish a socket """
         if self.socket == None:
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sckt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             server = (self.server[0], int(self.server[1]))
-            s.connect(server)
-            self.socket = s
+            sckt.connect(server)
+            self.socket = sckt
         return self.socket
 
     def send_data(self, buf):
+        """ send data over socket """
         return self.socket.send(buf)
 
     def receive_data(self, bufsize):
+        """ receive data from socket """
         return self.socket.recv(bufsize)
 
     def send_data_all(self, buf):
+        """ send all data """
         total = len(buf)
         sent = 0
         while sent < total:
@@ -49,10 +57,12 @@ class Connection:  # generic tcp connection wrapper
         return sent
 
     def send_data_line(self, line):
+        """ send line by line """
         #print "C:" + line  ## debug
         return self.send_data_all(line) + self.send_data_all('\r\n')
 
     def receive_data_line(self):
+        """ receive data line by line """
         cnt = 0
         buf = ''
         while 1:
@@ -71,16 +81,19 @@ class Connection:  # generic tcp connection wrapper
                 return buf
 
     def break_(self):
+        """ when socket is broken, shutdown and close """
         self.socket.shutdown(2)
         self.socket.close()
         self.socket = None
 
-class HttpProxyConnection(Connection):  # http tunnelling
+class HttpProxyConnection(Connection):
+    """ HTTP proxy connection that tunnels using TCP/IP """
     def __init__(self, server, proxy):
         Connection.__init__(self, server)
         self.proxy = proxy
 
     def establish(self):
+        """ establish connection """
         tmp = self.server
         self.server = self.proxy
         try:
@@ -100,7 +113,7 @@ class HttpProxyConnection(Connection):  # http tunnelling
         while 1:
             buf = self.receive_data_line()
             if status == -1:
-                resp = split(buf, ' ', 2)
+                resp = buf.split(buf, ' ', 2)
                 if len(resp) > 1:
                     status = int(resp[1])
                 else:
@@ -113,7 +126,7 @@ class HttpProxyConnection(Connection):  # http tunnelling
         return self.socket
 
 class HTTPSConnection(httplib.HTTPSConnection):
-    # httplib.HTTPSConnection with proxy support
+    """ extend the httplib.HTTPSConnection base class with proxy support """
     def __init__(self, host, port = None, key_file = None, cert_file = None,
                  strict = None, http_proxy = None):
         httplib.HTTPSConnection.__init__(self, host, port, key_file, cert_file,
@@ -121,11 +134,11 @@ class HTTPSConnection(httplib.HTTPSConnection):
         self.http_proxy = http_proxy
 
     def connect(self):
+        """ proxy connect, or not """
         if self.http_proxy:
             conn = HttpProxyConnection((self.host, self.port), self.http_proxy)
             conn.establish()
             sock = conn.socket
             self.sock = ssl.wrap_socket(sock, self.key_file, self.cert_file)
-            #self.sock = httplib.FakeSocket(sock, myssl)
         else:
             httplib.HTTPSConnection.connect(self)
