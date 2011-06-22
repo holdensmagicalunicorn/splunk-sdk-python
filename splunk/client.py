@@ -343,13 +343,6 @@ class Jobs(Collection):
     def __getitem__(self, sid):
         return Job(self.service, sid)
 
-    def __iter__(self):
-        sids = self.list()
-        for sid in sids: yield Job(self.service, sid)
-
-    def contains(self, sid):
-        return sid in self.list()
-
     def create(self, query, **kwargs):
         response = self.post(search=query, **kwargs)
         sid = load(response).sid

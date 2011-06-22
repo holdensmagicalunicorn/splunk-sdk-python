@@ -15,7 +15,6 @@
 import sys
 from time import sleep
 import unittest
-from xml.etree.ElementTree import XML
 
 import splunk
 
@@ -29,7 +28,6 @@ class PackageTestCase(unittest.TestCase):
 
 class ServiceTestCase(unittest.TestCase):
     def setUp(self):
-        global opts
         self.service = splunk.client.Service(**opts.kwargs)
         self.service.login()
 
@@ -37,19 +35,19 @@ class ServiceTestCase(unittest.TestCase):
         pass
 
     def test_apps(self):
-        self.service.apps.delete('sdk-test')
-        self.assertTrue('sdk-test' not in self.service.apps.list())
+        self.service.apps.delete('sdk-tests')
+        self.assertTrue('sdk-tests' not in self.service.apps.list())
 
-        self.service.apps.create('sdk-test')
-        self.assertTrue('sdk-test' in self.service.apps.list())
+        self.service.apps.create('sdk-tests')
+        self.assertTrue('sdk-tests' in self.service.apps.list())
 
-        testapp = self.service.apps['sdk-test']
+        testapp = self.service.apps['sdk-tests']
         self.assertTrue(testapp['author'] != "Splunk")
         testapp.update(author="Splunk")
         self.assertTrue(testapp['author'] == "Splunk")
 
-        self.service.apps.delete('sdk-test')
-        self.assertTrue('sdk-test' not in self.service.apps.list())
+        self.service.apps.delete('sdk-tests')
+        self.assertTrue('sdk-tests' not in self.service.apps.list())
 
     def test_info(self):
         info = self.service.info
@@ -87,6 +85,57 @@ class ServiceTestCase(unittest.TestCase):
             metadata = index.readmeta()
             self.assertTrue(metadata.has_key('eai:acl'))
             self.assertTrue(metadata.has_key('eai:attributes'))
+
+    def runjob(self, query, secs):
+        """Create a job to run the given search and wait up to (approximately)
+           the given number of seconds for it to complete.""" 
+        job = self.service.jobs.create(query)
+        done = False
+        while not done and secs > 0:
+            sleep(1)
+            secs -= 1 # Approximate
+            done = bool(job['isDone'])
+        return job
+
+    def test_jobs(self):
+        if not "sdk-tests" in self.service.indexes():
+            self.service.indexes.create("sdk-tests")
+
+        # Make sure we can create a job
+        job = self.service.jobs.create("search index=sdk-tests")
+        self.assertTrue(job.sid in self.service.jobs())
+
+        # Scan jobs and make sure the entities look like something we recognize
+        attrs = [
+            'cursorTime', 'delegate', 'diskUsage', 'dispatchState',
+            'doneProgress', 'dropCount', 'earliestTime', 'eventAvailableCount',
+            'eventCount', 'eventFieldCount', 'eventIsStreaming',
+            'eventIsTruncated', 'eventSearch', 'eventSorting', 'isDone',
+            'isFailed', 'isFinalized', 'isPaused', 'isPreviewEnabled',
+            'isRealTimeSearch', 'isRemoteTimeline', 'isSaved', 'isSavedSearch',
+            'isZombie', 'keywords', 'label', 'latestTime', 'messages',
+            'numPreviews', 'priority', 'remoteSearch', 'reportSearch',
+            'resultCount', 'resultIsStreaming', 'resultPreviewCount',
+            'runDuration', 'scanCount', 'searchProviders', 'sid',
+            'statusBuckets', 'ttl'
+        ]
+        for job in self.service.jobs:
+            entity = job.read()
+            for attr in attrs: self.assertTrue(attr in entity.keys())
+
+        # Make sure we can cancel the job
+        job.cancel()
+        self.assertTrue(job.sid not in self.service.jobs())
+
+        # Search for non-existant data
+        job = self.runjob("search index=sdk-tests TERM_DOES_NOT_EXIST", 10)
+        self.assertTrue(bool(job['isDone']))
+        self.assertTrue(int(job['eventCount']) == 0)
+
+        # UNDONE: Need to submit test data and test searches for actual 
+        # results Check various formats, timeline, searchlog, etc. Check 
+        # events and results for both streaming and non-streaming searches. 
+        # UNDONE: Need to at least create a realtime search.
 
     def test_parse(self):
         response = self.service.parse("search *")
