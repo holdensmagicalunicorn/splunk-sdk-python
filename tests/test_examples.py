@@ -19,7 +19,7 @@ import unittest
 class ExamplesTestCase(unittest.TestCase):
     def startUp(self):
         # Ignore result, it might already exist
-        os.system("python index.py create sdk-examples > __stdout__")
+        os.system("python index.py create sdk-tests > __stdout__")
 
     def tearDown(self):
         os.remove("__stdout__")
@@ -33,10 +33,10 @@ class ExamplesTestCase(unittest.TestCase):
             "python index.py --help > __stdout__",
             "python index.py > __stdout__",
             "python index.py list > __stdout__",
-            "python index.py list sdk-examples > __stdout__",
-            "python index.py disable sdk-examples > __stdout__",
-            "python index.py enable sdk-examples > __stdout__",
-            "python index.py clean sdk-examples > __stdout__",
+            "python index.py list sdk-tests > __stdout__",
+            "python index.py disable sdk-tests > __stdout__",
+            "python index.py enable sdk-tests > __stdout__",
+            "python index.py clean sdk-tests > __stdout__",
         ]
         for command in commands:
             result = os.system(command)
