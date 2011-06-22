@@ -32,7 +32,6 @@ __all__ = [
     "connect",
     "Context",
     "HTTPError",
-    "login",
 ]
 
 DEFAULT_HOST = "localhost"
