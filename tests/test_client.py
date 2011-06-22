@@ -36,6 +36,21 @@ class ServiceTestCase(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def test_apps(self):
+        self.service.apps.delete('sdk-test')
+        self.assertTrue('sdk-test' not in self.service.apps.list())
+
+        self.service.apps.create('sdk-test')
+        self.assertTrue('sdk-test' in self.service.apps.list())
+
+        testapp = self.service.apps['sdk-test']
+        self.assertTrue(testapp['author'] != "Splunk")
+        testapp.update(author="Splunk")
+        self.assertTrue(testapp['author'] == "Splunk")
+
+        self.service.apps.delete('sdk-test')
+        self.assertTrue('sdk-test' not in self.service.apps.list())
+
     def test_info(self):
         info = self.service.info
         keys = [
