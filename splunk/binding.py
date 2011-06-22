@@ -26,6 +26,7 @@ from pprint import pprint # debug
 from xml.etree.ElementTree import XML
 
 from splunk.data import record
+import httpproxy
 
 __all__ = [
     "connect",
@@ -55,6 +56,11 @@ class Context:
         self.password = kwargs.get("password", "")
         self.namespace = kwargs.get("namespace", None)
         self.prefix = prefix(**kwargs)
+        if kwargs.get("proxyhost", None) == None:
+            self.proxy = None
+        else:
+            self.proxy = (kwargs.get("proxyhost", None),
+                          kwargs.get("proxyport", str(DEFAULT_PORT)))
         self.token = None
 
     # Shared per-context request headers
@@ -77,26 +83,31 @@ class Context:
         return lambda *args, **kwargs: fn(path.format(*args), **kwargs)
 
     def delete(self, path, **kwargs):
-        return http.delete(self.url(path), self._headers(), **kwargs)
+        return http.delete(self.url(path), self._headers(), 
+                           proxy=self.proxy, **kwargs)
 
     def get(self, path, **kwargs):
-        return http.get(self.url(path), self._headers(), **kwargs)
+        return http.get(self.url(path), self._headers(), 
+                           proxy=self.proxy, **kwargs)
 
     def post(self, path, **kwargs):
-        return http.post(self.url(path), self._headers(), **kwargs)
+        return http.post(self.url(path), self._headers(), 
+                           proxy=self.proxy, **kwargs)
 
-    def request(self, path, message):
+    def request(self, path, message, proxy=None):
         return http.request(
             self.url(path), {
                 'method': message.get("method", "GET"),
                 'headers': message.get("headers", []) + self._headers(),
-                'body': message.get("body", "")})
+                'body': message.get("body", "")},
+                proxy=self.proxy)
 
     def login(self):
         response = http.post(
             self.url("/services/auth/login"),
             username=self.username, 
-            password=self.password)
+            password=self.password,
+            proxy=self.proxy)
         if response.status >= 400:
             raise HTTPError(response.status, response.reason)
         # assert response.status == 200
@@ -129,14 +140,6 @@ class Context:
 def connect(**kwargs):
     """Establishes an authenticated context with the given host."""
     return Context(**kwargs).login() 
-
-# kwargs: scheme, host, port, username, password
-def login(**kwargs):
-    """Issues a login request and returns the response message."""
-    return http.post(
-        prefix(**kwargs) + "/services/auth/login",
-        username=kwargs.get("username", ""),
-        password=kwargs.get("password", ""))
 
 #
 # The HTTP interface below, used by the Splunk binding layer, abstracts the 
@@ -205,35 +208,47 @@ class http:
     """HTTP interface used by the Splunk binding layer."""
 
     @staticmethod
-    def connect(scheme, host, port, timeout = None):
+    def connect(scheme, host, port, timeout = None, proxy = None):
         """Returns an HTTP connection object corresponding to the given scheme,
            host and port."""
+
         kwargs = {}
+
         if timeout is not None: kwargs["timeout"] = timeout
-        if scheme == "http":
-            return httplib.HTTPConnection(host, port, None, **kwargs)
-        if scheme == "https":
-            return httplib.HTTPSConnection(host, port, None, **kwargs)
+        if proxy is None:
+            if scheme == "http":
+                return httplib.HTTPConnection(host, port, None, **kwargs)
+            else:
+                return httplib.HTTPSConnection(host, port, None, **kwargs)
+        else:
+            if scheme == "http":
+                host = proxy[0]
+                port = proxy[1]
+                return httplib.HTTPConnection(host, port, None, **kwargs)
+            if proxy and scheme == "https":
+                kwargs['http_proxy'] = proxy
+                return httpproxy.HTTPSConnection(host, port, None, **kwargs)
+
         return None # UNDONE: Raise an invalid scheme exception
 
     @staticmethod
-    def delete(url, headers = None, timeout = None, **kwargs):
+    def delete(url, headers = None, timeout = None, proxy = None, **kwargs):
         if headers is None: headers = []
         if kwargs: url = url + '?' + encode(**kwargs)
         message = {
             'method': "DELETE",
             'headers': headers,
         }
-        return http.request(url, message, timeout)
+        return http.request(url, message, timeout, proxy)
 
     @staticmethod
-    def get(url, headers = None, timeout = None, **kwargs):
+    def get(url, headers = None, timeout = None, proxy = None, **kwargs):
         if headers is None: headers = []
         if kwargs: url = url + '?' + encode(**kwargs)
-        return http.request(url, { "headers": headers }, timeout)
+        return http.request(url, { "headers": headers }, timeout, proxy)
 
     @staticmethod
-    def post(url, headers = None, timeout = None, **kwargs):
+    def post(url, headers = None, timeout = None, proxy = None, **kwargs):
         if headers is None: headers = []
         headers.append(("Content-Type", "application/x-www-form-urlencoded")),
         message = {
@@ -241,10 +256,10 @@ class http:
             "headers": headers,
             "body": encode(**kwargs)
         }
-        return http.request(url, message, timeout)
+        return http.request(url, message, timeout, proxy)
 
     @staticmethod
-    def request(url, message, timeout = None):
+    def request(url, message, timeout = None, proxy = None):
         scheme, host, port, path = _spliturl(url)
         body = message.get("body", "")
         head = { 
@@ -256,7 +271,7 @@ class http:
         for k, v in message["headers"]: head[k] = v
         method = message.get("method", "GET")
         if debug: _print_request(method, url, head, body)
-        connection = http.connect(scheme, host, port, timeout)
+        connection = http.connect(scheme, host, port, timeout=timeout, proxy=proxy)
         try:
             connection.request(method, path, body, head)
             if timeout is not None: connection.sock.settimeout(timeout)

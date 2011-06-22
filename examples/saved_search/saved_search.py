@@ -75,7 +75,7 @@ RULES = {
     },
     "action.<action_type>.<custom_key>.": { 
         'flags': ["--action.<action_type>.<custom_key>"],
-        'help': "<optional for create> A key/value pair that is specific to the action_type. For example, if actions contains email, then the following keys would be necessary: action.email.to=foo@splunk.com  and action.email.sender=splunkbot. For scripts: action.script.filename=doodle.py (note: script is run from $SPLUNK_HOME/bin/scripts/"
+        'help': "<optional for create> A key/value pair that is specific to the action_type. For example, if actions contains email, then the following keys would be necessary: action.email.to=foo@splunk.com  and action.email.sender=splunkbot. For scripts: action.script.filename=doodle.py (note: script is run from $SPLUNK_HOME/bin/scripts/)"
     },
     "dispatch.ttl": { 
         'flags': ["--dispatch.ttl"],
