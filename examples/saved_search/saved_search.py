@@ -196,11 +196,11 @@ def main(argv):
     if operation == "list-all":
         result = context.get("saved/searches",  **kwargs)
     elif operation == "list":
-        result = context.get("saved/searches/%s" % name,  **kwargs)
+        result = context.get("saved/searches/%s" % name, **kwargs)
     elif operation == "create":
-        result = context.post("saved/searches",  **kwargs)
+        result = context.post("saved/searches", **kwargs)
     else:
-        result = context.delete("saved/searches/%s" % name,  **kwargs)
+        result = context.delete("saved/searches/%s" % name, **kwargs)
     print "HTTP STATUS: %d" % result.status
     xml_data = result.body.read()
     sys.stdout.write(xml_data)
