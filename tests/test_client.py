@@ -58,10 +58,32 @@ class ServiceTestCase(unittest.TestCase):
         for key in keys: self.assertTrue(key in info.keys())
 
     def test_indexes(self):
-        if not "sdk-examples" in self.service.indexes.list():
-            self.service.indexes.create("sdk-examples")
+        if not "sdk-tests" in self.service.indexes.list():
+            self.service.indexes.create("sdk-tests")
+        self.assertTrue("sdk-tests" in self.service.indexes())
 
-        index = self.service.indexes['sdk-examples']
+        # Scan indexes and make sure the entities look familiar
+        attrs = [
+            'maxRunningProcessGroups', 'thawedPath', 'quarantineFutureSecs',
+            'isInternal', 'maxHotBuckets', 'disabled', 'homePath',
+            'compressRawdata', 'maxWarmDBCount', 'frozenTimePeriodInSecs',
+            'memPoolMB', 'maxHotSpanSecs', 'minTime', 'blockSignatureDatabase',
+            'serviceMetaPeriod', 'coldToFrozenDir', 'quarantinePastSecs',
+            'maxConcurrentOptimizes', 'maxMetaEntries', 'minRawFileSyncSecs',
+            'maxMemMB', 'maxTime', 'partialServiceMetaPeriod', 'maxHotIdleSecs',
+            'coldToFrozenScript', 'thawedPath_expanded', 'coldPath_expanded',
+            'defaultDatabase', 'throttleCheckPeriod', 'totalEventCount',
+            'enableRealtimeSearch', 'indexThreads', 'maxDataSize',
+            'currentDBSizeMB', 'homePath_expanded', 'blockSignSize',
+            'syncMeta', 'assureUTF8', 'rotatePeriodInSecs', 'sync',
+            'suppressBannerList', 'rawChunkSizeBytes', 'coldPath',
+            'maxTotalDataSizeMB'
+        ]
+        for index in self.service.indexes:
+            entity = index.read()
+            for attr in attrs: self.assertTrue(attr in entity.keys())
+
+        index = self.service.indexes['sdk-tests']
 
         entity = index.read()
         self.assertEqual(index['disabled'], entity.disabled)
@@ -105,7 +127,7 @@ class ServiceTestCase(unittest.TestCase):
         job = self.service.jobs.create("search index=sdk-tests")
         self.assertTrue(job.sid in self.service.jobs())
 
-        # Scan jobs and make sure the entities look like something we recognize
+        # Scan jobs and make sure the entities look familiar
         attrs = [
             'cursorTime', 'delegate', 'diskUsage', 'dispatchState',
             'doneProgress', 'dropCount', 'earliestTime', 'eventAvailableCount',
