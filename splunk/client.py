@@ -12,62 +12,25 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+#
 # The purpose of this module is to provide a friendlier domain interface to 
-# various Splunk endpoints. The approach here is to leverage the binding layer
-# to capture endpoint context and provide objects and methods that offer
-# simplified access their corresponding endpoints. The design specifically
-# avoids caching resource state. From the pov of this module, the 'policy' for
-# caching and refreshing resource state belongs in the application or a higher
-# level framework, and its the purpose of this module to provide simplified
+# various Splunk endpoints. The approach here is to leverage the binding
+# layer to capture endpoint context and provide objects and methods that
+# offer simplified access their corresponding endpoints. The design avoids
+# caching resource state. From the perspective of this module, the 'policy'
+# for caching resource state belongs in the application or a higher level
+# framework, and its the purpose of this module to provide simplified
 # access to that resource state.
 #
 # A side note, the objects below that provide helper methods for updating eg:
-# Entity state, are written in a fluent style.
+# Entity state, are written so that they may be used in a fluent style.
+#
 
 # UNDONE: Cases below where we need to pass schema to data.load (eg: Collection)
 # UNDONE: Check status needs to attempt to retrive error message from the
 #  the resonse body. Eg: a call to index.disable on the defaultDatabase will
 #  return a 404 (which is a little misleading) but the response body contains
 #  a message indicating that disable cant be called on the default database.
-
-# NOTES
-# =====
-#
-# Layer 1 -- Entity.read => content, Collection.list => keys
-# Layer ' -- get, put, post, delete
-# Layer 0 -- request
-#
-# Service
-#
-#   * status
-#   * login
-#   * logout
-#   * settings/info
-#   * restart
-#
-#   * Licensing
-#   * Monitoring
-#   * Deployment
-#
-# Access Control - users, roles, capabilities ..
-#
-# Knowledge (conf)
-#   * Stanza?
-#
-# Index
-# Input(s)
-# Output(s)
-#
-# Search
-#   * jobs
-#
-#   * export
-#   * parse
-#
-#   * saved
-#
-# Applications
-#   * ..
 
 from time import sleep
 
@@ -81,10 +44,8 @@ __all__ = [
     "Service"
 ]
 
-# XML Namespaces
-# "http://www.w3.org/2005/Atom",
-# "http://dev.splunk.com/ns/rest",
-# "http://a9.com/-/spec/opensearch/1.1",
+PATH_APP = "apps/local/%s"
+PATH_APPS = "apps/local"
 
 PATH_INDEX = "data/indexes/%s"
 PATH_INDEXES = "data/indexes"
@@ -134,12 +95,43 @@ class Service(Context):
         Context.__init__(self, **kwargs)
 
     @property
+    def apps(self):
+        return Collection(self, PATH_APPS, 
+            item=lambda service, name: 
+                Entity(service, PATH_APP % name, name),
+            ctor=lambda service, name, **kwargs:
+                service.post(PATH_APPS, name=name, **kwargs),
+            dtor=lambda service, name: service.delete(PATH_APP % name))
+
+    @property
     def indexes(self):
-        return Indexes(self)
+        return Collection(self, PATH_INDEXES, 
+            item=lambda service, name: 
+                Index(service, name),
+            ctor=lambda service, name, **kwargs:
+                service.post(PATH_INDEXES, name=name, **kwargs))
+
+    @property
+    def info(self):
+        response = self.get("server/info")
+        check_status(response, 200)
+        return _filter_content(load(response).entry.content)
 
     @property
     def jobs(self):
         return Jobs(self)
+
+    # kwargs: enable_lookups, reload_macros, parse_only, output_mode
+    def parse(self, query, **kwargs):
+        return self.get("search/parser", q=query, **kwargs)
+
+    def restart(self):
+        """Restart the service."""
+        return self.get("server/control/restart")
+
+    @property
+    def settings(self):
+        return Entity(self, "server/settings")
 
 class Endpoint:
     def __init__(self, service, path):
@@ -156,13 +148,37 @@ class Endpoint:
         check_status(response, 200, 201)
         return response
 
-# UNDONE: Common create & delete options?
 class Collection(Endpoint):
-    def __init__(self, service, path):
+    """A generic implementation of the Splunk collection protocol."""
+
+    def __init__(self, service, path, item=None, ctor=None, dtor=None):
         Endpoint.__init__(self, service, path)
+        self.item = item # Item accessor
+        self.ctor = ctor # Item constructor
+        self.dtor = dtor # Item desteructor
+
+    def __call__(self): # Too cute?
+        return self.list()
 
     def __getitem__(self, key):
-        pass # Abstract
+        if self.item is None: raise NotSupportedError
+        return self.item(self.service, key)
+
+    def __iter__(self):
+        for name in self.list(): yield self[name]
+
+    def contains(self, name):
+        return name in self.list()
+
+    def create(self, name, **kwargs):
+        if self.ctor is None: raise NotSupportedError
+        self.ctor(self.service, name, **kwargs)
+        return self[name]
+
+    def delete(self, name):
+        if self.dtor is None: raise NotSupportedError
+        self.dtor(self.service, name)
+        return self
 
     def itemmeta(self):
         """Returns collection item metadata."""
@@ -173,8 +189,12 @@ class Collection(Endpoint):
             'eai:attributes': content['eai:attributes']
         })
 
-    def list(self): # UNDONE: keys?
-        pass # Abstract
+    def list(self):
+        """Returns a list of collection keys."""
+        response = self.get(count=-1)
+        entry = load(response).entry
+        if not isinstance(entry, list): entry = [entry] # UNDONE
+        return [item.title for item in entry]
 
 def _filter_content(content, *args):
     if len(args) > 0: # We have filter args
@@ -192,10 +212,11 @@ def _filter_content(content, *args):
     return result
 
 class Entity(Endpoint):
-    """Abstract base class that implements the Splunk 'entity' protocol."""
+    """A generic implementation of the Splunk 'entity' protocol."""
 
-    def __init__(self, service, path):
+    def __init__(self, service, path, name=None):
         Endpoint.__init__(self, service, path)
+        if name is not None: self.name = name
         # UNDONE: The following should be derived by reading entity links
         self.delete = lambda: self.service.delete(self.path)
         self.disable = lambda: self.post("disable")
@@ -226,8 +247,7 @@ class Entity(Endpoint):
 # UNDONE: Index should not have a delete method (currently inherited)
 class Index(Entity):
     def __init__(self, service, name):
-        Entity.__init__(self, service, PATH_INDEX % name)
-        self.name = name
+        Entity.__init__(self, service, PATH_INDEX % name, name)
         self.roll_hot_buckets = lambda: self.post("roll-hot-buckets")
 
     def clean(self):
@@ -239,32 +259,6 @@ class Index(Entity):
             sleep(1)
             if self['totalEventCount'] == '0': break
         self.update(**saved)
-
-class Indexes(Collection):
-    def __init__(self, service):
-        Collection.__init__(self, service, PATH_INDEXES)
-
-    def __getitem__(self, name):
-        return Index(self.service, name)
-
-    def __iter__(self):
-        names = self.list()
-        for name in names: yield Index(self.service, name)
-
-    def contains(self, name):
-        """Answers if an index with the given name exists."""
-        return name in self.list()
-
-    def create(self, name, **kwargs):
-        response = self.post(name=name, **kwargs)
-        return Index(self.service, name)
-
-    def list(self):
-        """Returns a list of index names."""
-        response = self.get(count=-1)
-        entry = load(response).entry
-        if not isinstance(entry, list): entry = [entry] # UNDONE
-        return [item.title for item in entry]
 
 # The Splunk Job is not an enity, but we are able to make the interface look
 # a lot like one.
@@ -338,6 +332,10 @@ class Job(Endpoint):
         self.post("control", action="unpause")
         return self
 
+    def update(self, **kwargs):
+        self.post(**kwargs)
+        return self
+
 class Jobs(Collection):
     def __init__(self, service):
         Collection.__init__(self, service, PATH_JOBS)
@@ -363,6 +361,7 @@ class Jobs(Collection):
         if not isinstance(entry, list): entry = [entry] # UNDONE
         return [item.content.sid for item in entry]
     
-class SplunkError(Exception): 
-    pass
+class SplunkError(Exception): pass
+
+class NotSupportedError(Exception): pass
 

@@ -70,7 +70,7 @@ def main(argv):
         cmdopts.error("Search expression required", 2)
     search = opts.args[0]
 
-    verbose = opts.kwargs.get("verbose", 1)
+    verbose = opts.kwargs.get("verbose", 0)
 
     kwargs_splunk = slice(opts.kwargs, FLAGS_SPLUNK)
     kwargs_create = slice(opts.kwargs, FLAGS_CREATE)

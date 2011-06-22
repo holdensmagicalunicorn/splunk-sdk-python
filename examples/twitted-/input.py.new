@@ -8,7 +8,15 @@
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the # License for the specific language governing permissions and limitations # under the License.  """This utility reads the Twitter 'spritzer' and writes status results (aka tweets) to Splunk for indexing.""" 
+# Unless required by applicable law or agreed to in writing, software 
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+# License for the specific language governing permissions and limitations 
+# under the License.  
+
+"""This utility reads the Twitter 'spritzer' and writes status results 
+   to Splunk for indexing.""" 
+
 # UNDONE: Hardening ..
 #   * Script doesn't handle loss of the twitter HTTP connection or the Splunk
 #     TCP connection
@@ -194,8 +202,46 @@ def print_record(record):
 
 def process(status):
     status = json.loads(status)
+
+    user = status.get('user', None)
+    if user is not None:
+        status['user_id'] = user.id
+        status['user_name'] = user.name
+        status['user_screen_name'] = user.screen_name
+        write_user(user)
+        del status['user']
+
+    entities = status.get('entities', None)
+    if entities is not None:
+        if len(entities.hashtags) > 0:
+            status['hashtags'] = entities.hashtags
+        if len(entities.user_mentions) > 0:
+            status['mentions'] = entities.use_nemtions
+        if len(entities.urls) > 0:
+            status['urls'] = entities.urls
+        del status['entities']
+
+    retweeted_status = status.get('retweeted_status', None)
+    if retweeted_status is not None:
+        status['retweeted_status_id'] = retweeted_status.id
+        write_status(retweeted_status)
+        del status['retweeted_status']
+
+    write_status(status)
+        
+    output(retweeted_status)
+    del retweeted_status
+
+    pprint(status)
     record = flatten(status)
+
     output(record)
+
+def write_user(user):
+    pass
+
+def write_status(status):
+    pass
 
 def main():
     kwargs = cmdline()
@@ -216,7 +262,6 @@ def main():
     # UNDONE: Ensure index exists
     # UNDONE: Ensure TCP input is configured
     # UNDONE: Ensure twitter sourcetype is defined
-    # UNDONE: Ensure rules are created
 
     global ingest
     ingest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

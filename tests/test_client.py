@@ -13,6 +13,7 @@
 # under the License.
 
 import sys
+from time import sleep
 import unittest
 from xml.etree.ElementTree import XML
 
@@ -35,13 +36,28 @@ class ServiceTestCase(unittest.TestCase):
     def tearDown(self):
         pass
 
-    #def test_info(self):
-    #    info = self.cn.info()
-    #    keys = [
-    #        "build", "cpu_arch", "guid", "isFree", "isTrial", "licenseKeys",
-    #        "licenseSignature", "licenseState", "master_guid", "mode", 
-    #        "os_build", "os_name", "os_version", "serverName", "version" ]
-    #    for key in keys: self.assertTrue(info.has_key(key))
+    def test_apps(self):
+        self.service.apps.delete('sdk-test')
+        self.assertTrue('sdk-test' not in self.service.apps.list())
+
+        self.service.apps.create('sdk-test')
+        self.assertTrue('sdk-test' in self.service.apps.list())
+
+        testapp = self.service.apps['sdk-test']
+        self.assertTrue(testapp['author'] != "Splunk")
+        testapp.update(author="Splunk")
+        self.assertTrue(testapp['author'] == "Splunk")
+
+        self.service.apps.delete('sdk-test')
+        self.assertTrue('sdk-test' not in self.service.apps.list())
+
+    def test_info(self):
+        info = self.service.info
+        keys = [
+            "build", "cpu_arch", "guid", "isFree", "isTrial", "licenseKeys",
+            "licenseSignature", "licenseState", "master_guid", "mode", 
+            "os_build", "os_name", "os_version", "serverName", "version" ]
+        for key in keys: self.assertTrue(key in info.keys())
 
     def test_indexes(self):
         if not "sdk-examples" in self.service.indexes.list():
@@ -50,13 +66,13 @@ class ServiceTestCase(unittest.TestCase):
         index = self.service.indexes['sdk-examples']
 
         entity = index.read()
-        self.assertTrue(index['disabled'] == entity.disabled)
+        self.assertEqual(index['disabled'], entity.disabled)
 
         index.disable()
-        self.assertTrue(index['disabled'] == '1')
+        self.assertEqual(index['disabled'], '1')
 
         index.enable()
-        self.assertTrue(index['disabled'] == '0')
+        self.assertEqual(index['disabled'], '0')
             
         # Restore
         index.disable() if entity.disabled else entity.enable()
@@ -72,12 +88,35 @@ class ServiceTestCase(unittest.TestCase):
             self.assertTrue(metadata.has_key('eai:acl'))
             self.assertTrue(metadata.has_key('eai:attributes'))
 
-    #def test_users(self):
-    #    users = self.cn.users
-    #    roles = self.cn.roles
-    #    for user in users.values():
-    #        for role in user.roles:
-    #            self.assertTrue(role in roles.keys())
+    def test_parse(self):
+        response = self.service.parse("search *")
+        self.assertEqual(response.status, 200)
+
+        response = self.service.parse("search index=twitter status_count=* | stats count(status_source) as count by status_source | sort -count | head 20")
+        self.assertEqual(response.status, 200)
+
+        response = self.service.parse("xyzzy")
+        self.assertEqual(response.status, 400)
+
+    def test_restart(self):
+        response = self.service.restart()
+        self.assertEqual(response.status, 200)
+
+        sleep(5) # Wait for server to notice restart
+
+        retry = 10
+        restarted = False
+        while retry > 0:
+            retry -= 1
+            try:
+                self.service.login() # Awake yet?
+                response = self.service.get('server')
+                self.assertEqual(response.status, 200)
+                restarted = True
+                break
+            except:
+                sleep(5)
+        self.assertTrue(restarted)
 
     #def test_roles(self):
     #    roles = self.cn.roles
@@ -85,6 +124,23 @@ class ServiceTestCase(unittest.TestCase):
     #    for role in roles.values():
     #        for capability in role.capabilities:
     #            self.assertTrue(capability in capabilities)
+
+    #def test_users(self):
+    #    users = self.cn.users
+    #    roles = self.cn.roles
+    #    for user in users.values():
+    #        for role in user.roles:
+    #            self.assertTrue(role in roles.keys())
+
+    def test_settings(self):
+        settings = self.service.settings.read()
+        keys = [
+            "SPLUNK_DB", "SPLUNK_HOME", "enableSplunkWebSSL", "host",
+            "httpport", "mgmtHostPort", "minFreeSpace", "pass4SymmKey",
+            "serverName", "sessionTimeout", "startwebserver", "trustedIP"
+        ]
+        for key in keys: self.assertTrue(key in settings.keys())
+        
 
 def main(argv):
     global opts

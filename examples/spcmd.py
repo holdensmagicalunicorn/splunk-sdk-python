@@ -36,43 +36,21 @@ import splunk
 
 from utils import cmdopts
 
-# Ambient search arguments
-SEARCH_ARGS = [
-    "earliest_time",
-    "enable_lookups",
-    "exec_mode",
-    "id",
-    "latest_time",
-    "max_count",
-    "max_time",
-    "namespace",
-    "now",
-    "output_mode",
-    "reload_macros",
-    "rf",
-    "search_mode",
-    "spawn_process",
-    "status_buckets",
-    "time_format",
-    "timeout",  
-]
-
 class Session(InteractiveInterpreter):
     def __init__(self, **kwargs):
-        self.context = splunk.binding.connect(**kwargs)
-        self.bind = self.context.bind
-        self.delete = self.context.delete
-        self.get = self.context.get
-        self.post = self.context.post
+        self.service = splunk.client.connect(**kwargs)
+        self.bind = self.service.bind
+        self.delete = self.service.delete
+        self.get = self.service.get
+        self.post = self.service.post
         locals = {
             'bind': self.bind,
-            'context': self.context,
-            'connect': splunk.binding.connect,
+            'service': self.service,
+            'connect': splunk.client.connect,
             'delete': self.delete,
             'get': self.get,
             'post': self.post,
             'load': self.load,
-            'search': self.search,
         }
         InteractiveInterpreter.__init__(self, locals)
 
@@ -84,11 +62,10 @@ class Session(InteractiveInterpreter):
 
     # Run the interactive interpreter
     def run(self):
-        print "'context' variable has been established"
         print "%s connected to %s:%s" % (
-            self.context.username, 
-            self.context.host, 
-            self.context.port)
+            self.service.username, 
+            self.service.host, 
+            self.service.port)
 
         while True:
             try:
@@ -118,40 +95,12 @@ class Session(InteractiveInterpreter):
 
             self.runcode(co)
 
-    def search(self, query, **kwargs):
-        if not query.startswith("search"):
-            query = "search %s" % query
-
-        # Do a quick syntax check on the search query
-        response = self.context.get('search/parser', q=query)
-        if response.status != 200:
-            # UNDONE: Extract error message from response body
-            return "Syntax error in query: '%s'" % query
-            
-        # Pick up ambient search args from environment that do not already
-        # exist in explicitly passed kwargs.
-        for arg in SEARCH_ARGS:
-            if self.locals.has_key(arg) and not kwargs.has_key(arg): 
-                kwargs[arg] = self.locals[arg]
-        kwargs['search'] = query
-
-        response =  self.context.post('search/jobs/export', **kwargs)
-        if response.status != 200:
-            return "HTTP %d (%s)" % (response.status, response.reason)
-
-        return response.body
-
 # Additional cmdopts parser rules
 RULES = {
     "eval": {
         'flags': ["-e", "--eval"],
         'action': "append",
         'help': "Evaluate the given expression",
-    },
-    "search": {
-        'flags': ["-s", "--search"],
-        'action': "append",
-        'help': "Execute the given search",
     },
     "interactive": {
         'flags': ["-i", "--interactive"], 
@@ -162,9 +111,7 @@ RULES = {
 
 def actions(opts):
     """Ansers if the given command line options specify any 'actions'."""
-    return len(opts.args) > 0 \
-        or opts.kwargs.has_key('eval') \
-        or opts.kwargs.has_key('search')
+    return len(opts.args) > 0 or opts.kwargs.has_key('eval') 
 
 def main():
     opts = cmdopts.parse(sys.argv[1:], RULES, ".splunkrc")
@@ -179,10 +126,6 @@ def main():
     # Process any command line evals
     for arg in opts.kwargs.get('eval', []): 
         session.eval(arg)
-
-    # Process the search command if given
-    for arg in opts.kwargs.get('search', []):
-        session.eval("search('%s')" % arg)
 
     # Enter interactive mode automatically if no actions were specified or
     # or if interactive mode was specifically requested.
