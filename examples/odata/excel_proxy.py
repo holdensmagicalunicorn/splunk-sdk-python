@@ -33,7 +33,7 @@ import socket
 import splunk.binding as binding
 from splunk.binding import connect
 
-from utils import cmdopts
+import utils
 
 DEBUG = True
 
@@ -615,7 +615,7 @@ def application(environ, start_response):
     query = environ["QUERY_STRING"]
 
     # perform idempotent login/connect -- get login creds from ~/.splunkrc
-    opts = cmdopts.parse(sys.argv[1:], {}, ".splunkrc")
+    opts = utils.parse(sys.argv[1:], {}, ".splunkrc")
     connection = connect(**opts.kwargs)
 
     # get lower level context

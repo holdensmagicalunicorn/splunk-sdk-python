@@ -57,14 +57,12 @@ class ExamplesTestCase(unittest.TestCase):
             result = os.system(command)
             self.assertEquals(result, 0)
         
-    def test_publish(self):
-        result = os.system("python publish.py --help > __stdout__")
-        self.assertEquals(result, 0)
-        
     def test_search(self):
         result = os.system("python search.py --help > __stdout__")
         self.assertEquals(result, 0)
         result = os.system("python search.py 'search * | head 10' > __stdout__")
+        self.assertEquals(result, 0)
+        result = os.system("python search.py 'search * | stats count' --output_mode='csv' > __stdout__")
         self.assertEquals(result, 0)
 
     def test_spcmd(self):
@@ -79,6 +77,10 @@ class ExamplesTestCase(unittest.TestCase):
         self.assertEquals(result, 0)
 
         result = os.system("python spurl.py /services > __stdout__")
+        self.assertEquals(result, 0)
+
+    def test_submit(self):
+        result = os.system("python submit.py --help > __stdout__")
         self.assertEquals(result, 0)
         
 def main():

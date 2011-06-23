@@ -32,7 +32,9 @@
 #  return a 404 (which is a little misleading) but the response body contains
 #  a message indicating that disable cant be called on the default database.
 
+import socket
 from time import sleep
+from urllib import urlencode
 
 import splunk.binding as binding
 from splunk.binding import Context, HTTPError
@@ -52,29 +54,6 @@ PATH_INDEXES = "data/indexes"
 
 PATH_JOB = "search/jobs/%s"
 PATH_JOBS = "search/jobs"
-
-# Ensure that this is a syntactically valid Splunk namespace.
-# The namespace must be of the form <username>:<appname> where both username
-# and appname must be at least one character, must not contain a colon (':'),
-# and may be a wildcard ('*').
-def _check_namespace(namespace):
-    if len(namespace) < 3 or namespace.count(':') != 1:
-        raise SplunkError("Invalid namespace: '%s'" % namespace)
-
-# Combine the given host & path to create a fully-formed URL.
-def _mkurl(host, path):
-    # Append default port to host if port is not already provided
-    if not ':' in host: host = host + ':' + binding.DEFAULT_PORT
-    return "%s://%s%s" % (binding.DEFAULT_SCHEME, host, path)
-
-# Construct a resource path using the given path suffix and optional namespace
-def _mkpath(suffix, namespace = None):
-    if namespace is None: 
-        return "/services/%s" % suffix
-    username, appname = namespace.split(':')
-    if username == "*": username = '-'
-    if appname == "*": appname = '-'
-    return "/servicesNS/%s/%s/%s" % (username, appname, suffix)
 
 def check_status(response, *args):
     """Checks that the given HTTP response is one of the expected values."""
@@ -244,7 +223,6 @@ class Entity(Endpoint):
         self.post(**kwargs)
         return self
 
-# UNDONE: Index should not have a delete method (currently inherited)
 class Index(Entity):
     def __init__(self, service, name):
         Entity.__init__(self, service, PATH_INDEX % name, name)
@@ -259,6 +237,33 @@ class Index(Entity):
             sleep(1)
             if self['totalEventCount'] == '0': break
         self.update(**saved)
+
+    def submit(self, event, host=None, source=None, sourcetype=None):
+        """Submits an event to the index."""
+        args = { 'index': self.name }
+        if host is not None: args['host'] = host
+        if source is not None: args['source'] = source
+        if sourcetype is not None: args['sourcetype'] = sourcetype
+        path = "receivers/simple?%s" % urlencode(args)
+        message = { 'method': "POST", 'body': event }
+        response = self.service.request(path, message)
+        check_status(response, 200)
+
+    def attach(self, host=None, source=None, sourcetype=None):
+        """Opens a stream for writing events to the index."""
+        args = { 'index': self.name }
+        if host is not None: args['host'] = host
+        if source is not None: args['source'] = source
+        if sourcetype is not None: args['sourcetype'] = sourcetype
+        path = "receivers/stream?%s" % urlencode(args)
+        cn = self.service.connect()
+        cn.write("POST %s HTTP/1.1\r\n" % self.service.fullpath(path))
+        cn.write("Host: %s:%s\r\n" % (self.service.host, self.service.port))
+        cn.write("Accept-Encoding: identity\r\n")
+        cn.write("Authorization: %s\r\n" % self.service.token)
+        cn.write("X-Splunk-Input-Mode: Streaming\r\n")
+        cn.write("\r\n")
+        return cn
 
 # The Splunk Job is not an enity, but we are able to make the interface look
 # a lot like one.

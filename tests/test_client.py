@@ -18,13 +18,24 @@ import unittest
 
 import splunk
 
-from utils import cmdopts
+from utils import parse
 
 opts = None # Command line options
 
 class PackageTestCase(unittest.TestCase):
     def test_names(self):
         names = dir(splunk)
+
+# When an event is submitted to an index it takes a somewhat variable amount
+# of time before the event is registered in the index's totalEventCount.
+def wait_event_count(index, count, secs):
+    """Wait up to the given number of secs for the given index's
+       totalEventCount to reach the given value."""
+    done = False
+    while not done and secs > 0:
+        sleep(1)
+        secs -= 1 # Approximate
+        done = index['totalEventCount'] == count
 
 class ServiceTestCase(unittest.TestCase):
     def setUp(self):
@@ -94,10 +105,25 @@ class ServiceTestCase(unittest.TestCase):
         index.enable()
         self.assertEqual(index['disabled'], '0')
             
-        # Restore
-        index.disable() if entity.disabled else entity.enable()
+        index.clean()
+        self.assertEqual(index['totalEventCount'], '0')
+
+        cn = index.attach()
+        cn.write("Hello World!")
+        cn.close()
+        wait_event_count(index, '1', 30)
+        self.assertEqual(index['totalEventCount'], '1')
+
+        index.submit("Hello again!!")
+        wait_event_count(index, '2', 30)
+        self.assertEqual(index['totalEventCount'], '2')
+
+        index.submit("La-la .. lalala ..")
+        wait_event_count(index, '3', 30)
+        self.assertEqual(index['totalEventCount'], '3')
 
         index.clean()
+        self.assertEqual(index['totalEventCount'], '0')
 
     def test_indexes_metadata(self):
         metadata = self.service.indexes.itemmeta()
@@ -215,7 +241,7 @@ class ServiceTestCase(unittest.TestCase):
 
 def main(argv):
     global opts
-    opts = cmdopts.parse(argv, {}, ".splunkrc")
+    opts = parse(argv, {}, ".splunkrc")
     unittest.main()
 
 if __name__ == "__main__":

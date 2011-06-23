@@ -33,7 +33,7 @@ import sys
 
 from splunk.client import connect
 
-from utils.cmdopts import cmdline, error, parse
+from utils import *
 
 class Program:
     def __init__(self, service):

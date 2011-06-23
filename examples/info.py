@@ -20,10 +20,10 @@ import sys
 
 import splunk
 
-from utils import cmdopts
+from utils import parse
 
 if __name__ == "__main__":
-    opts = cmdopts.parse(sys.argv[1:], {}, ".splunkrc")
+    opts = parse(sys.argv[1:], {}, ".splunkrc")
     service = splunk.client.connect(**opts.kwargs)
 
     info = service.info

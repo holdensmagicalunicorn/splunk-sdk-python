@@ -14,4 +14,94 @@
 
 """Utility module shared by the SDK examples & unit tests."""
 
-import utils.cmdopts
+from utils.cmdopts import *
+
+def config(option, opt, value, parser):
+    assert opt == "--config"
+    parser.load(value)
+
+# Default Splunk cmdline rules
+RULES_SPLUNK = {
+    'config': {
+        'flags': ["--config"],
+        'action': "callback",
+        'callback': config,
+        'type': "string",
+        'nargs': "1",
+        'help': "Load options from config file" 
+    },
+    'scheme': {
+        'flags': ["--scheme"],
+        'default': "https",
+        'help': "Scheme (default 'https')",
+    },
+    'host': {
+        'flags': ["--host"],
+        'default': "localhost",
+        'help': "Host name (default 'localhost')" 
+    },
+    'port': { 
+        'flags': ["--port"],
+        'default': "8089",
+        'help': "Port number (default 8089)" 
+    },
+    'username': {
+        'flags': ["--username"],
+        'default': None,
+        'help': "Username to login with" 
+    },
+    'password': {
+        'flags': ["--password"], 
+        'default': None,
+        'help': "Password to login with" 
+    },
+    'namespace': {
+        'flags': ["--namespace"], 
+        'default': None,
+    },
+    'proxyhost': {
+        'flags': ["--proxyhost"],
+        'default': None,
+        'help': "Proxy host name (default None)" 
+    },
+    'proxyport': { 
+        'flags': ["--proxyport"],
+        'default': None,
+        'help': "Port number (default None)" 
+    },
+}
+
+FLAGS_SPLUNK = RULES_SPLUNK.keys()
+
+# value: dict, args: [(dict | list | str)*]
+def dslice(value, *args):
+    """Returns a 'slice' of the given dictionary value containing only the
+       requested keys. The keys can be requested in a variety of ways, as an
+       arg list of keys, as a list of keys, or as a dict whose key(s) represent
+       the source keys and whose corresponding values represent the resulting 
+       key(s) (enabling key rename), or any combination of the above.""" 
+    result = {}
+    for arg in args:
+        if isinstance(arg, dict):
+            for k, v in arg.iteritems():
+                if value.has_key(k): 
+                    result[v] = value[k]
+        elif isinstance(arg, list):
+            for k in arg:
+                if value.has_key(k): 
+                    result[k] = value[k]
+        else:
+            if value.has_key(arg): result[arg]
+    return result
+
+def parse(argv, rules=None, config=None, **kwargs):
+    """Parse the given arg vector with the default Splunk command rules."""
+    parser_ = parser(rules, **kwargs)
+    if config is not None: parser_.loadrc(config)
+    return parser_.parse(argv).result
+
+def parser(rules=None, **kwargs):
+    """Instantiate a parser with the default Splunk command rules."""
+    rules = RULES_SPLUNK if rules is None else dict(RULES_SPLUNK, **rules)
+    return Parser(rules, **kwargs)
+

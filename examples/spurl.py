@@ -23,7 +23,7 @@ from xml.etree import ElementTree
 
 import splunk
 
-from utils import cmdopts
+import utils
 
 # Invoke the url using the given opts parameters
 def invoke(path, **kwargs):
@@ -42,7 +42,7 @@ def print_response(response):
         print body
 
 def main():
-    opts = cmdopts.parse(sys.argv[1:], {}, ".splunkrc")
+    opts = utils.parse(sys.argv[1:], {}, ".splunkrc")
     for arg in opts.args: 
         print_response(invoke(arg, **opts.kwargs))
 
