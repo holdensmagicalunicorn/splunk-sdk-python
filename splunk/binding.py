@@ -29,7 +29,6 @@ import ssl
 from xml.etree.ElementTree import XML
 
 from splunk.data import record
-import httpproxy
 
 __all__ = [
     "connect",
@@ -189,7 +188,7 @@ def connect(**kwargs):
 # UNDONE: http.post does not support: file upload, 'raw' body data, streaming,
 #   multipart/form-data, query args
 
-import httplib
+import ehttplib
 import urllib
 
 debug = False
@@ -236,21 +235,28 @@ class http:
 
         kwargs = {}
 
-        if timeout is not None: kwargs["timeout"] = timeout
-        if proxy is None:
-            if scheme == "http":
-                return httplib.HTTPConnection(host, port, None, **kwargs)
-            else:
-                return httplib.HTTPSConnection(host, port, None, **kwargs)
-        else:
-            if scheme == "http":
-                host = proxy[0]
-                port = proxy[1]
-                return httplib.HTTPConnection(host, port, None, **kwargs)
-            if proxy and scheme == "https":
-                kwargs['http_proxy'] = proxy
-                return httpproxy.HTTPSConnection(host, port, None, **kwargs)
+        # build up the variable argument list 
+        kwargs["timeout"] = timeout
+        kwargs['proxy'] = proxy
 
+        # if scheme is http, we don't use SSL, which means we will ignore
+        # all the cert file info.
+        #
+        # if scheme is https, the presence ca_file indicates whether or not
+        # we will perform any cert checking
+        #
+        # UNDONE:
+        # what we need here is a way to get the following arguments into kwargs:
+        # key_file
+        # cert_file
+        # ca_file 
+
+        # invoke our extended http[s] connection to handle proxies and cert
+        if scheme == "http":
+            return ehttplib.HTTPConnection(host, port, **kwargs)
+        elif scheme == "https":
+            return ehttplib.HTTPSConnection(host, port, **kwargs)
+       
         return None # UNDONE: Raise an invalid scheme exception
 
     @staticmethod
