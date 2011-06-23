@@ -8,300 +8,223 @@
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
-
-"""This utility reads the Twitter 'spritzer' and writes status results 
-   to Cassandra while teeing off a portion of the stream to Splunk for
-   indexing."""
-
+# Unless required by applicable law or agreed to in writing, software # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the # License for the specific language governing permissions and limitations # under the License.  """This utility reads the Twitter 'spritzer' and writes status results (aka tweets) to Splunk for indexing.""" 
 # UNDONE: Hardening ..
 #   * Script doesn't handle loss of the twitter HTTP connection or the Splunk
 #     TCP connection
-#   * Script doesn't handle failure to write to Splunk or Cassandra (no
-#     transaction)
-#   * Need some way to validate contents of database against contents of 
-#     the index.
+# UNDONE: Command line args - Splunk host/port
+# UNDONE: Basic auth will be disabled in August/2010 .. need to support OAuth2
 
-# UNDONE: Inestigate alternatives to pycassa
-# UNDONE: Command line args - Splunk host/port, Cassandra host/port ...
-# UNDONE: Is there a better way to store bools in Cassandra?
+from pprint import pprint
 
-from pprint import pprint # UNDONE
-
+import base64
+from getpass import getpass
+import httplib
 import json
-import pycurl
 import socket
 import sys
 
-import pycassa
-from pycassa.system_manager import SystemManager
-from pycassa.system_manager import ASCII_TYPE, INT_TYPE, LONG_TYPE, UTF8_TYPE
+import splunk
 
-#
-# Simple curl command to read from the Twitter 'gardenhose'
-#
-#   curl http://stream.twitter.com/1/statuses/sample.json -u<user>:<pw>
-#
+from utils import parse
 
-TWITTER_STREAM = "http://stream.twitter.com/1/statuses/sample.json"
-TWITTER_LOGIN  = "http://api.twitter.com/1/account/verify_credentials.json"
+TWITTER_STREAM_HOST = "stream.twitter.com"
+TWITTER_STREAM_PATH = "/1/statuses/sample.json"
 
 SPLUNK_HOST = "localhost"
 SPLUNK_PORT = 9001
 
-CASSANDRA_HOSTPORT = "localhost:9160"
-CASSANDRA_KEYSPACE = "twitter"
-
-cassandra = None    # The cassandra service
-splunk = None       # The splunk ingest socket
-
-# UNDONE: Validate schema if it already exists
-# UNDONE: Need a better wrapping: system/keyspace/column_family
-class Cassandra:
-    def __init__(self, hostport):
-        self.hostport = hostport
-        self.system = SystemManager(hostport)
-
-    def _ensure_column_family(self, kname, cfname, cols = None):
-        cfams = self.system.get_keyspace_column_families(kname)
-        if cfname not in cfams.keys():
-            self.system.create_column_family(
-                kname, cfname,
-                comparator_type = ASCII_TYPE,           # Column names
-                default_validation_class = UTF8_TYPE)  # Default column value
-        if cols is not None:
-            for cname, ctype in cols.iteritems():
-                self.system.alter_column(kname, cfname, cname, ctype)
-
-    def column_family(self, kname, cfname):
-        pool = pycassa.connect(kname, [self.hostport])
-        return pycassa.ColumnFamily(pool, cfname)
-
-    def ensure_schema(self, kname, cfams):
-        # UNDONE: Parameterize replication_factor
-        if kname not in self.system.list_keyspaces():
-            self.system.create_keyspace(kname, replication_factor=1)
-        if cfams is not None:
-            for cfname, cols in cfams.iteritems():
-                self._ensure_column_family(kname, cfname, cols)
+ingest = None       # The splunk ingest socket
+verbose = 1
 
 class Twitter:
     def __init__(self, username, password):
         self.buffer = ""
-        #self.userid = None
         self.username = username
         self.password = password
-        self.connection = pycurl.Curl()
 
-    def login(self):
-        userpwd = "%s:%s" % (self.username, self.password)
-        self.connection.setopt(pycurl.USERPWD, userpwd)
-        # UNDONE: Must use OAuth to access REST API, even validating creds
-        #import StringIO
-        #self.connection.setopt(pycurl.URL, TWITTER_LOGIN_URL)
-        #result = StringIO.StringIO()
-        #self.connection.setopt(pycurl.WRITEFUNCTION, result.write)
-        #self.connection.perform()
-        #data = json.loads(result.getvalue())
-        #pprint(data)
-        return self
+    def connect(self):
+        # Login using basic auth
+        login = "%s:%s" % (self.username, self.password)
+        token = "Basic " + str.strip(base64.encodestring(login))
+        headers = {
+            'Content-Length': "0",
+            'Authorization': token,
+            'Host': "stream.twitter.com",
+            'User-Agent': "twitted.py/0.1",
+            'Accept': "*/*",
+        }
+        connection = httplib.HTTPConnection(TWITTER_STREAM_HOST)
+        connection.request("GET", TWITTER_STREAM_PATH, "", headers)
+        response = connection.getresponse()
+        if response.status != 200:
+            raise Exception, "HTTP Error %d (%s)" % (
+                response.status, response.reason)
+        return response
 
-    def connect(self, onreceive):
-        self.login()
-        self.connection.setopt(pycurl.URL, TWITTER_STREAM)
-        self.connection.setopt(pycurl.WRITEFUNCTION, onreceive)
-        self.connection.perform()
-
-#
-# Pipe {id, user_id, created_at, text} => Splunk
-#
-# Pipe entire tweet response (aka status) into Cassandra, with some light 
-# normalization of the status data:
-#
-#   Status is split into two parts, Status & User. Status.user is replaced
-#   with Status.user_id (id pulled from user field). Status is inserted into
-#   the Statuses ColumnFamily and User is inserted into the Users ColumnFamily.
-#   In effect, the status data is very lightly normalized before inserting into
-#   Cassandra.
-#
-buffer = ""
-def onreceive(data):
-    global buffer
-
-    buffer += data
-
-    if not buffer.endswith("\r\n"): return
-
-    buffer.strip()
-    result = json.loads(buffer)
-    buffer = ""
-
-    # UNDONE: Ignoring delete messages for now
-    if result.has_key('delete'): return
-
-    isstatus = \
-        result.has_key('id') and \
-        result.has_key('user') and \
-        result.has_key('text') and \
-        result.has_key('created_at')
-
-    # Ignore if we dont recognize the result as a status message
-    if not isstatus: return
-
-    # Store status record (lightly normalized) in Cassandra
-    write_status(result)
-
-    # Write status summary to Splunk for indexing
-    index_status(result)
-
-CASSANDRA_KEYSPACE = "twitter"
-# UNDONE: bools (eg: user.profile_use_background_image) are stored as strings
-# UNDONE: No support for SuperColumns
-CASSANDRA_SCHEMA = {
-    'Statuses': {
-        # UNDONE: comparator_type, default_validation_class
-        #'favorited': <bool>
-        'id': LONG_TYPE,
-        'in_reply_to_status': LONG_TYPE,
-        'text': UTF8_TYPE,
-        #'truncated': <bool>
-        'user_id': LONG_TYPE,
+RULES = {
+    'tusername': {
+        'flags': ["--twitter:username"],
+        'help': "Twitter username",
     },
-    'Users': {
-        'favourites_count': INT_TYPE,
-        'followers_count': INT_TYPE,
-        'friends_count': INT_TYPE,
-        'id': LONG_TYPE,
-        'list_count': INT_TYPE,
-        'statuses_count': INT_TYPE,
+    'tpassword': { 
+        'flags': ["--twitter:password"],
+        'help': "Twitter password",
+    },
+    'verbose': {
+        'flags': ["--verbose"],
+        'default': 1,
+        'type': "int",
+        'help': "Verbosity level (0-3, default 0)",
     }
 }
 
-# Tee off summary of status data for Splunk to index
-# UNDONE: Should we also tee off any results from Cassandra insert?
-def index_status(status):
-    id = status['id']
-    user_id = status['user']['id']
-    created_at = status['created_at']
-    text = status['text'].encode("UTF-8").replace('\n', '\\n')
-    header = "%s id=%d user_id=%d " % (created_at, id, user_id)
-    global splunk
-    splunk.send(header)
-    splunk.send("text=\"")
-    splunk.send(text)
-    splunk.send("\"\n")
-    print header
+def cmdline():
+    kwargs = parse(sys.argv[1:], RULES, ".splunkrc").kwargs
 
-def tostr(value):
+    # Prompt for Twitter username/password if not provided on command line
+    if not kwargs.has_key('tusername'):
+        kwargs['tusername'] = raw_input("Twitter username: ")
+    if not kwargs.has_key('tpassword'):
+        kwargs['tpassword'] = getpass("Twitter password:")
+
+    # Prompt for Splunk username/password if not provided on command line
+    if not kwargs.has_key('username'):
+        kwargs['username'] = raw_input("Splunk username: ")
+    if not kwargs.has_key('password'):
+        kwargs['password'] = getpass("Splunk password:")
+
+    return kwargs
+
+# Returns a str, dict or simple list
+def flatten(value, prefix=None):
+    """Takes an arbitrary JSON(ish) object and 'flattens' it into a dict
+       with values consisting of either simple types or lists of simple
+       types."""
+
+    def issimple(value): # foldr(True, or, value)?
+        for item in value:
+            if isinstance(item, dict) or isinstance(item, list):
+                return False
+        return True
+
     if isinstance(value, unicode):
         return value.encode("utf8")
-    if isinstance(value, list) or isinstance(value, dict):
-        return json.dumps(value)
-    return str(value)
 
-def torow(value, schema, ignore=[]):
-    assert isinstance(value, dict)
-    row = {}
-    for cname,value in value.iteritems():
-        cname = cname.encode("ascii")
-        if value is None or value == [] or value == {}: continue
-        if cname in ignore: continue
-        ctype = schema.get(cname, None)
-        value = {
-            None: lambda value: tostr(value),
-            INT_TYPE: lambda value: int(value),
-            LONG_TYPE: lambda value: long(value),
-            UTF8_TYPE: lambda value: value.encode("utf8"),
-        }[ctype](value)
-        row[cname] = value
-    return row
+    if isinstance(value, list):
+        if issimple(value): return value
+        offset = 0
+        result = {}
+        prefix = "%d" if prefix is None else "%s_%%d" % prefix
+        for item in value:
+            k = prefix % offset
+            v = flatten(item, k)
+            if not isinstance(v, dict): v = {k:v}
+            result.update(v)
+            offset += 1
+        return result
 
-def write_status(status):
+    if isinstance(value, dict):
+        result = {}
+        prefix = "%s" if prefix is None else "%s_%%s" % prefix
+        for k, v in value.iteritems():
+            k = prefix % str(k)
+            v = flatten(v, k)
+            if not isinstance(v, dict): v = {k:v}
+            result.update(v)
+        return result
 
-    # UNDONE: Cassandra 0.6 only supports string row keys, but in 0.7 row
-    # keys are binary, which should allow int & long keys, pycassa throws
-    # on a now str/unicode key .. so I suspect pycassa is out of date.
+    return value
 
-    retweeted_status = status.get('retweeted_status', None)
-    if retweeted_status is not None:
-        write_status(retweeted_status)
-        status['retweeted_status_id'] = retweeted_status['id']
+def listen(username, password):
+    twitter = Twitter(username, password)
+    stream = twitter.connect()
+    buffer = ""
+    while True:
+        offset = buffer.find("\r\n")
+        if offset != -1:
+            status = buffer[:offset]
+            buffer = buffer[offset+2:]
+            process(status)
+            continue # Consume all statuses in buffer before reading more
+        buffer += stream.read(2048)
 
-    user = status['user']
-    schema = CASSANDRA_SCHEMA['Users']
-    ignore = ['id', 'id_str']
-    row = torow(user, schema, ignore)
-    cassandra_users.insert(str(user['id']), row)
+def output(record):
+    if verbose == 1: print_record(record)
+    if verbose == 2: pprint(record)
 
-    # Grab the idea of the normalized user data
-    status['user_id'] = user['id']
+    for k in sorted(record.keys()):
+        if k.endswith("_str"): 
+            continue # Ignore
 
-    # Flatten entities to simplify storage model slightly
-    entities = status.get('entities', None)
-    if entities is not None:
-        for k,v in entities.iteritems(): status[k] = v
+        v = record[k]
 
-    schema = CASSANDRA_SCHEMA['Statuses']
-    ignore = [
-        'entities',                 # Flattened
-        'id',                       # Key value
-        'id_str',                   # Redundant
-        'in_reply_to_status_id_str',# Redundant
-        'in_reply_to_user_id_str',  # Redundant
-        'retweeted_status',         # Normalized
-        'user',                     # Normalized
-    ]
-    row = torow(status, schema, ignore)
-    cassandra_statuses.insert(str(status['id']), row)
+        if v is None:
+            continue # Ignore
 
-def cmdline():
-    from optparse import OptionParser
-    parser = OptionParser()
-    parser.add_option("-u", dest="username", help="Twitter username")
-    parser.add_option("-p", dest="password", help="Twitter password")
-    (kwargs, args) = parser.parse_args()
-    username = getattr(kwargs, "username")
-    if username is None: 
-        username = raw_input("Username: ")
-    password = getattr(kwargs, "password")
-    if password is None: 
-        import getpass
-        password = getpass.getpass()
-    return { 
-        'username': username,
-        'password': password,
-    }
+        if isinstance(v, list):
+            if len(v) == 0: continue
+            v = ','.join([str(item) for item in v])
+
+        # Field renames
+        k = { 'source': "status_source" }.get(k, k)
+
+        if isinstance(v, str):
+            format = '%s="%s" '
+            v = v.replace('"', "'") # UNDONE: better ideas?
+        else:
+            format = "%s=%r "
+        result = format % (k, v)
+
+        ingest.send(result)
+
+    end = "\r\n---end-status---\r\n"
+    ingest.send(end)
+
+def print_record(record):
+    if record.has_key('delete_status_id'):
+        print "delete %d %d" % (
+            record['delete_status_id'],
+            record['delete_status_user_id'])
+    else:
+        print "status %s %d %d" % (
+            record['created_at'], 
+            record['id'], 
+            record['user_id'])
+
+def process(status):
+    status = json.loads(status)
+    record = flatten(status)
+    output(record)
 
 def main():
     kwargs = cmdline()
 
-    # UNDONE: It would be nice to check that the Twitter credentials
-    # are valid before initializing Cassandra & Splunk.
+    global verbose
+    verbose = kwargs['verbose']
 
-    print "Initializing Cassandra .."
-    global cassandra, cassandra_statuses, cassandra_users
-    cassandra = Cassandra(CASSANDRA_HOSTPORT)
-    cassandra.ensure_schema(CASSANDRA_KEYSPACE, CASSANDRA_SCHEMA)
-    cassandra_statuses = cassandra.column_family(CASSANDRA_KEYSPACE, "Statuses")
-    cassandra_users = cassandra.column_family(CASSANDRA_KEYSPACE, "Users")
+    # Force the namespace
+    kwargs['namespace'] = "%s:twitted" % kwargs['username']
 
     print "Initializing Splunk .."
-    global splunk
+    service = splunk.client.connect(**kwargs)
+
+    if "twitter" not in service.indexes.list():
+        print "Creating index 'twitter' .."
+        service.indexes.create("twitter")
+
     # UNDONE: Ensure index exists
     # UNDONE: Ensure TCP input is configured
     # UNDONE: Ensure twitter sourcetype is defined
-    splunk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    splunk.connect((SPLUNK_HOST, SPLUNK_PORT))
-    splunk.send("***SPLUNK*** sourcetype=twitter\n") # Initialize stream
+    # UNDONE: Ensure rules are created
+
+    global ingest
+    ingest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ingest.connect((SPLUNK_HOST, SPLUNK_PORT))
 
     print "Listening .."
-    twitter = Twitter(kwargs['username'], kwargs['password'])
-    twitter.connect(onreceive)
-
+    listen(kwargs['tusername'], kwargs['tpassword'])
+        
 if __name__ == "__main__":
-	main()
+    main()
 
