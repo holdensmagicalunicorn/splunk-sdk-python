@@ -27,8 +27,7 @@ import sys
 
 from splunk.client import connect
 
-import utils.cmdopts as cmdopts
-from utils.cmdopts import error
+import utils
 
 FLAGS_CREATE = [
     "search", "earliest_time", "latest_time", "now", "time_format",
@@ -66,7 +65,7 @@ def cmdline(argv, flags):
     """A cmdopts wrapper that takes a list of flags and builds the
        corresponding cmdopts rules to match those flags."""
     rules = dict([(flag, {'flags': ["--%s" % flag]}) for flag in flags])
-    return cmdopts.cmdline(argv, rules)
+    return utils.cmdline(argv, rules)
 
 def output(stream):
     """Write the contents of the given stream to stdout."""
@@ -226,7 +225,7 @@ def main():
         options = argv[:index]
         command = argv[index:]
 
-    opts = cmdopts.parse(options, {}, ".splunkrc", usage=usage)
+    opts = utils.parse(options, {}, ".splunkrc", usage=usage)
     service = connect(**opts.kwargs)
     program = Program(service)
     program.run(command)

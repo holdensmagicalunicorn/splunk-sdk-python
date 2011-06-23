@@ -18,7 +18,7 @@ import unittest
 
 import splunk
 
-from utils import cmdopts
+from utils import parse
 
 opts = None # Command line options
 
@@ -215,7 +215,7 @@ class ServiceTestCase(unittest.TestCase):
 
 def main(argv):
     global opts
-    opts = cmdopts.parse(argv, {}, ".splunkrc")
+    opts = parse(argv, {}, ".splunkrc")
     unittest.main()
 
 if __name__ == "__main__":

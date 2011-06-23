@@ -19,7 +19,7 @@
 
 from splunk.binding import connect
 
-from utils import cmdopts
+from utils import parse
 
 class Service:
     def __init__(self, context):
@@ -33,7 +33,7 @@ class Service:
         return self.export(search=query, **kwargs)
 
 def main(argv):
-    opts = cmdopts.parse(argv, {}, ".splunkrc")
+    opts = parse(argv, {}, ".splunkrc")
     service = Service(connect(**opts.kwargs))
     assert service.apps().status == 200
     assert service.indexes().status == 200

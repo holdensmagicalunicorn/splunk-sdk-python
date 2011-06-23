@@ -26,7 +26,7 @@ import sys
 
 import splunk
 
-from utils.cmdopts import parse
+from utils import parse
 
 TWITTER_STREAM_HOST = "stream.twitter.com"
 TWITTER_STREAM_PATH = "/1/statuses/sample.json"

@@ -22,6 +22,9 @@
 
 from pprint import pprint # debug
 
+import socket
+import ssl
+
 # UNDONE: Can we retrieve the sessionKey without instantiating this? regex?
 from xml.etree.ElementTree import XML
 
@@ -80,6 +83,13 @@ class Context:
         # eg: check that all replacements are positional and that the number 
         # of given args matches the number of expected replacements.
         return lambda *args, **kwargs: fn(path.format(*args), **kwargs)
+
+    def connect(self):
+        """Open a connection (socket) to the service (host:port)."""
+        cn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        cn.connect((self.host, int(self.port)))
+        #return socket.ssl(cn) if self.scheme == "https" else cn
+        return ssl.wrap_socket(cn) if self.scheme == "https" else cn
 
     def delete(self, path, **kwargs):
         return http.delete(self.url(path), self._headers(), 

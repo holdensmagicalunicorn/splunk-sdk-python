@@ -34,7 +34,7 @@ import sys
 
 import splunk
 
-from utils import cmdopts
+import utils
 
 class Session(InteractiveInterpreter):
     def __init__(self, **kwargs):
@@ -95,7 +95,6 @@ class Session(InteractiveInterpreter):
 
             self.runcode(co)
 
-# Additional cmdopts parser rules
 RULES = {
     "eval": {
         'flags': ["-e", "--eval"],
@@ -114,7 +113,7 @@ def actions(opts):
     return len(opts.args) > 0 or opts.kwargs.has_key('eval') 
 
 def main():
-    opts = cmdopts.parse(sys.argv[1:], RULES, ".splunkrc")
+    opts = utils.parse(sys.argv[1:], RULES, ".splunkrc")
 
     # Connect and initialize the command session
     session = Session(**opts.kwargs)

@@ -49,7 +49,7 @@ class Stanza:
 
     def create(self, **kwargs):
         """Creates the stanza."""
-        self._post(self.path, __stanza=self.stanza)
+        self._post("properties/%s" % self.filename, __stanza=self.stanza)
         self.update(**kwargs)
         return self
 
@@ -84,3 +84,4 @@ def main(argv):
 
 if __name__ == "__main__":
     main(sys.argv[1:])
+

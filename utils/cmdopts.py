@@ -18,11 +18,7 @@ from os import path
 from optparse import OptionParser
 import sys
 
-__all__ = [ "parse", "Parser" ]
-
-def config(option, opt, value, parser):
-    assert opt == "--config"
-    parser.load(value)
+__all__ = [ "error", "Parser", "cmdline" ]
 
 # Print the given message to stderr, and optionally exit
 def error(message, exitcode = None):
@@ -38,57 +34,6 @@ class record(dict):
 
     def __setattr__(self, name, value):
         self[name] = value
-
-# Default Splunk cmdline rules
-SPLUNK_RULES = {
-    'config': {
-        'flags': ["--config"],
-        'action': "callback",
-        'callback': config,
-        'type': "string",
-        'nargs': "1",
-        'help': "Load options from config file" 
-    },
-    'scheme': {
-        'flags': ["--scheme"],
-        'default': "https",
-        'help': "Scheme (default 'https')",
-    },
-    'host': {
-        'flags': ["--host"],
-        'default': "localhost",
-        'help': "Host name (default 'localhost')" 
-    },
-    'port': { 
-        'flags': ["--port"],
-        'default': "8089",
-        'help': "Port number (default 8089)" 
-    },
-    'username': {
-        'flags': ["--username"],
-        'default': None,
-        'help': "Username to login with" 
-    },
-    'password': {
-        'flags': ["--password"], 
-        'default': None,
-        'help': "Password to login with" 
-    },
-    'namespace': {
-        'flags': ["--namespace"], 
-        'default': None,
-    },
-    'proxyhost': {
-        'flags': ["--proxyhost"],
-        'default': None,
-        'help': "Proxy host name (default None)" 
-    },
-    'proxyport': { 
-        'flags': ["--proxyport"],
-        'default': None,
-        'help': "Port number (default None)" 
-    },
-}
 
 class Parser(OptionParser):
     def __init__(self, rules = None, **kwargs):
@@ -157,23 +102,9 @@ class Parser(OptionParser):
         return self
 
 def cmdline(argv, rules=None, config=None, **kwargs):
-    """Simplified cmdopts interface that does not default any parsing rules."""
+    """Simplified cmdopts interface that does not default any parsing rules
+       and that does not allow compounding calls to the parser."""
     parser = Parser(rules, **kwargs)
     if config is not None: parser.loadrc(config)
     return parser.parse(argv).result
 
-def parse(argv, rules=None, config=None, **kwargs):
-    """Parse the given arg vector with the default Splunk cmdline rules."""
-    parser_ = parser(rules, **kwargs)
-    if config is not None: parser_.loadrc(config)
-    return parser_.parse(argv).result
-
-def parser(rules=None, **kwargs):
-    """Instantiate a parser with the default rule set and optional extensions
-       and overrides."""
-    rules = SPLUNK_RULES if rules is None else dict(SPLUNK_RULES, **rules)
-    return Parser(rules, **kwargs)
-        
-if __name__ == "__main__":
-    from pprint import pprint
-    pprint(parse(sys.argv[1:]))

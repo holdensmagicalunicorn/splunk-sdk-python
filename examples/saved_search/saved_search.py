@@ -21,7 +21,8 @@ import sys
 import urllib
 
 import splunk.binding as binding
-from utils import cmdopts
+
+import utils
 
 # these 'rules' allow for setting parameters primarily for creating saved searches
 RULES = {
@@ -153,7 +154,7 @@ RULES = {
 def main(argv):
     """ main entry """
     usage = 'usage: %prog --help for options'
-    opts = cmdopts.parse(argv, RULES, ".splunkrc", usage=usage)
+    opts = utils.parse(argv, RULES, ".splunkrc", usage=usage)
 
     context = binding.connect(**opts.kwargs)
     operation = None

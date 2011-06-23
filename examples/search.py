@@ -24,7 +24,7 @@ from time import sleep
 import splunk
 import splunk.client as client
 
-from utils import cmdopts
+from utils import *
 
 FLAGS_TOOL = [ "verbose" ]
 
@@ -41,21 +41,11 @@ FLAGS_RESULTS = [
     "offset", "count", "search", "field_list", "f", "output_mode"
 ]
 
-FLAGS_SPLUNK = [
-    "scheme", "host", "port", "username", "password", "namespace"
-]
-
-# value : dict
-def slice(value, keys):
-    """Returns a 'slice' of the given dict value containing only the given
-       keys."""
-    return dict([(k, v) for k, v in value.iteritems() if k in keys])
-
 def cmdline(argv, flags, **kwargs):
     """A cmdopts wrapper that takes a list of flags and builds the
        corresponding cmdopts rules to match those flags."""
     rules = dict([(flag, {'flags': ["--%s" % flag]}) for flag in flags])
-    return cmdopts.parse(argv, rules, ".splunkrc", **kwargs)
+    return parse(argv, rules, ".splunkrc", **kwargs)
 
 def main(argv):
     usage = 'usage: %prog [options] "search"'
@@ -67,14 +57,14 @@ def main(argv):
     opts = cmdline(argv, flags, usage=usage)
 
     if len(opts.args) != 1:
-        cmdopts.error("Search expression required", 2)
+        error("Search expression required", 2)
     search = opts.args[0]
 
     verbose = opts.kwargs.get("verbose", 0)
 
-    kwargs_splunk = slice(opts.kwargs, FLAGS_SPLUNK)
-    kwargs_create = slice(opts.kwargs, FLAGS_CREATE)
-    kwargs_results = slice(opts.kwargs, FLAGS_RESULTS)
+    kwargs_splunk = dslice(opts.kwargs, FLAGS_SPLUNK)
+    kwargs_create = dslice(opts.kwargs, FLAGS_CREATE)
+    kwargs_results = dslice(opts.kwargs, FLAGS_RESULTS)
 
     service = client.connect(**kwargs_splunk)
 
