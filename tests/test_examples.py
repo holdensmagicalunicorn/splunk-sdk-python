@@ -62,6 +62,8 @@ class ExamplesTestCase(unittest.TestCase):
         self.assertEquals(result, 0)
         result = os.system("python search.py 'search * | head 10' > __stdout__")
         self.assertEquals(result, 0)
+        result = os.system("python search.py 'search * | stats count' --output_mode='csv' > __stdout__")
+        self.assertEquals(result, 0)
 
     def test_spcmd(self):
         result = os.system("python spcmd.py --help > __stdout__")
