@@ -188,7 +188,7 @@ def connect(**kwargs):
 # UNDONE: http.post does not support: file upload, 'raw' body data, streaming,
 #   multipart/form-data, query args
 
-import ehttplib
+import splunk.ehttplib as httplib
 import urllib
 
 debug = False
@@ -251,11 +251,12 @@ class http:
         # cert_file
         # ca_file 
 
-        # invoke our extended http[s] connection to handle proxies and cert
+        # Note: we invoke our extended http[s] connection to handle 
+        # proxies and cert
         if scheme == "http":
-            return ehttplib.HTTPConnection(host, port, **kwargs)
+            return httplib.HTTPConnection(host, port, **kwargs)
         elif scheme == "https":
-            return ehttplib.HTTPSConnection(host, port, **kwargs)
+            return httplib.HTTPSConnection(host, port, **kwargs)
        
         return None # UNDONE: Raise an invalid scheme exception
 
