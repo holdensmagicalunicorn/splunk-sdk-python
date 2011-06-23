@@ -31,6 +31,7 @@
 #  the resonse body. Eg: a call to index.disable on the defaultDatabase will
 #  return a 404 (which is a little misleading) but the response body contains
 #  a message indicating that disable cant be called on the default database.
+# UNDONE: Consider Entity.delete (if entity has 'remove' link?)
 
 import socket
 from time import sleep
@@ -228,27 +229,6 @@ class Index(Entity):
         Entity.__init__(self, service, PATH_INDEX % name, name)
         self.roll_hot_buckets = lambda: self.post("roll-hot-buckets")
 
-    def clean(self):
-        """Delete the contents of the index."""
-        saved = self.read('maxTotalDataSizeMB', 'frozenTimePeriodInSecs')
-        self.update(maxTotalDataSizeMB=1, frozenTimePeriodInSecs=1)
-        self.roll_hot_buckets()
-        while True: # Wait until event count goes to zero
-            sleep(1)
-            if self['totalEventCount'] == '0': break
-        self.update(**saved)
-
-    def submit(self, event, host=None, source=None, sourcetype=None):
-        """Submits an event to the index."""
-        args = { 'index': self.name }
-        if host is not None: args['host'] = host
-        if source is not None: args['source'] = source
-        if sourcetype is not None: args['sourcetype'] = sourcetype
-        path = "receivers/simple?%s" % urlencode(args)
-        message = { 'method': "POST", 'body': event }
-        response = self.service.request(path, message)
-        check_status(response, 200)
-
     def attach(self, host=None, source=None, sourcetype=None):
         """Opens a stream for writing events to the index."""
         args = { 'index': self.name }
@@ -264,6 +244,36 @@ class Index(Entity):
         cn.write("X-Splunk-Input-Mode: Streaming\r\n")
         cn.write("\r\n")
         return cn
+
+    def clean(self):
+        """Delete the contents of the index."""
+        saved = self.read('maxTotalDataSizeMB', 'frozenTimePeriodInSecs')
+        self.update(maxTotalDataSizeMB=1, frozenTimePeriodInSecs=1)
+        self.roll_hot_buckets()
+        while True: # Wait until event count goes to zero
+            sleep(1)
+            if self['totalEventCount'] == '0': break
+        self.update(**saved)
+
+    def submit(self, event, host=None, source=None, sourcetype=None):
+        """Submits an event to the index via HTTP POST."""
+        args = { 'index': self.name }
+        if host is not None: args['host'] = host
+        if source is not None: args['source'] = source
+        if sourcetype is not None: args['sourcetype'] = sourcetype
+        path = "receivers/simple?%s" % urlencode(args)
+        message = { 'method': "POST", 'body': event }
+        response = self.service.request(path, message)
+        check_status(response, 200)
+
+    # kwargs: host, host_regex, host_segment, rename-source, sourcetype
+    def upload(self, filename, **kwargs):
+        """Uploads a file to the index using the 'oneshot' input. The file
+           must be accessible from the server."""
+        kwargs['index'] = self.name
+        path = 'data/inputs/oneshot'
+        response = self.service.post(path, name=filename, **kwargs)
+        check_status(response, 201)
 
 # The Splunk Job is not an enity, but we are able to make the interface look
 # a lot like one.
