@@ -63,7 +63,16 @@ class Context:
         else:
             self.proxy = (kwargs.get("proxyhost", None),
                           kwargs.get("proxyport", str(DEFAULT_PORT)))
+        self.timeout = kwargs.get("timeout", None)
         self.token = None
+
+    def _set_timeout(self, **kwargs):
+        if kwargs.has_key('timeout'):
+            return kwargs
+        if self.timeout == None:
+            return kwargs
+        kwargs['timeout'] = int(self.timeout)
+        return kwargs
 
     # Shared per-context request headers
     def _headers(self):
@@ -92,14 +101,17 @@ class Context:
         return ssl.wrap_socket(cn) if self.scheme == "https" else cn
 
     def delete(self, path, **kwargs):
+        kwargs = self._set_timeout(**kwargs)
         return http.delete(self.url(path), self._headers(), 
                            proxy=self.proxy, **kwargs)
 
     def get(self, path, **kwargs):
+        kwargs = self._set_timeout(**kwargs)
         return http.get(self.url(path), self._headers(), 
                            proxy=self.proxy, **kwargs)
 
     def post(self, path, **kwargs):
+        kwargs = self._set_timeout(**kwargs)
         return http.post(self.url(path), self._headers(), 
                            proxy=self.proxy, **kwargs)
 
@@ -116,7 +128,8 @@ class Context:
             self.url("/services/auth/login"),
             username=self.username, 
             password=self.password,
-            proxy=self.proxy)
+            proxy=self.proxy,
+            timeout=self.timeout)
         if response.status >= 400:
             raise HTTPError(response.status, response.reason)
         # assert response.status == 200

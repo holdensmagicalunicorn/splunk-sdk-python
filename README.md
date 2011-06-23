@@ -41,6 +41,14 @@ If you dont already have a copy of splunk, you can download it at http://splunk.
 
 ## Documentation
 
+Proxy support: HTTPS and HTTP proxy is supported by adding proxyhost=<hostname> proxyport=<proxyport> to the CLI (or .splunkrc file) or the **kwargs in the connect API.
+               host and port should still continue to address the splunkd server.
+
+Socket timeout: Socket timeout is supported in the following manner:
+               If not specified, the system default is used.
+               If specified in the connect api **kwargs (timeout=<value>) the initial connection and subsequent get/post/delete/etc operations all use the timeout value.
+               If specified on the connect api, individual get/post/delete can be individually overridden by adding timeout=<value>.
+
 <outline of SDK docs and additional resources>
 
 ## Community
