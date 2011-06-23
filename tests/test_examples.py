@@ -38,9 +38,7 @@ class ExamplesTestCase(unittest.TestCase):
             "python index.py enable sdk-tests > __stdout__",
             "python index.py clean sdk-tests > __stdout__",
         ]
-        for command in commands:
-            result = os.system(command)
-            self.assertEquals(result, 0)
+        for command in commands: self.assertEquals(os.system(command), 0)
 
     def test_info(self):
         result = os.system("python info.py > __stdout__")
@@ -53,17 +51,15 @@ class ExamplesTestCase(unittest.TestCase):
             "python job.py list > __stdout__",
             "python job.py list @0 > __stdout__",
         ]
-        for command in commands:
-            result = os.system(command)
-            self.assertEquals(result, 0)
+        for command in commands: self.assertEquals(os.system(command), 0)
         
     def test_search(self):
-        result = os.system("python search.py --help > __stdout__")
-        self.assertEquals(result, 0)
-        result = os.system("python search.py 'search * | head 10' > __stdout__")
-        self.assertEquals(result, 0)
-        result = os.system("python search.py 'search * | stats count' --output_mode='csv' > __stdout__")
-        self.assertEquals(result, 0)
+        commands = [
+            "python search.py --help > __stdout__",
+            "python search.py 'search * | head 10' > __stdout__",
+            "python search.py 'search * | stats count' --output_mode='csv' > __stdout__"
+        ]
+        for command in commands: self.assertEquals(os.system(command), 0)
 
     def test_spcmd(self):
         result = os.system("python spcmd.py --help > __stdout__")
@@ -82,6 +78,13 @@ class ExamplesTestCase(unittest.TestCase):
     def test_submit(self):
         result = os.system("python submit.py --help > __stdout__")
         self.assertEquals(result, 0)
+
+    def test_upload(self):
+        commands = [
+            "python upload.py --help > __stdout__",
+            "python upload.py --index=sdk-tests ./upload.py > __stdout__"
+        ]
+        for command in commands: self.assertEquals(os.system(command), 0)
         
 def main():
     os.chdir("../examples")

@@ -12,6 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from os import path
 import sys
 from time import sleep
 import unittest
@@ -118,7 +119,7 @@ class ServiceTestCase(unittest.TestCase):
         wait_event_count(index, '2', 30)
         self.assertEqual(index['totalEventCount'], '2')
 
-        index.submit("La-la .. lalala ..")
+        index.upload(path.abspath(__file__))
         wait_event_count(index, '3', 30)
         self.assertEqual(index['totalEventCount'], '3')
 
