@@ -27,8 +27,8 @@ class PackageTestCase(unittest.TestCase):
     def test_names(self):
         names = dir(splunk)
 
-# When an event is submitted to an index it takes a somewhat variable amount
-# of time before the event is registered in the index's totalEventCount.
+# When an event is submitted to an index it takes a while before the event
+# is registered by the index's totalEventCount.
 def wait_event_count(index, count, secs):
     """Wait up to the given number of secs for the given index's
        totalEventCount to reach the given value."""
@@ -47,6 +47,8 @@ class ServiceTestCase(unittest.TestCase):
         pass
 
     def test_apps(self):
+        for app in self.service.apps: app.read()
+
         self.service.apps.delete('sdk-tests')
         self.assertTrue('sdk-tests' not in self.service.apps.list())
 
@@ -61,6 +63,26 @@ class ServiceTestCase(unittest.TestCase):
         self.service.apps.delete('sdk-tests')
         self.assertTrue('sdk-tests' not in self.service.apps.list())
 
+    def test_confs(self):
+        for conf in self.service.confs:
+            for stanza in conf: stanza.read()
+
+        self.assertTrue(self.service.confs.contains('props'))
+        props = self.service.confs['props']
+
+        stanza = props.create('sdk-tests')
+        self.assertTrue(props.contains('sdk-tests'))
+        self.assertEqual(stanza.name,'sdk-tests')
+        self.assertTrue('maxDist' in stanza.read().keys())
+        value = int(stanza['maxDist'])
+        stanza.update(maxDist = value+1)
+        self.assertEqual(stanza['maxDist'], str(value+1))
+        stanza['maxDist'] = value
+        self.assertEqual(stanza['maxDist'], str(value))
+
+        props.delete('sdk-tests')
+        self.assertFalse(props.contains('sdk-tests')) 
+
     def test_info(self):
         info = self.service.info
         keys = [
@@ -70,6 +92,8 @@ class ServiceTestCase(unittest.TestCase):
         for key in keys: self.assertTrue(key in info.keys())
 
     def test_indexes(self):
+        for index in self.service.indexes: index.read()
+
         if not "sdk-tests" in self.service.indexes.list():
             self.service.indexes.create("sdk-tests")
         self.assertTrue("sdk-tests" in self.service.indexes())
@@ -147,6 +171,8 @@ class ServiceTestCase(unittest.TestCase):
         return job
 
     def test_jobs(self):
+        for job in self.service.jobs: job.read()
+
         if not "sdk-tests" in self.service.indexes():
             self.service.indexes.create("sdk-tests")
 

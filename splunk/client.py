@@ -35,7 +35,7 @@
 
 import socket
 from time import sleep
-from urllib import urlencode
+from urllib import urlencode, quote_plus
 
 import splunk.binding as binding
 from splunk.binding import Context, HTTPError
@@ -47,14 +47,21 @@ __all__ = [
     "Service"
 ]
 
-PATH_APP = "apps/local/%s"
 PATH_APPS = "apps/local"
+PATH_APP = "apps/local/%s"
 
-PATH_INDEX = "data/indexes/%s"
+PATH_CONFS = "properties"
+PATH_CONF = "admin/conf-%s"
+PATH_STANZA = "admin/conf-%s/%s"
+
+def _path_stanza(conf, stanza):
+    return PATH_STANZA % (conf, quote_plus(stanza))
+
 PATH_INDEXES = "data/indexes"
+PATH_INDEX = "data/indexes/%s"
 
-PATH_JOB = "search/jobs/%s"
 PATH_JOBS = "search/jobs"
+PATH_JOB = "search/jobs/%s"
 
 def check_status(response, *args):
     """Checks that the given HTTP response is one of the expected values."""
@@ -82,6 +89,18 @@ class Service(Context):
             ctor=lambda service, name, **kwargs:
                 service.post(PATH_APPS, name=name, **kwargs),
             dtor=lambda service, name: service.delete(PATH_APP % name))
+
+    @property
+    def confs(self):
+        return Collection(self, PATH_CONFS,
+            item=lambda service, conf: 
+                Collection(service, PATH_CONF % conf,
+                    item=lambda service, stanza:
+                        Entity(service, _path_stanza(conf, stanza), stanza),
+                    ctor=lambda service, stanza, **kwargs:
+                        service.post(PATH_CONF % conf, name=stanza, **kwargs),
+                    dtor=lambda service, stanza:
+                        service.delete(_path_stanza(conf, stanza))))
 
     @property
     def indexes(self):
@@ -137,15 +156,18 @@ class Collection(Endpoint):
         self.ctor = ctor # Item constructor
         self.dtor = dtor # Item desteructor
 
-    def __call__(self): # Too cute?
+    def __call__(self):
         return self.list()
 
     def __getitem__(self, key):
         if self.item is None: raise NotSupportedError
+        if not self.contains(key): raise KeyError, key
         return self.item(self.service, key)
 
     def __iter__(self):
-        for name in self.list(): yield self[name]
+        # Don't invoke __getitem__ below, we don't need the extra round-trip
+        # to validate that the key exists, because we just checked.
+        for name in self.list(): yield self.item(self.service, name)
 
     def contains(self, name):
         return name in self.list()
@@ -161,7 +183,7 @@ class Collection(Endpoint):
         return self
 
     def itemmeta(self):
-        """Returns collection item metadata."""
+        """Returns metadata for members of the collection."""
         response = self.get("/_new")
         content = load(response).entry.content
         return record({
@@ -172,7 +194,8 @@ class Collection(Endpoint):
     def list(self):
         """Returns a list of collection keys."""
         response = self.get(count=-1)
-        entry = load(response).entry
+        entry = load(response).get('entry', None)
+        if entry is None: return []
         if not isinstance(entry, list): entry = [entry] # UNDONE
         return [item.title for item in entry]
 
@@ -203,11 +226,14 @@ class Entity(Endpoint):
         self.enable = lambda: self.post("enable")
         self.reload = lambda: self.post("_reload")
 
+    def __call__(self):
+        return self.read()
+
     def __getitem__(self, key):
         return self.read()[key]
 
     def __setitem__(self, key, value):
-        self.update(key=value)
+        self.update(**{ key: value })
 
     def read(self, *args):
         """Read and return the current entity value, optionally returning
@@ -282,11 +308,14 @@ class Job(Endpoint):
         Endpoint.__init__(self, service, PATH_JOB % sid)
         self.sid = sid
 
+    def __call__(self):
+        return self.read()
+
     def __getitem__(self, key):
         return self.read()[key]
 
     def __setitem__(self, key, value):
-        self.update(key=value)
+        self.update(**{ key: value })
 
     def cancel(self):
         self.post("control", action="cancel")
@@ -353,10 +382,8 @@ class Job(Endpoint):
 
 class Jobs(Collection):
     def __init__(self, service):
-        Collection.__init__(self, service, PATH_JOBS)
-
-    def __getitem__(self, sid):
-        return Job(self.service, sid)
+        Collection.__init__(self, service, PATH_JOBS,
+            item=lambda service, sid: Job(service, sid))
 
     def create(self, query, **kwargs):
         response = self.post(search=query, **kwargs)
@@ -368,7 +395,7 @@ class Jobs(Collection):
         entry = load(response).entry
         if not isinstance(entry, list): entry = [entry] # UNDONE
         return [item.content.sid for item in entry]
-    
+
 class SplunkError(Exception): pass
 
 class NotSupportedError(Exception): pass
