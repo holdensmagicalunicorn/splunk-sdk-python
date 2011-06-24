@@ -14,73 +14,37 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""An example that shows how to interface with the conf system via the Splunk
-   REST API."""
-
-# UNDONE: Finish this example!
+"""A command line that will list out Splunk confs, or if given a conf name
+   will list the contents of the given conf."""
 
 import sys
 
-from splunk.binding import *
+import splunk
 
-from utils import cmdopts
-
-def check_status(response, *args):
-    """Checks that the given HTTP response is one of the expected values."""
-    if response.status not in args:
-        raise HTTPError(response.status, response.reason)
-
-class Stanza:
-    """Provides a CRUD interface to a .conf file stanza."""
-    def __init__(self, context, filename, stanza):
-        self.context = context
-        self.filename = filename
-        self.stanza = stanza
-        self.path = "properties/%s/%s" % (filename, stanza)
-
-    def _get(self, path):
-        response = self.context.get(path)
-        check_status(response, 200)
-        return data.load(response.body.read())
-
-    def _post(self, path, **kwargs):
-        response = self.context.post(path, **kwargs)
-        check_status(response, 200)
-
-    def create(self, **kwargs):
-        """Creates the stanza."""
-        self._post("properties/%s" % self.filename, __stanza=self.stanza)
-        self.update(**kwargs)
-        return self
-
-    def delete(self):
-        """Deletes the stanza."""
-        response = self.context.delete(self.path)
-        check_status(response, 200)
-        return self
-
-    def ensure(self):
-        """Creates the stanza of it does not already exist."""
-        if not self.exists(): self.create()
-        return self
-
-    def exists(self):
-        """Answers if the stanza exists."""
-        return self.context.get(self.path).status == 200
-
-    def read(self):
-        """Returns the contents of the stanza."""
-        content = self._get(self.path).entry
-        return dict(
-            [(item.title, item.content.get('$text', "")) for item in content])
-
-    def update(self, **kwargs):
-        """Updates the contents of the stanza with the given kwargs."""
-        if len(kwargs) > 0: self._post(self.path, **kwargs)
-        return self
+from utils import *
 
 def main(argv):
-    pass
+    usage = 'usage: %prog [options] [conf]'
+    opts = parse(argv, {}, ".splunkrc", usage=usage)
+    service = splunk.client.connect(**opts.kwargs)
+
+    count = len(opts.args)
+    if count > 1: error("Requires at most one conf", 2)
+
+    if count == 0:
+        # List out the available confs
+        for conf in service.confs: 
+            print conf.name
+    else:
+        # Print out detail on the requested conf
+        name = opts.args[0]
+        conf = service.confs[name]
+        for stanza in conf:
+            print "[%s]" % stanza.name
+            entity = stanza.read()
+            for k, v in entity.iteritems():
+                print "%s = %s" % (k, v)
+            print
 
 if __name__ == "__main__":
     main(sys.argv[1:])

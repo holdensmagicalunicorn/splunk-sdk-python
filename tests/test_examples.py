@@ -28,6 +28,15 @@ class ExamplesTestCase(unittest.TestCase):
         result = os.system("python binding1.py > __stdout__")
         self.assertEquals(result, 0)
 
+    def test_conf(self):
+        commands = [
+            "python conf.py --help > __stdout__",
+            "python conf.py > __stdout__",
+            "python conf.py props > __stdout__",
+            "python conf.py --namespace='admin:search' props > __stdout__",
+        ]
+        for command in commands: self.assertEquals(os.system(command), 0)
+
     def test_index(self):
         commands = [
             "python index.py --help > __stdout__",

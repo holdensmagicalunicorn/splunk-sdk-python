@@ -83,7 +83,7 @@ class Service(Context):
 
     @property
     def apps(self):
-        return Collection(self, PATH_APPS, 
+        return Collection(self, PATH_APPS, "apps",
             item=lambda service, name: 
                 Entity(service, PATH_APP % name, name),
             ctor=lambda service, name, **kwargs:
@@ -92,9 +92,9 @@ class Service(Context):
 
     @property
     def confs(self):
-        return Collection(self, PATH_CONFS,
+        return Collection(self, PATH_CONFS, "confs",
             item=lambda service, conf: 
-                Collection(service, PATH_CONF % conf,
+                Collection(service, PATH_CONF % conf, conf,
                     item=lambda service, stanza:
                         Entity(service, _path_stanza(conf, stanza), stanza),
                     ctor=lambda service, stanza, **kwargs:
@@ -104,7 +104,7 @@ class Service(Context):
 
     @property
     def indexes(self):
-        return Collection(self, PATH_INDEXES, 
+        return Collection(self, PATH_INDEXES, "indexes",
             item=lambda service, name: 
                 Index(service, name),
             ctor=lambda service, name, **kwargs:
@@ -150,8 +150,10 @@ class Endpoint:
 class Collection(Endpoint):
     """A generic implementation of the Splunk collection protocol."""
 
-    def __init__(self, service, path, item=None, ctor=None, dtor=None):
+    def __init__(self, service, path, name=None, 
+                 item=None, ctor=None, dtor=None):
         Endpoint.__init__(self, service, path)
+        if name is not None: self.name = name
         self.item = item # Item accessor
         self.ctor = ctor # Item constructor
         self.dtor = dtor # Item desteructor
@@ -382,7 +384,7 @@ class Job(Endpoint):
 
 class Jobs(Collection):
     def __init__(self, service):
-        Collection.__init__(self, service, PATH_JOBS,
+        Collection.__init__(self, service, PATH_JOBS, "jobs",
             item=lambda service, sid: Job(service, sid))
 
     def create(self, query, **kwargs):
