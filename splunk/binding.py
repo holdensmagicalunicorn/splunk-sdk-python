@@ -42,93 +42,119 @@ DEFAULT_SCHEME = "https"
 
 # kwargs: scheme, host, port
 def prefix(**kwargs):
+    """ generate the 3-tuple prefix """
     scheme = kwargs.get("scheme", DEFAULT_SCHEME)
     host = kwargs.get("host", DEFAULT_HOST)
     port = kwargs.get("port", DEFAULT_PORT)
     return "%s://%s:%s" % (scheme, host, port)
 
 class Context:
+    """ Context Class """
     # kwargs: scheme, host, port, username, password, namespace
     def __init__(self, **kwargs):
+        self.token = None
+        self.prefix = prefix(**kwargs)
         self.scheme = kwargs.get("scheme", DEFAULT_SCHEME)
         self.host = kwargs.get("host", DEFAULT_HOST)
         self.port = kwargs.get("port", DEFAULT_PORT)
         self.username = kwargs.get("username", "")
         self.password = kwargs.get("password", "")
         self.namespace = kwargs.get("namespace", None)
-        self.prefix = prefix(**kwargs)
+        self.timeout = kwargs.get("timeout", None)
+        # ssl certs
+        self.key_file = kwargs.get("key_file", None)
+        self.cert_file = kwargs.get("cert_file", None)
+        self.ca_file = kwargs.get("ca_file", None)
+        # proxy
         if kwargs.get("proxyhost", None) == None:
             self.proxy = None
         else:
             self.proxy = (kwargs.get("proxyhost", None),
                           kwargs.get("proxyport", str(DEFAULT_PORT)))
-        self.timeout = kwargs.get("timeout", None)
-        self.token = None
 
-    def _set_timeout(self, **kwargs):
-        if kwargs.has_key('timeout'):
-            return kwargs
-        if self.timeout == None:
-            return kwargs
-        kwargs['timeout'] = int(self.timeout)
+    def _set_varargs(self, **kwargs):
+        """ extact variable args from context and optionally use """
+        # if already present, use it, otherwise, if self
+        # contains a non-None setting, add it in
+        if not kwargs.has_key('proxy'):
+            if self.proxy:
+                kwargs['proxy'] = self.proxy
+        if not kwargs.has_key('timeout'):
+            if self.timeout:
+                kwargs['timeout'] = int(self.timeout)
+        if not kwargs.has_key('key_file'):
+            if self.key_file:
+                kwargs['key_file'] = self.key_file
+        if not kwargs.has_key('cert_file'):
+            if self.cert_file:
+                kwargs['cert_file'] = self.cert_file
+        if not kwargs.has_key('ca_file'):
+            if self.ca_file:
+                kwargs['ca_file'] = self.ca_file
+
         return kwargs
 
     # Shared per-context request headers
     def _headers(self):
+        """ generate HTTP authorization header portion """
         return [("Authorization", self.token)]
 
     def bind(self, path, method = "get"):
-        fn = {
+        func = {
             'get': self.get,
             'delete': self.delete,
             'post': self.post 
         }.get(method.lower(), None) 
-        if fn is None: raise ValueError, "Unknown method '%s'" % method
+        if func is None: 
+            raise ValueError, "Unknown method '%s'" % method
         path = self.fullpath(path)
         if path.find('{') == -1:
-            return lambda **kwargs: fn(path, **kwargs)
+            return lambda **kwargs: func(path, **kwargs)
         # UNDONE: Need some better error checking on the path format string,
         # eg: check that all replacements are positional and that the number 
         # of given args matches the number of expected replacements.
-        return lambda *args, **kwargs: fn(path.format(*args), **kwargs)
+        return lambda *args, **kwargs: func(path.format(*args), **kwargs)
 
     def connect(self):
         """Open a connection (socket) to the service (host:port)."""
-        cn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        cn.connect((self.host, int(self.port)))
+        conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        conn.connect((self.host, int(self.port)))
         #return socket.ssl(cn) if self.scheme == "https" else cn
-        return ssl.wrap_socket(cn) if self.scheme == "https" else cn
+        return ssl.wrap_socket(conn) if self.scheme == "https" else conn
 
     def delete(self, path, **kwargs):
-        kwargs = self._set_timeout(**kwargs)
-        return http.delete(self.url(path), self._headers(), 
-                           proxy=self.proxy, **kwargs)
+        """ context layer delete endpoint access """
+        kwargs = self._set_varargs(**kwargs)
+        return Http.delete(self.url(path), self._headers(), **kwargs)
 
     def get(self, path, **kwargs):
-        kwargs = self._set_timeout(**kwargs)
-        return http.get(self.url(path), self._headers(), 
-                           proxy=self.proxy, **kwargs)
+        """ context layer get endpoint access """
+        kwargs = self._set_varargs(**kwargs)
+        return Http.get(self.url(path), self._headers(), **kwargs)
 
     def post(self, path, **kwargs):
-        kwargs = self._set_timeout(**kwargs)
-        return http.post(self.url(path), self._headers(), 
-                           proxy=self.proxy, **kwargs)
+        """ context layer post endpoint access """
+        kwargs = self._set_varargs(**kwargs)
+        return Http.post(self.url(path), self._headers(), **kwargs)
 
-    def request(self, path, message, proxy=None):
-        return http.request(
+    def request(self, path, message):
+        """ context layer request """
+        kwargs = self._set_varargs()
+        return Http.request(
             self.url(path), {
                 'method': message.get("method", "GET"),
                 'headers': message.get("headers", []) + self._headers(),
                 'body': message.get("body", "")},
-                proxy=self.proxy)
+                **kwargs)
 
     def login(self):
-        response = http.post(
+        """ context layer login """
+        kwargs = self._set_varargs()
+        response = Http.post(
             self.url("/services/auth/login"),
             username=self.username, 
             password=self.password,
-            proxy=self.proxy,
-            timeout=self.timeout)
+            **kwargs)
         if response.status >= 400:
             raise HTTPError(response.status, response.reason)
         # assert response.status == 200
@@ -138,23 +164,29 @@ class Context:
         return self
 
     def logout(self):
+        """ context layer logout """
         self.token = None
         return self
 
     def fullpath(self, path):
         """If the given path is a fragment, qualify with segments corresponding
            to the binding context's namespace."""
-        if path.startswith('/'): return path
-        if self.namespace is None: return "/services/%s" % path
+        if path.startswith('/'): 
+            return path
+        if self.namespace is None: 
+            return "/services/%s" % path
         username, appname = self.namespace.split(':')
-        if username == "*": username = '-'
-        if appname == "*": appname = '-'
+        if username == "*": 
+            username = '-'
+        if appname == "*": 
+            appname = '-'
         return "/servicesNS/%s/%s/%s" % (username, appname, path)
 
     # Convet the given path into a fully qualified URL by first qualifying
     # the given path with namespace segments if necessarry and then prefixing
     # with the scheme, host and port.
     def url(self, path):
+        """ fully qualified URL generation """
         return self.prefix + self.fullpath(path)
 
 # kwargs: scheme, host, port, username, password, namespace
@@ -191,14 +223,16 @@ def connect(**kwargs):
 import splunk.ehttplib as httplib
 import urllib
 
-debug = False
+DEBUG = False
 
 def _print_request(method, url, head, body):
+    """ debug print request """
     print "** %s %s" % (method, url)
     pprint(head)
     print body
 
 def _print_response(response):
+    """ debug print response """
     print "=> %d %s" % (response.status, response.reason)
     pprint(response.headers)
     # UNDONE: Dont consume the body here .. figure out a better way to show
@@ -217,19 +251,21 @@ def _spliturl(url):
 # for example an argument such as 'foo=[1,2,3]' will be encoded as
 # 'foo=1&foo=2&foo=3'. 
 def encode(**kwargs):
+    """ encode variable arguments into HTTP safe strings """
     items = []
-    for k, v in kwargs.iteritems():
-        if isinstance(v, list):
-            items.extend([(k, item) for item in v])
+    for key, value in kwargs.iteritems():
+        if isinstance(value, list):
+            items.extend([(key, item) for item in value])
         else:
-            items.append((k, v))
+            items.append((key, value))
     return urllib.urlencode(items)
 
-class http:
+class Http:
     """HTTP interface used by the Splunk binding layer."""
 
     @staticmethod
-    def connect(scheme, host, port, timeout = None, proxy = None):
+    def connect(scheme, host, port, timeout = None, proxy = None,
+                 key_file = None, cert_file = None, ca_file = None):
         """Returns an HTTP connection object corresponding to the given scheme,
            host and port."""
 
@@ -245,11 +281,9 @@ class http:
         # if scheme is https, the presence ca_file indicates whether or not
         # we will perform any cert checking
         #
-        # UNDONE:
-        # what we need here is a way to get the following arguments into kwargs:
-        # key_file
-        # cert_file
-        # ca_file 
+        kwargs['key_file'] = key_file
+        kwargs['cert_file'] = cert_file
+        kwargs['ca_file'] = ca_file
 
         # Note: we invoke our extended http[s] connection to handle 
         # proxies and cert
@@ -261,34 +295,53 @@ class http:
         return None # UNDONE: Raise an invalid scheme exception
 
     @staticmethod
-    def delete(url, headers = None, timeout = None, proxy = None, **kwargs):
-        if headers is None: headers = []
-        if kwargs: url = url + '?' + encode(**kwargs)
+    def delete(url, headers = None, timeout = None, proxy = None, 
+               key_file = None, cert_file = None, ca_file = None,
+               **kwargs):
+        """ http layer delete """
+        if headers is None: 
+            headers = []
+        if kwargs: 
+            url = url + '?' + encode(**kwargs)
         message = {
             'method': "DELETE",
             'headers': headers,
         }
-        return http.request(url, message, timeout, proxy)
+        return Http.request(url, message, timeout, proxy,
+                           key_file, cert_file, ca_file)
 
     @staticmethod
-    def get(url, headers = None, timeout = None, proxy = None, **kwargs):
-        if headers is None: headers = []
-        if kwargs: url = url + '?' + encode(**kwargs)
-        return http.request(url, { "headers": headers }, timeout, proxy)
+    def get(url, headers = None, timeout = None, proxy = None,
+            key_file = None, cert_file = None, ca_file = None,
+            **kwargs):
+        """ http layer get """
+        if headers is None: 
+            headers = []
+        if kwargs: 
+            url = url + '?' + encode(**kwargs)
+        return Http.request(url, { "headers": headers }, timeout, proxy,
+                           key_file, cert_file, ca_file)
 
     @staticmethod
-    def post(url, headers = None, timeout = None, proxy = None, **kwargs):
-        if headers is None: headers = []
+    def post(url, headers = None, timeout = None, proxy = None,
+             key_file = None, cert_file = None, ca_file = None,
+             **kwargs):
+        """ http layer post """
+        if headers is None: 
+            headers = []
         headers.append(("Content-Type", "application/x-www-form-urlencoded")),
         message = {
             "method": "POST",
             "headers": headers,
             "body": encode(**kwargs)
         }
-        return http.request(url, message, timeout, proxy)
+        return Http.request(url, message, timeout, proxy,
+                           key_file, cert_file, ca_file)
 
     @staticmethod
-    def request(url, message, timeout = None, proxy = None):
+    def request(url, message, timeout = None, proxy = None,
+                key_file = None, cert_file = None, ca_file = None):
+        """ http layer request """
         scheme, host, port, path = _spliturl(url)
         body = message.get("body", "")
         head = { 
@@ -297,13 +350,21 @@ class http:
             "User-Agent": "http.py/1.0",
             "Accept": "*/*",
         } # defaults
-        for k, v in message["headers"]: head[k] = v
+        for key, value in message["headers"]: 
+            head[key] = value
         method = message.get("method", "GET")
-        if debug: _print_request(method, url, head, body)
-        connection = http.connect(scheme, host, port, timeout=timeout, proxy=proxy)
+        if DEBUG: 
+            _print_request(method, url, head, body)
+        connection = Http.connect(scheme, host, port, 
+                                  timeout=timeout, 
+                                  proxy=proxy,
+                                  key_file=key_file, 
+                                  cert_file=cert_file, 
+                                  ca_file=ca_file)
         try:
             connection.request(method, path, body, head)
-            if timeout is not None: connection.sock.settimeout(timeout)
+            if timeout is not None: 
+                connection.sock.settimeout(timeout)
             response = connection.getresponse()
         finally:
             connection.close()
@@ -313,7 +374,8 @@ class http:
             "headers": response.getheaders(),
             "body": ResponseReader(response),
         })
-        if debug: _print_response(response)
+        if DEBUG: 
+            _print_response(response)
         return response
 
 # UNDONE: Complete implementation of file-like object
