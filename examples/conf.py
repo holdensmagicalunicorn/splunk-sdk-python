@@ -17,11 +17,16 @@
 """A command line that will list out Splunk confs, or if given a conf name
    will list the contents of the given conf."""
 
+# UNDONE: Add support for a conf 'path' to list out contents of individual
+# stanza, or key value.
+# UNDONE: Support for adding and deleting stanzas
+# UNDONE: Extra credit points for support for modifying key/value pairs
+
 import sys
 
 import splunk
 
-from utils import *
+from utils import error, parse
 
 def main(argv):
     usage = 'usage: %prog [options] [conf]'
