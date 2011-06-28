@@ -23,7 +23,7 @@
 # ssl cert: cookbook sample by Marcelo Fernandez
 #
 
-""" extend the base python httplib with proxy and SSL certs """
+"""Extend base python httplib with proxy and SSL certificates."""
 
 import socket
 import httplib
@@ -32,14 +32,13 @@ import ssl
 #from string import split, join
 
 class Connection:
-    """ Generic TCP connection wrapper """
+    """Generic TCP connection wrapper."""
 
     def __init__(self, server):
         self.socket = None
         self.server = server
 
     def establish(self):
-        """ establish a socket """
         if self.socket == None:
             sckt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             server = (self.server[0], int(self.server[1]))
@@ -48,13 +47,12 @@ class Connection:
         return self.socket
 
 class HttpProxy(Connection):
-    """ HTTP proxy connection that tunnels using TCP/IP """
+    """HTTP proxy connection that tunnels using TCP/IP socket."""
     def __init__(self, server, proxy):
         Connection.__init__(self, server)
         self.proxy = proxy
 
     def establish(self):
-        """ establish connection """
         tmp = self.server
         self.server = self.proxy
         try:
@@ -85,7 +83,7 @@ class HttpProxy(Connection):
         return self.socket
 
 class HTTPConnection(httplib.HTTPConnection):
-    """ Class to make a HTTP connection with support for proxy """
+    """Class to make a HTTP connection with support for proxy."""
 
     def __init__(self, host, port, key_file=None, 
                                    cert_file=None, 
@@ -101,7 +99,7 @@ class HTTPConnection(httplib.HTTPConnection):
         self.timeout = timeout
 
     def connect(self):
-        """ connect using a proxy, or not """
+        """Connect using a proxy, or not."""
 
         # Since this is HTTP (not HTTPS) don't concern ourselves
         # with the cert files, etc. We are only interested in 
@@ -122,8 +120,8 @@ class HTTPConnection(httplib.HTTPConnection):
                                         cert_reqs=ssl.CERT_NONE)
 
 class HTTPSConnection(httplib.HTTPSConnection):
-    """ Class to make a HTTPS connection, with support for full 
-        client-based SSL Authentication or proxy """
+    """Class to make a HTTPS connection, with support for full 
+        client-based SSL Authentication or proxy."""
 
     def __init__(self, host, port, key_file=None, 
                                    cert_file=None, 
@@ -142,10 +140,9 @@ class HTTPSConnection(httplib.HTTPSConnection):
         self.timeout = timeout
 
     def connect(self):
-        """ Connect to a host on a given (SSL) port.
+        """Connect to a host on a given (SSL) port.
             If ca_file is pointing somewhere, use it to check SSL 
-            Certificate.
-        """
+            Certificate."""
 
         if self.proxy:
             conn = HttpProxy((self.host, self.port), self.proxy)

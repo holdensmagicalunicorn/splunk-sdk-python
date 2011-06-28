@@ -101,7 +101,7 @@ class ExamplesTestCase(unittest.TestCase):
             "python upload.py --index=sdk-tests ./upload.py > __stdout__"
         ]
         for command in commands: self.assertEquals(os.system(command), 0)
-        
+ 
 def main():
     os.chdir("../examples")
     unittest.main()

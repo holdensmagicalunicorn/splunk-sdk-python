@@ -12,6 +12,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+"""A progressive XML reader."""
+
 from cStringIO import StringIO
 import xml.dom.pulldom as pulldom
 
@@ -341,18 +343,15 @@ class ResultsReader:
         return self._reader.name
 
     def _scanval(self):
-        """ get value """
         self._reader.read()
         self._checkval()
         return self._reader.value
 
     @property
     def item(self):
-        """ return kind and value of object """
         return (self.kind, self.value)
 
     def next(self):
-        """ read next """
         self.read()
         if self.value is None: 
             raise StopIteration()
@@ -362,7 +361,6 @@ class ResultsReader:
     # as necessarry. NOTE: if the pulldom reader raises StopIteration, we 
     # simply pass that through to indicate the end of our iterable.
     def read(self):
-        """ read the search results """
         while True:
             kind = self._scan()
 

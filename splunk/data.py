@@ -17,8 +17,8 @@
 # UNDONE: Figure out what to do with examples like: <a>foo<b>bar</b></a>, seems
 #  like we should at least detect and error on less 'well-formed' sdata inputs
 
-""" data manipulation module for converting XML to python based 
-    data structure """
+"""Data manipulation module for converting XML to python based 
+    data structure."""
 
 from pprint import pprint # UNDONE
 
@@ -36,33 +36,26 @@ XNAME_LIST = XNAMEF_REST % "list"
 # so we look for both the extended and local version of the following names.
 
 def isdict(name):
-    """ check if we are dealing with a dictionary """
     return name == XNAME_DICT or name == "dict"
 
 def isitem(name):
-    """ check if we are dealing with an item """
     return name == XNAME_ITEM or name == "item"
 
 def iskey(name):
-    """ check if we dealing with a key """
     return name == XNAME_KEY or name == "key"
 
 def islist(name):
-    """ check if we are dealing with a list """
     return name == XNAME_LIST or name == "list"
 
 def hasattrs(element):
-    """ shortcut for checking if attributes exist """
     return len(element.attrib) > 0
 
 def localname(xname):
-    """ convert xml to local name """
     rcurly = xname.find('}')
     return xname if rcurly == -1 else xname[rcurly+1:]
 
 # Parse a <dict> element and return a Python dict
 def load_dict(element, nametable = None):
-    """ load dictionary """
     value = record()
     children = list(element)
     for child in children:
@@ -72,7 +65,6 @@ def load_dict(element, nametable = None):
     return value
 
 def load_element(element, nametable = None):
-    """ load element """
     tag = element.tag
     if isdict(tag): 
         return load_dict(element, nametable)
@@ -96,7 +88,6 @@ def load_element(element, nametable = None):
     
 # Parse a <list> element and return a Python list
 def load_list(element, nametable = None):
-    """ load and parse list """
     assert islist(element.tag)
     value = []
     children = list(element)
@@ -106,7 +97,6 @@ def load_list(element, nametable = None):
     return value
 
 def load_attrs(element):
-    """ load and parse attributes """
     if not hasattrs(element): 
         return None
     attrs = record()
@@ -115,7 +105,6 @@ def load_attrs(element):
     return attrs
 
 def load_value(element, nametable = None):
-    """ load and parse element """
     children = list(element)
     count = len(children)
 
@@ -155,7 +144,6 @@ def load_value(element, nametable = None):
 
 # UNDONE: Nametable
 def load(text, path = None):
-    """ load/convert data from XML """
     if text is None: 
         return None
     text = text.strip()
@@ -178,7 +166,6 @@ def load(text, path = None):
 
 # A generic utility that enables "dot" access to dicts
 class Record(dict):
-    """ Record class for 'dot' access to dictionaries """
     def __getattr__(self, name):
         try:
             return self[name]
@@ -192,15 +179,12 @@ class Record(dict):
         self[name] = value
 
 def record(value = None): 
-    """ wrapper for Record class """
     if value is None: 
         value = {}
     return Record(value)
 
 def main():
-    """ sudo main entry point """
     def isxml(text): 
-        """ test for XML-ness """
         return text.strip().startswith('<')
     text = sys.stdin.read()
     if isxml(text):
