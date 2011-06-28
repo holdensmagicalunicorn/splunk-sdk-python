@@ -100,6 +100,7 @@ class Context:
         return [("Authorization", self.token)]
 
     def bind(self, path, method = "get"):
+        """ define verbs for client server binding """
         func = {
             'get': self.get,
             'delete': self.delete,
@@ -380,6 +381,7 @@ class Http:
 
 # UNDONE: Complete implementation of file-like object
 class ResponseReader:
+    """ Read response """
     def __init__(self, response):
         self._response = response
 
@@ -387,9 +389,11 @@ class ResponseReader:
         return self.read()
 
     def read(self, size = None):
+        """ Response reader """
         return self._response.read(size)
 
 class HTTPError(Exception):
+    """ HTTP Exception generator """
     def __init__(self, status, reason):
         Exception.__init__(self, "HTTP %d %s" % (status, reason)) 
         self.reason = reason

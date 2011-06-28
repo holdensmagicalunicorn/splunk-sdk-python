@@ -31,19 +31,23 @@ class ListStream:
     def read(self, size):
         result = ""
         while True:
-            if self.file is None: return result
+            if self.file is None: 
+                return result
             chunk = self.file.read(size)
             result += chunk
             count = len(chunk)
-            if count == size: return result
+            if count == size: 
+                return result
             size -= count
             self.file = self._next()
 
     def _next(self):
-        if len(self.args) == 0: return None
+        if len(self.args) == 0: 
+            return None
         item = self.args[0]
         self.args = self.args[1:]
-        if isinstance(item, str): return StringIO(item)
+        if isinstance(item, str): 
+            return StringIO(item)
         return item
             
 # A file-like interface that will convert a stream of XML fragments, into
@@ -64,7 +68,8 @@ class XMLStream:
         while True:
             chunk = file_.read(180)
             chunksize = len(chunk)
-            if chunksize == 0: return
+            if chunksize == 0: 
+                return
             head += chunk
             headsize += chunksize
             index = head.find('<', start)
@@ -126,7 +131,8 @@ class XMLReader:
 
     def expand(self):
         """Expands the current node into a minidom."""
-        if not self.kind == TAG: raise Exception, "Illegal operation" # UNDONE
+        if not self.kind == TAG: 
+            raise Exception, "Illegal operation" # UNDONE
         node = self._item[1]
         self._items.expandNode(node)
         return node
@@ -141,13 +147,17 @@ class XMLReader:
         }[self.kind]
 
     def isend(self, name = None):
-        if self.kind != END: return False
-        if name is not None: return name == self.name
+        if self.kind != END: 
+            return False
+        if name is not None: 
+            return name == self.name
         return True
 
     def istag(self, name = None):
-        if self.kind != TAG: return False
-        if name is not None: return name == self.name
+        if self.kind != TAG: 
+            return False
+        if name is not None: 
+            return name == self.name
         return True
 
     def isval(self):
@@ -156,7 +166,8 @@ class XMLReader:
     def next(self):
         """An iterator interface to the reader, returns a tuple of values
            corresponding to the current item."""
-        if self.read() is None: raise StopIteration
+        if self.read() is None: 
+            raise StopIteration
         return self.item
 
     def read(self):
@@ -169,41 +180,42 @@ class XMLReader:
             self.value = None
             return None
 
-        e, n = self._item
+        elem, name = self._item
 
-        if e == pulldom.START_ELEMENT:
+        if elem == pulldom.START_ELEMENT:
             self.kind = TAG
-            self.name = n.tagName
-            self.attrs = dict(n.attributes.items()) \
-                if n.hasAttributes() else None
+            self.name = name.tagName
+            self.attrs = dict(name.attributes.items()) \
+                if name.hasAttributes() else None
             self.value = None
             return TAG
 
-        if e == pulldom.END_ELEMENT:
+        if elem == pulldom.END_ELEMENT:
             self.kind = END
-            self.name = n.tagName
+            self.name = name.tagName
             self.attrs = None
             self.value = None
             return END
 
-        if e == pulldom.CHARACTERS:
+        if elem == pulldom.CHARACTERS:
             self.kind = VAL
             self.name = None
             self.attrs = None
-            self.value = n.data
+            self.value = name.data
             while True: # Merge adjacent CHARACTERS
-                e, n = item = self._scan()
-                if e != pulldom.CHARACTERS:
+                elem, name = item = self._scan()
+                if elem != pulldom.CHARACTERS:
                     self._push(item)
                     break
-                self.value += n.data
-            if len(self.value.strip()) == 0: self.read()
+                self.value += name.data
+            if len(self.value.strip()) == 0: 
+                self.read()
             return VAL
 
-        if e == pulldom.START_DOCUMENT: # Ignore
+        if elem == pulldom.START_DOCUMENT: # Ignore
             return self.read() 
 
-        if e == pulldom.END_DOCUMENT:
+        if elem == pulldom.END_DOCUMENT:
             return None # done
 
         assert False # Unexpected
@@ -224,13 +236,16 @@ class ResultsReader:
         return self
 
     def _checktag(self, name = None):
-        if not self._istag(name): self._error() 
+        if not self._istag(name): 
+            self._error() 
 
     def _checkend(self, name = None):
-        if not self._isend(name): self._error()
+        if not self._isend(name): 
+            self._error()
     
     def _checkval(self):
-        if not self._isval(): self._error()
+        if not self._isval(): 
+            self._error()
 
     def _error(self):
         raise Exception, "Unexpected item: %s" % repr(self._reader.item)
@@ -256,7 +271,8 @@ class ResultsReader:
         self._scantag("fieldOrder")
         while True:
             self._scan()
-            if self._isend("fieldOrder"): break
+            if self._isend("fieldOrder"): 
+                break
             self._checktag("field")
             value = self._scanval()
             self.fields.append(value)
@@ -306,7 +322,8 @@ class ResultsReader:
             self._scanend("text")
             self._scanend("value")
             self._scan()
-            if self._isend("field"): break
+            if self._isend("field"): 
+                break
         return value[0] if len(value) == 1 else value
 
     def _scan(self):
@@ -324,23 +341,28 @@ class ResultsReader:
         return self._reader.name
 
     def _scanval(self):
+        """ get value """
         self._reader.read()
         self._checkval()
         return self._reader.value
 
     @property
     def item(self):
+        """ return kind and value of object """
         return (self.kind, self.value)
 
     def next(self):
+        """ read next """
         self.read()
-        if self.value is None: raise StopIteration()
+        if self.value is None: 
+            raise StopIteration()
         return self.item
 
     # Read the next search result, handling new sections and section metadata 
     # as necessarry. NOTE: if the pulldom reader raises StopIteration, we 
     # simply pass that through to indicate the end of our iterable.
     def read(self):
+        """ read the search results """
         while True:
             kind = self._scan()
 
@@ -366,7 +388,8 @@ class ResultsReader:
                 if name == "doc":
                     continue # Skip synthetic root end-element
 
-            if kind is None: return None
+            if kind is None: 
+                return None
 
             self._error()
 

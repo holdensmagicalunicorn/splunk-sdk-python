@@ -33,11 +33,12 @@
 #  a message indicating that disable cant be called on the default database.
 # UNDONE: Consider Entity.delete (if entity has 'remove' link?)
 
-import socket
+""" Client layer layer asbtract aggregrate splunk objects, 
+    relies on binding layer """
+
 from time import sleep
 from urllib import urlencode, quote_plus
 
-import splunk.binding as binding
 from splunk.binding import Context, HTTPError
 import splunk.data as data
 from splunk.data import record
@@ -55,6 +56,7 @@ PATH_CONF = "admin/conf-%s"
 PATH_STANZA = "admin/conf-%s/%s"
 
 def _path_stanza(conf, stanza):
+    """ utility to fill out the stanza for config URL """
     return PATH_STANZA % (conf, quote_plus(stanza))
 
 PATH_INDEXES = "data/indexes"
@@ -75,14 +77,17 @@ def connect(**kwargs):
 
 # Response utilities
 def load(response):
+    """ short cut for reading body of response """
     return data.load(response.body.read())
 
 class Service(Context):
+    """ Service class """
     def __init__(self, **kwargs):
         Context.__init__(self, **kwargs)
 
     @property
     def apps(self):
+        """ retiurn the collection of applications """
         return Collection(self, PATH_APPS, "apps",
             item=lambda service, name: 
                 Entity(service, PATH_APP % name, name),
@@ -92,6 +97,7 @@ class Service(Context):
 
     @property
     def confs(self):
+        """ retiurn the collection of configs """
         return Collection(self, PATH_CONFS, "confs",
             item=lambda service, conf: 
                 Collection(service, PATH_CONF % conf, conf,
@@ -104,6 +110,7 @@ class Service(Context):
 
     @property
     def indexes(self):
+        """ return the collection of indexes """
         return Collection(self, PATH_INDEXES, "indexes",
             item=lambda service, name: 
                 Index(service, name),
@@ -112,16 +119,19 @@ class Service(Context):
 
     @property
     def info(self):
+        """ get the server info """
         response = self.get("server/info")
         check_status(response, 200)
         return _filter_content(load(response).entry.content)
 
     @property
     def jobs(self):
+        """ return Jobs through service """
         return Jobs(self)
 
     # kwargs: enable_lookups, reload_macros, parse_only, output_mode
     def parse(self, query, **kwargs):
+        """ test a search query through the parser """
         return self.get("search/parser", q=query, **kwargs)
 
     def restart(self):
@@ -130,19 +140,23 @@ class Service(Context):
 
     @property
     def settings(self):
+        """ return the server settings entity """
         return Entity(self, "server/settings")
 
 class Endpoint:
+    """ base endpoint class """
     def __init__(self, service, path):
         self.service = service
         self.path = path
 
     def get(self, relpath="", **kwargs):
+        """ get on a basic endpoint """
         response = self.service.get("%s/%s" % (self.path, relpath), **kwargs)
         check_status(response, 200)
         return response
 
     def post(self, relpath="", **kwargs):
+        """ set (post) to a basic endpoint """
         response = self.service.post("%s/%s" % (self.path, relpath), **kwargs)
         check_status(response, 200, 201)
         return response
@@ -153,7 +167,8 @@ class Collection(Endpoint):
     def __init__(self, service, path, name=None, 
                  item=None, ctor=None, dtor=None):
         Endpoint.__init__(self, service, path)
-        if name is not None: self.name = name
+        if name is not None: 
+            self.name = name
         self.item = item # Item accessor
         self.ctor = ctor # Item constructor
         self.dtor = dtor # Item desteructor
@@ -162,25 +177,33 @@ class Collection(Endpoint):
         return self.list()
 
     def __getitem__(self, key):
-        if self.item is None: raise NotSupportedError
-        if not self.contains(key): raise KeyError, key
+        if self.item is None: 
+            raise NotSupportedError
+        if not self.contains(key): 
+            raise KeyError, key
         return self.item(self.service, key)
 
     def __iter__(self):
         # Don't invoke __getitem__ below, we don't need the extra round-trip
         # to validate that the key exists, because we just checked.
-        for name in self.list(): yield self.item(self.service, name)
+        for name in self.list(): 
+            yield self.item(self.service, name)
 
     def contains(self, name):
+        """ check if a name is in a collection """
         return name in self.list()
 
     def create(self, name, **kwargs):
-        if self.ctor is None: raise NotSupportedError
+        """ create a collection """
+        if self.ctor is None: 
+            raise NotSupportedError
         self.ctor(self.service, name, **kwargs)
         return self[name]
 
     def delete(self, name):
-        if self.dtor is None: raise NotSupportedError
+        """ delete a specfic collection by name """
+        if self.dtor is None: 
+            raise NotSupportedError
         self.dtor(self.service, name)
         return self
 
@@ -197,14 +220,18 @@ class Collection(Endpoint):
         """Returns a list of collection keys."""
         response = self.get(count=-1)
         entry = load(response).get('entry', None)
-        if entry is None: return []
-        if not isinstance(entry, list): entry = [entry] # UNDONE
+        if entry is None: 
+            return []
+        if not isinstance(entry, list): 
+            entry = [entry] # UNDONE
         return [item.title for item in entry]
 
 def _filter_content(content, *args):
+    """ filter content by removing certain elements """
     if len(args) > 0: # We have filter args
         result = record({})
-        for key in args: result[key] = content[key]
+        for key in args: 
+            result[key] = content[key]
     else:
         # Eliminate some noise by default
         result = content
@@ -221,7 +248,8 @@ class Entity(Endpoint):
 
     def __init__(self, service, path, name=None):
         Endpoint.__init__(self, service, path)
-        if name is not None: self.name = name
+        if name is not None: 
+            self.name = name
         # UNDONE: The following should be derived by reading entity links
         self.delete = lambda: self.service.delete(self.path)
         self.disable = lambda: self.post("disable")
@@ -249,10 +277,12 @@ class Entity(Endpoint):
         return self.read('eai:acl', 'eai:attributes')
 
     def update(self, **kwargs):
+        """ update Entity """
         self.post(**kwargs)
         return self
 
 class Index(Entity):
+    """ Index class access to specific operations """
     def __init__(self, service, name):
         Entity.__init__(self, service, PATH_INDEX % name, name)
         self.roll_hot_buckets = lambda: self.post("roll-hot-buckets")
@@ -260,18 +290,21 @@ class Index(Entity):
     def attach(self, host=None, source=None, sourcetype=None):
         """Opens a stream for writing events to the index."""
         args = { 'index': self.name }
-        if host is not None: args['host'] = host
-        if source is not None: args['source'] = source
-        if sourcetype is not None: args['sourcetype'] = sourcetype
+        if host is not None: 
+            args['host'] = host
+        if source is not None: 
+            args['source'] = source
+        if sourcetype is not None: 
+            args['sourcetype'] = sourcetype
         path = "receivers/stream?%s" % urlencode(args)
-        cn = self.service.connect()
-        cn.write("POST %s HTTP/1.1\r\n" % self.service.fullpath(path))
-        cn.write("Host: %s:%s\r\n" % (self.service.host, self.service.port))
-        cn.write("Accept-Encoding: identity\r\n")
-        cn.write("Authorization: %s\r\n" % self.service.token)
-        cn.write("X-Splunk-Input-Mode: Streaming\r\n")
-        cn.write("\r\n")
-        return cn
+        conn = self.service.connect()
+        conn.write("POST %s HTTP/1.1\r\n" % self.service.fullpath(path))
+        conn.write("Host: %s:%s\r\n" % (self.service.host, self.service.port))
+        conn.write("Accept-Encoding: identity\r\n")
+        conn.write("Authorization: %s\r\n" % self.service.token)
+        conn.write("X-Splunk-Input-Mode: Streaming\r\n")
+        conn.write("\r\n")
+        return conn
 
     def clean(self):
         """Delete the contents of the index."""
@@ -280,15 +313,19 @@ class Index(Entity):
         self.roll_hot_buckets()
         while True: # Wait until event count goes to zero
             sleep(1)
-            if self['totalEventCount'] == '0': break
+            if self['totalEventCount'] == '0': 
+                break
         self.update(**saved)
 
     def submit(self, event, host=None, source=None, sourcetype=None):
         """Submits an event to the index via HTTP POST."""
         args = { 'index': self.name }
-        if host is not None: args['host'] = host
-        if source is not None: args['source'] = source
-        if sourcetype is not None: args['sourcetype'] = sourcetype
+        if host is not None: 
+            args['host'] = host
+        if source is not None: 
+            args['source'] = source
+        if sourcetype is not None: 
+            args['sourcetype'] = sourcetype
         path = "receivers/simple?%s" % urlencode(args)
         message = { 'method': "POST", 'body': event }
         response = self.service.request(path, message)
@@ -306,6 +343,7 @@ class Index(Entity):
 # The Splunk Job is not an enity, but we are able to make the interface look
 # a lot like one.
 class Job(Endpoint): 
+    """ Job class access to specific operations """
     def __init__(self, service, sid):
         Endpoint.__init__(self, service, PATH_JOB % sid)
         self.sid = sid
@@ -320,29 +358,36 @@ class Job(Endpoint):
         self.update(**{ key: value })
 
     def cancel(self):
+        """ cancel job """
         self.post("control", action="cancel")
         return self
 
     def disable_preview(self):
+        """ set job disable preview """
         self.post("control", action="disablepreview")
         return self
 
     def events(self, **kwargs):
+        """ get job events """
         return self.get("events", **kwargs).body
 
     def enable_preview(self):
+        """ set job enable preview """
         self.post("control", action="enablepreview")
         return self
 
     def finalize(self):
+        """ finalize job """
         self.post("control", action="finalize")
         return self
 
     def pause(self):
+        """ pause job """
         self.post("control", action="pause")
         return self
 
     def preview(self, **kwargs):
+        """ get job preview data """
         return self.get("results_preview", **kwargs).body
 
     def read(self, *args):
@@ -352,37 +397,47 @@ class Job(Endpoint):
         return _filter_content(content, *args)
 
     def results(self, **kwargs):
+        """ get job results """
         return self.get("results", **kwargs).body
 
     def searchlog(self, **kwargs):
+        """ get job search log """
         return self.get("search.log", **kwargs).body
 
     def setpriority(self, value):
+        """ set job priority """
         self.post('control', action="setpriority", priority=value)
         return self
 
     def summary(self, **kwargs):
+        """ get job summary """
         return self.get("summary", **kwargs).body
 
     def timeline(self, **kwargs):
+        """ get job timeline """
         return self.get("timeline", **kwargs).body
 
     def touch(self,):
+        """ update job via touch """
         self.post("control", action="touch")
         return self
 
     def setttl(self, value):
+        """ set job ttl """
         self.post("control", action="setttl", ttl=value)
 
     def unpause(self):
+        """ unpause job """
         self.post("control", action="unpause")
         return self
 
     def update(self, **kwargs):
+        """ update job """
         self.post(**kwargs)
         return self
 
 class Jobs(Collection):
+    """ Collection of jobs """
     def __init__(self, service):
         Collection.__init__(self, service, PATH_JOBS, "jobs",
             item=lambda service, sid: Job(service, sid))
@@ -395,10 +450,15 @@ class Jobs(Collection):
     def list(self):
         response = self.get()
         entry = load(response).entry
-        if not isinstance(entry, list): entry = [entry] # UNDONE
+        if not isinstance(entry, list): 
+            entry = [entry] # UNDONE
         return [item.content.sid for item in entry]
 
-class SplunkError(Exception): pass
+class SplunkError(Exception): 
+    """ splunk error [ignored] """
+    pass
 
-class NotSupportedError(Exception): pass
+class NotSupportedError(Exception): 
+    """ Not support error [ignored]"""
+    pass
 

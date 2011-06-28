@@ -17,6 +17,9 @@
 # UNDONE: Figure out what to do with examples like: <a>foo<b>bar</b></a>, seems
 #  like we should at least detect and error on less 'well-formed' sdata inputs
 
+""" data manipulation module for converting XML to python based 
+    data structure """
+
 from pprint import pprint # UNDONE
 
 import sys
@@ -33,26 +36,33 @@ XNAME_LIST = XNAMEF_REST % "list"
 # so we look for both the extended and local version of the following names.
 
 def isdict(name):
+    """ check if we are dealing with a dictionary """
     return name == XNAME_DICT or name == "dict"
 
 def isitem(name):
+    """ check if we are dealing with an item """
     return name == XNAME_ITEM or name == "item"
 
 def iskey(name):
+    """ check if we dealing with a key """
     return name == XNAME_KEY or name == "key"
 
 def islist(name):
+    """ check if we are dealing with a list """
     return name == XNAME_LIST or name == "list"
 
 def hasattrs(element):
+    """ shortcut for checking if attributes exist """
     return len(element.attrib) > 0
 
 def localname(xname):
+    """ convert xml to local name """
     rcurly = xname.find('}')
     return xname if rcurly == -1 else xname[rcurly+1:]
 
 # Parse a <dict> element and return a Python dict
 def load_dict(element, nametable = None):
+    """ load dictionary """
     value = record()
     children = list(element)
     for child in children:
@@ -62,25 +72,31 @@ def load_dict(element, nametable = None):
     return value
 
 def load_element(element, nametable = None):
+    """ load element """
     tag = element.tag
-    if isdict(tag): return load_dict(element, nametable)
-    if islist(tag): return load_list(element, nametable)
+    if isdict(tag): 
+        return load_dict(element, nametable)
+    if islist(tag): 
+        return load_list(element, nametable)
     attrs = load_attrs(element)
     value = load_value(element, nametable)
-    if attrs is None: return value
-    if value is None: return attrs
+    if attrs is None: 
+        return value
+    if value is None: 
+        return attrs
     # If value is simple, merge into attrs dict using special key
     if isinstance(value, str):
         attrs["$text"] = value
         return attrs
     # Both attrs & value are complex, merge the two dicts
-    for k, v in attrs.items():
+    for key, val in attrs.items():
         #assert not value.has_key(k) # Assume no collisions
-        value[k] = v
+        value[key] = val
     return value
     
 # Parse a <list> element and return a Python list
 def load_list(element, nametable = None):
+    """ load and parse list """
     assert islist(element.tag)
     value = []
     children = list(element)
@@ -90,29 +106,37 @@ def load_list(element, nametable = None):
     return value
 
 def load_attrs(element):
-    if not hasattrs(element): return None
+    """ load and parse attributes """
+    if not hasattrs(element): 
+        return None
     attrs = record()
-    for k, v in element.attrib.items(): attrs[k] = v
+    for key, value in element.attrib.items(): 
+        attrs[key] = value
     return attrs
 
 def load_value(element, nametable = None):
+    """ load and parse element """
     children = list(element)
     count = len(children)
 
     # No children, assume a simple text value
     if count == 0:
         text = element.text
-        if text is None: return None
+        if text is None: 
+            return None
         text = text.strip()
-        if len(text) == 0: return None
+        if len(text) == 0: 
+            return None
         return text
 
     # Look for the special case of a single well-known structure
     if count == 1:
         child = children[0]
         tag = child.tag
-        if isdict(tag): return load_dict(child, nametable)
-        if islist(tag): return load_list(child, nametable)
+        if isdict(tag): 
+            return load_dict(child, nametable)
+        if islist(tag): 
+            return load_list(child, nametable)
 
     value = record()
     for child in children:
@@ -121,7 +145,8 @@ def load_value(element, nametable = None):
         # If we have seen this name before, promote the value to a list
         if value.has_key(name):
             current = value[name]
-            if not isinstance(current, list): value[name] = [current]
+            if not isinstance(current, list): 
+                value[name] = [current]
             value[name].append(item)
         else:
             value[name] = item
@@ -130,9 +155,12 @@ def load_value(element, nametable = None):
 
 # UNDONE: Nametable
 def load(text, path = None):
-    if text is None: return None
+    """ load/convert data from XML """
+    if text is None: 
+        return None
     text = text.strip()
-    if len(text) == 0: return None
+    if len(text) == 0: 
+        return None
     nametable = {
         'namespaces': [],
         'names': {}
@@ -150,6 +178,7 @@ def load(text, path = None):
 
 # A generic utility that enables "dot" access to dicts
 class Record(dict):
+    """ Record class for 'dot' access to dictionaries """
     def __getattr__(self, name):
         try:
             return self[name]
@@ -163,11 +192,16 @@ class Record(dict):
         self[name] = value
 
 def record(value = None): 
-    if value is None: value = {}
+    """ wrapper for Record class """
+    if value is None: 
+        value = {}
     return Record(value)
 
 def main():
-    def isxml(text): return text.strip().startswith('<')
+    """ sudo main entry point """
+    def isxml(text): 
+        """ test for XML-ness """
+        return text.strip().startswith('<')
     text = sys.stdin.read()
     if isxml(text):
         value = load(text)
