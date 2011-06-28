@@ -16,30 +16,12 @@
 #
 
 #
-# this module is an amalgam of openly availble sources from the internet.
-# in particular:
+# this module is an amalgam and adaption of openly availble sources from the 
+# internet.
+# 
+# proxy: httplib2 
+# ssl cert: cookbook sample by Marcelo Fernandez
 #
-# Copyright (C) 2003 Manish Jethani (manish_jethani AT yahoo.com)
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
-# and
-#
-# by Marcelo Fernandez
-#
-
 
 """ extend the base python httplib with proxy and SSL certs """
 
@@ -65,53 +47,7 @@ class Connection:
             self.socket = sckt
         return self.socket
 
-    def send_data(self, buf):
-        """ send data over socket """
-        return self.socket.send(buf)
-
-    def receive_data(self, bufsize):
-        """ receive data from socket """
-        return self.socket.recv(bufsize)
-
-    def send_data_all(self, buf):
-        """ send all data """
-        total = len(buf)
-        sent = 0
-        while sent < total:
-            sent = sent + self.send_data(buf[sent:])
-        return sent
-
-    def send_data_line(self, line):
-        """ send line by line """
-        #print "C:" + line  ## debug
-        return self.send_data_all(line) + self.send_data_all('\r\n')
-
-    def receive_data_line(self):
-        """ receive data line by line """
-        cnt = 0
-        buf = ''
-        while 1:
-            in_byte = self.receive_data(1)
-            if in_byte == '':
-                return None
-            if in_byte == '\r':
-                cnt = 1
-            elif in_byte == '\n' and cnt == 1:
-                cnt = 2
-            else:
-                cnt = 0
-            buf = buf + in_byte
-            if cnt == 2:
-                #print "S:" + buf ## debug
-                return buf
-
-    def break_(self):
-        """ when socket is broken, shutdown and close """
-        self.socket.shutdown(2)
-        self.socket.close()
-        self.socket = None
-
-class HttpProxyConnection(Connection):
+class HttpProxy(Connection):
     """ HTTP proxy connection that tunnels using TCP/IP """
     def __init__(self, server, proxy):
         Connection.__init__(self, server)
@@ -126,28 +62,26 @@ class HttpProxyConnection(Connection):
         finally:
             self.server = tmp
 
-        connect_str = 'CONNECT ' + self.server[0] \
-            + ':' + str(self.server[1]) \
-            + ' HTTP/1.0\r\n'
-        self.send_data_all(connect_str)
-        self.send_data_all('User-Agent: msnp.py\r\n')
-        self.send_data_all('Host: ' + self.server[0] + '\r\n')
-        self.send_data_all('\r\n')
+        self.socket.sendall(("CONNECT " +
+                             self.server[0] + ":" + 
+                             str(self.server[1]) + 
+                             " HTTP/1.1\r\n" + 
+                             "Host: " + 
+                             self.server[0] + 
+                             "\r\n\r\n").encode())
+        # We read the response until we get the string "\r\n\r\n"
+        resp = self.socket.recv(1)
+        while resp.find("\r\n\r\n".encode()) == -1:
+            resp = resp + self.socket.recv(1)
 
-        status = -1
-        while 1:
-            buf = self.receive_data_line()
-            if status == -1:
-                resp = buf.split(' ', 2)
-                if len(resp) > 1:
-                    status = int(resp[1])
-                else:
-                    status = 0
-            if buf == '\r\n':
-                break
-
-        if status != 200:
+        # We just need the first line to check if the connection
+        # was successful
+        statusline = resp.splitlines()[0].split(" ".encode(), 2)
+        if statusline[0] not in ("HTTP/1.0".encode(), "HTTP/1.1".encode()):
+            self.socket.close()
             self.socket = None
+
+        # return the socket
         return self.socket
 
 class HTTPConnection(httplib.HTTPConnection):
@@ -173,7 +107,7 @@ class HTTPConnection(httplib.HTTPConnection):
         # with the cert files, etc. We are only interested in 
         # whether or not we need to use a proxy
         if self.proxy:
-            conn = HttpProxyConnection((self.host, self.port), self.proxy)
+            conn = HttpProxy((self.host, self.port), self.proxy)
             conn.establish()
             sock = conn.socket
             self.sock = ssl.wrap_socket(sock, self.key_file, 
@@ -209,19 +143,15 @@ class HTTPSConnection(httplib.HTTPSConnection):
 
     def connect(self):
         """ Connect to a host on a given (SSL) port.
-            If ca_file is pointing somewhere, use it to check Server 
+            If ca_file is pointing somewhere, use it to check SSL 
             Certificate.
-
-            Redefined/copied and extended from httplib.py:1105 (Python 2.6.x).
-            This is needed to pass cert_reqs=ssl.CERT_REQUIRED as parameter to 
-            ssl.wrap_socket(), which forces SSL to check server certificate 
-            against our client certificate.
         """
 
         if self.proxy:
-            conn = HttpProxyConnection((self.host, self.port), self.proxy)
+            conn = HttpProxy((self.host, self.port), self.proxy)
             conn.establish()
             sock = conn.socket
+            # If there's no CA File, don't force Server Certificate Check
             if self.ca_file:
                 self.sock = ssl.wrap_socket(sock, self.key_file, 
                                         self.cert_file, 
