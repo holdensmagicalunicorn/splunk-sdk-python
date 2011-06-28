@@ -53,6 +53,13 @@ class ExamplesTestCase(unittest.TestCase):
         result = os.system("python info.py > __stdout__")
         self.assertEquals(result, 0)
 
+    def test_inputs(self):
+        commands = [
+            "python inputs.py --help > __stdout__",
+            "python inputs.py > __stdout__",
+        ]
+        for command in commands: self.assertEquals(os.system(command), 0)
+        
     def test_job(self):
         commands = [
             "python job.py --help > __stdout__",

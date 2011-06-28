@@ -36,26 +36,14 @@ def main():
     opts = parse(sys.argv[1:], {}, ".splunkrc")
     service = connect(**opts.kwargs)
 
-    response = service.get('properties/inputs')
-    check_status(response, 200)
-    entry = load(response.body.read()).entry
-    links = [(item.title, item.id) for item in entry]
-    for title, id in links:
-        print title
-
-        # Get input stanza contents
-        response = service.get(urlparse(id).path)
-        check_status(response, 200)
-        entry = load(response.body.read()).entry
-
-        # Process atom response back into key=value pairs
-        stanza = {}
-        for item in entry:
-            stanza[item.title] = item.content['$text']
-
-        for k, v in stanza.iteritems():
+    inputs = service.confs['inputs']
+    for input in inputs:
+        print "[%s]" % input.name
+        entity = input.read()
+        for k, v in entity.iteritems():
             print "    %s: %s" % (k, v)
-
+        print
+        
 if __name__ == "__main__":
     main()
 
