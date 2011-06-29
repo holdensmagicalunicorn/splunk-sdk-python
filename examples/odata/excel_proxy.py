@@ -257,14 +257,15 @@ def process_content(odata, atomcontent):
                         name = str(child.getAttribute("name"))
 
                         ##
-                        ## seems that parenthesis and leading slash found
+                        ## seems that parenthesis slashes and spaces found
                         ## in the atom make Odata unhappy, so here we
                         ## convert parens to dashes and strip the slash
                         ##
 
-                        name = name.replace("(", "")
-                        name = name.replace(")", "")
-                        name = name.replace("/", "")
+                        name = name.replace("(", "_")
+                        name = name.replace(")", "_")
+                        name = name.replace("/", "_")
+                        name = name.replace(" ", "_")
                         value = str(child.firstChild.nodeValue)
                         newelement = odata.createElement("d:"+name)
                         newtext = odata.createTextNode(value)
