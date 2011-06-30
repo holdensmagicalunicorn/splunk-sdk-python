@@ -16,34 +16,23 @@
 
 """A command line utility for interacting with Splunk inputs."""
 
-from pprint import pprint # UNDONE
-
 import sys
-from urlparse import urlparse
 
-import splunk
-from splunk.binding import HTTPError
 from splunk.client import connect
-from splunk.data import load
 
-from utils import error, parse
-
-def check_status(response, *args):
-    if response.status not in args:
-        raise HTTPError(response.status, response.reason)
+from utils import parse
 
 def main():
     opts = parse(sys.argv[1:], {}, ".splunkrc")
     service = connect(**opts.kwargs)
 
-    inputs = service.confs['inputs']
-    for input in inputs:
-        print "[%s]" % input.name
-        entity = input.read()
-        for k, v in entity.iteritems():
-            print "    %s: %s" % (k, v)
-        print
-        
+    for item in service.inputs:
+        print "%s (%s)" % (item.name, item.kind)
+        entity = item.read()
+        for key in sorted(entity.keys()):
+            value = entity[key]
+            print "    %s: %s" % (key, value)
+
 if __name__ == "__main__":
     main()
 

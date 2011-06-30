@@ -33,11 +33,17 @@
 #  a message indicating that disable cant be called on the default database.
 # UNDONE: Consider Entity.delete (if entity has 'remove' link?)
 
-import socket
+# UNDONE: A note on collections ..
+#   * Entities have a kind, name & key. The kind is a tag that indicates the
+#     "kind" of entity, name is a friendly name for the entity suitable for
+#     display and key is a unique identifier for the Entity within its host
+#     collection. In Splunk collections, name and key are frequently the same
+#     but not always (eg: inputs).
+
 from time import sleep
 from urllib import urlencode, quote_plus
+from urlparse import urlparse
 
-import splunk.binding as binding
 from splunk.binding import Context, HTTPError
 import splunk.data as data
 from splunk.data import record
@@ -47,21 +53,24 @@ __all__ = [
     "Service"
 ]
 
-PATH_APPS = "apps/local"
+PATH_APPS = "apps/local/"
 PATH_APP = "apps/local/%s"
 
-PATH_CONFS = "properties"
-PATH_CONF = "admin/conf-%s"
-PATH_STANZA = "admin/conf-%s/%s"
+PATH_CONFS = "properties/"
+PATH_CONF = "admin/conf-%s/"
+PATH_STANZA = "admin/conf-%s/%s"    # (file, stanza)
 
-def _path_stanza(conf, stanza):
-    return PATH_STANZA % (conf, quote_plus(stanza))
-
-PATH_INDEXES = "data/indexes"
+PATH_INDEXES = "data/indexes/"
 PATH_INDEX = "data/indexes/%s"
 
-PATH_JOBS = "search/jobs"
+PATH_INPUTS = "data/inputs/"
+
+PATH_JOBS = "search/jobs/"
 PATH_JOB = "search/jobs/%s"
+
+# Constructs a path from the given conf & stanza
+def _path_stanza(conf, stanza):
+    return PATH_STANZA % (conf, quote_plus(stanza))
 
 def check_status(response, *args):
     """Checks that the given HTTP response is one of the expected values."""
@@ -117,6 +126,10 @@ class Service(Context):
         return _filter_content(load(response).entry.content)
 
     @property
+    def inputs(self):
+        return Inputs(self)
+
+    @property
     def jobs(self):
         return Jobs(self)
 
@@ -135,15 +148,15 @@ class Service(Context):
 class Endpoint:
     def __init__(self, service, path):
         self.service = service
-        self.path = path
+        self.path = path if path.endswith('/') else path + '/'
 
     def get(self, relpath="", **kwargs):
-        response = self.service.get("%s/%s" % (self.path, relpath), **kwargs)
+        response = self.service.get("%s%s" % (self.path, relpath), **kwargs)
         check_status(response, 200)
         return response
 
     def post(self, relpath="", **kwargs):
-        response = self.service.post("%s/%s" % (self.path, relpath), **kwargs)
+        response = self.service.post("%s%s" % (self.path, relpath), **kwargs)
         check_status(response, 200, 201)
         return response
 
@@ -168,7 +181,7 @@ class Collection(Endpoint):
 
     def __iter__(self):
         # Don't invoke __getitem__ below, we don't need the extra round-trip
-        # to validate that the key exists, because we just checked.
+        # to validate that the key exists, because we just it from the list.
         for name in self.list(): yield self.item(self.service, name)
 
     def contains(self, name):
@@ -223,7 +236,7 @@ class Entity(Endpoint):
         Endpoint.__init__(self, service, path)
         if name is not None: self.name = name
         # UNDONE: The following should be derived by reading entity links
-        self.delete = lambda: self.service.delete(self.path)
+        #self.delete = lambda: self.service.delete(self.path) # remove
         self.disable = lambda: self.post("disable")
         self.enable = lambda: self.post("enable")
         self.reload = lambda: self.post("_reload")
@@ -302,6 +315,125 @@ class Index(Entity):
         path = 'data/inputs/oneshot'
         response = self.service.post(path, name=filename, **kwargs)
         check_status(response, 201)
+
+class Input(Entity):
+    # kwargs: key, kind, name, path, links
+    def __init__(self, service, **kwargs):
+        Entity.__init__(self, service, kwargs['path'], kwargs['name'])
+        self.key = kwargs['key']
+        self.kind = kwargs['kind']
+
+# Directory of known input kinds that maps from input kind to path relative 
+# to data/inputs, eg: inputs of kind 'splunktcp' map to a relative path
+# of 'tcp/cooked' and therefore an endpoint path of 'data/inputs/tcp/cooked'.
+INPUT_KINDMAP = {
+    'ad': "ad",
+    'monitor': "monitor",
+    'registry': "registry",
+    'script': "script",
+    'tcp': "tcp/raw",
+    'splunktcp': "tcp/cooked",
+    'udp': "udp",
+    'win-event-log-collections': "win-event-log-collections", 
+    'win-perfmon': "win-perfmon",
+    'win-wmi-collections': "win-wmi-collections"
+}
+
+# Inputs is a kinded collection, which is a heterogenous collection where
+# each item is tagged with a kind.
+class Inputs(Endpoint):
+    def __init__(self, service, kindmap=None):
+        Endpoint.__init__(self, service, PATH_INPUTS)
+        if kindmap is None: kindmap = INPUT_KINDMAP
+        self._kindmap = kindmap
+        self._infos = None
+        self.refresh()
+        
+    # args: kind*
+    def __call__(self, *args):
+        return self.list(*args)
+
+    def __getitem__(self, key):
+        info = self._infos.get(key, None)
+        if info is None: raise KeyError, key
+        return Input(self.service, **info)
+
+    def __iter__(self):
+        # Don't invoke __getitem__ below, we don't need the extra round-trip
+        # to validate that the key exists, because we just it from the list.
+        for info in self._infos.itervalues(): 
+            yield Input(self.service, **info)
+
+    def contains(self, key):
+        """Answers if the given key exists in the collection."""
+        return key in self.list()
+
+    def create(self, kind, name, **kwargs):
+        """Creates an input of the given kind, with the given name & args."""
+        response = self.post(self._kindmap[kind], name=name, **kwargs)
+        return self.refresh()[self.itemkey(kind, name)]
+
+    def delete(self, key):
+        """Deletes the input with the given key."""
+        response = self.service.delete(self._infos[key]['path'])
+        self.refresh()
+        return self
+
+    def itemkey(self, kind, name):
+        """Constructs a key from the given kind and item name."""
+        if not kind in self._kindmap.keys(): 
+            raise ValueError("Unknown kind '%s'" % kind)
+        return "%s:%s" % (kind, name)
+
+    def itemmeta(self, kind):
+        """Returns metadata for members of the given kind."""
+        response = self.get("/%s/_new" % kind)
+        content = load(response).entry.content
+        return record({
+            'eai:acl': content['eai:acl'],
+            'eai:attributes': content['eai:attributes']
+        })
+
+    @property
+    def kinds(self):
+        """Returns the list of kinds that this collection may contain."""
+        return self._kindmap.keys()
+
+    def kindpath(self, kind):
+        """Returns the path to resources of the given kind."""
+        return self.path + self._kindmap[kind]
+
+    # args: kind*
+    def list(self, *args):
+        """Returns a list of collection keys, optionally filtered by kind."""
+        if len(args) == 0: return self._infos.keys()
+        return [k for k, v in self._infos.iteritems() if v['kind'] in args]
+
+    # Refreshes the 
+    def refresh(self):
+        """Refreshes the internal directory of entities and entity metadata."""
+        self._infos = {}
+        for kind in self.kinds:
+            # UNDONE: Can't use the following until I fix error propagation
+            # response = self.get(kind, count=-1)
+            response = self.service.get(self.kindpath(kind), count=-1)
+            if response.status == 404: continue # Nothing of this kind
+            entry = load(response).get('entry', None)
+            if entry is None: continue
+            if not isinstance(entry, list): entry = [entry] # UNDONE
+            for item in entry:
+                name = item.title
+                key = self.itemkey(kind, name)
+                path = urlparse(item.id).path
+                links = dict([(link.rel, link.href) for link in item.link])
+                self._infos[key] = {
+                    'key': key,
+                    'kind': kind,
+                    'name': name,
+                    'path': path,
+                    'links': links,
+                }
+        return self
 
 # The Splunk Job is not an enity, but we are able to make the interface look
 # a lot like one.

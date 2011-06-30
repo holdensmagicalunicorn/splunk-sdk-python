@@ -159,6 +159,34 @@ class ServiceTestCase(unittest.TestCase):
             self.assertTrue(metadata.has_key('eai:acl'))
             self.assertTrue(metadata.has_key('eai:attributes'))
 
+    def test_inputs(self):
+        inputs = self.service.inputs;
+
+        for input in inputs: input.read()
+
+        # Scan inputs and look for some common attributes
+        attrs = [ 'disabled', 'host', 'index' ]
+        for input in inputs:
+            entity = input.read()
+            for attr in attrs: self.assertTrue(attr in entity.keys())
+
+        for kind in inputs.kinds:
+            for key in inputs.list(kind):
+                input = inputs[key]
+                self.assertEqual(input.kind, kind)
+
+        if inputs.contains('tcp:9999'): inputs.delete('tcp:9999')
+        self.assertFalse(inputs.contains('tcp:9999'))
+        inputs.create("tcp", "9999", host="sdk-test")
+        self.assertTrue(inputs.contains('tcp:9999'))
+        input = inputs['tcp:9999']
+        self.assertEqual(input['host'], "sdk-test")
+        input.update(host="foo", sourcetype="bar")
+        self.assertEqual(input['host'], "foo")
+        self.assertEqual(input['sourcetype'], "bar")
+        inputs.delete('tcp:9999')
+        self.assertFalse(inputs.contains('tcp:9999'))
+
     def runjob(self, query, secs):
         """Create a job to run the given search and wait up to (approximately)
            the given number of seconds for it to complete.""" 
