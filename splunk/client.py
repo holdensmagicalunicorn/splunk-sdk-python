@@ -26,6 +26,8 @@
 # Entity state, are written so that they may be used in a fluent style.
 #
 
+"""Client interface to the Splunk REST API."""
+
 # UNDONE: Cases below where we need to pass schema to data.load (eg: Collection)
 # UNDONE: Check status needs to attempt to retrive error message from the
 #  the resonse body. Eg: a call to index.disable on the defaultDatabase will
@@ -87,11 +89,13 @@ def load(response):
     return data.load(response.body.read())
 
 class Service(Context):
+    """The Splunk service."""
     def __init__(self, **kwargs):
         Context.__init__(self, **kwargs)
 
     @property
     def apps(self):
+        """Return a collection of applications."""
         return Collection(self, PATH_APPS, "apps",
             item=lambda service, name: 
                 Entity(service, PATH_APP % name, name),
@@ -101,6 +105,7 @@ class Service(Context):
 
     @property
     def confs(self):
+        """Return a collection of configs."""
         return Collection(self, PATH_CONFS, "confs",
             item=lambda service, conf: 
                 Collection(service, PATH_CONF % conf, conf,
@@ -113,6 +118,7 @@ class Service(Context):
 
     @property
     def indexes(self):
+        """Return a collection of indexes."""
         return Collection(self, PATH_INDEXES, "indexes",
             item=lambda service, name: 
                 Index(service, name),
@@ -121,6 +127,7 @@ class Service(Context):
 
     @property
     def info(self):
+        """Returns server information."""
         response = self.get("server/info")
         check_status(response, 200)
         return _filter_content(load(response).entry.content)
@@ -131,10 +138,12 @@ class Service(Context):
 
     @property
     def jobs(self):
+        """Returns a collection of current search jobs."""
         return Jobs(self)
 
     # kwargs: enable_lookups, reload_macros, parse_only, output_mode
     def parse(self, query, **kwargs):
+        """Test a search query through the parser."""
         return self.get("search/parser", q=query, **kwargs)
 
     def restart(self):
@@ -143,19 +152,23 @@ class Service(Context):
 
     @property
     def settings(self):
+        """Return the server settings entity."""
         return Entity(self, "server/settings")
 
 class Endpoint:
+    """The base class for all client layer endpoints."""
     def __init__(self, service, path):
         self.service = service
         self.path = path if path.endswith('/') else path + '/'
 
     def get(self, relpath="", **kwargs):
+        """A generic HTTP GET to the endpoint and optional relative path."""
         response = self.service.get("%s%s" % (self.path, relpath), **kwargs)
         check_status(response, 200)
         return response
 
     def post(self, relpath="", **kwargs):
+        """A generic HTTP POST to the endpoint and optional relative path."""
         response = self.service.post("%s%s" % (self.path, relpath), **kwargs)
         check_status(response, 200, 201)
         return response
@@ -210,8 +223,10 @@ class Collection(Endpoint):
         """Returns a list of collection keys."""
         response = self.get(count=-1)
         entry = load(response).get('entry', None)
-        if entry is None: return []
-        if not isinstance(entry, list): entry = [entry] # UNDONE
+        if entry is None: 
+            return []
+        if not isinstance(entry, list): 
+            entry = [entry] # UNDONE
         return [item.title for item in entry]
 
 def _filter_content(content, *args):
@@ -262,10 +277,12 @@ class Entity(Endpoint):
         return self.read('eai:acl', 'eai:attributes')
 
     def update(self, **kwargs):
+        """Update Entity."""
         self.post(**kwargs)
         return self
 
 class Index(Entity):
+    """Index class access to specific operations."""
     def __init__(self, service, name):
         Entity.__init__(self, service, PATH_INDEX % name, name)
         self.roll_hot_buckets = lambda: self.post("roll-hot-buckets")
@@ -293,7 +310,8 @@ class Index(Entity):
         self.roll_hot_buckets()
         while True: # Wait until event count goes to zero
             sleep(1)
-            if self['totalEventCount'] == '0': break
+            if self['totalEventCount'] == '0': 
+                break
         self.update(**saved)
 
     def submit(self, event, host=None, source=None, sourcetype=None):
@@ -387,7 +405,7 @@ class Inputs(Endpoint):
 
     def itemmeta(self, kind):
         """Returns metadata for members of the given kind."""
-        response = self.get("/%s/_new" % kind)
+        response = self.get("%s/_new" % self._kindmap[kind])
         content = load(response).entry.content
         return record({
             'eai:acl': content['eai:acl'],
@@ -438,6 +456,7 @@ class Inputs(Endpoint):
 # The Splunk Job is not an enity, but we are able to make the interface look
 # a lot like one.
 class Job(Endpoint): 
+    """Job class access to specific operations."""
     def __init__(self, service, sid):
         Endpoint.__init__(self, service, PATH_JOB % sid)
         self.sid = sid
@@ -452,29 +471,36 @@ class Job(Endpoint):
         self.update(**{ key: value })
 
     def cancel(self):
+        """Cancel job."""
         self.post("control", action="cancel")
         return self
 
     def disable_preview(self):
+        """Set job disable preview."""
         self.post("control", action="disablepreview")
         return self
 
     def events(self, **kwargs):
+        """Get job events."""
         return self.get("events", **kwargs).body
 
     def enable_preview(self):
+        """Set job enable preview."""
         self.post("control", action="enablepreview")
         return self
 
     def finalize(self):
+        """Finalize job."""
         self.post("control", action="finalize")
         return self
 
     def pause(self):
+        """Pause job."""
         self.post("control", action="pause")
         return self
 
     def preview(self, **kwargs):
+        """Get job preview data."""
         return self.get("results_preview", **kwargs).body
 
     def read(self, *args):
@@ -484,37 +510,47 @@ class Job(Endpoint):
         return _filter_content(content, *args)
 
     def results(self, **kwargs):
+        """Get job results."""
         return self.get("results", **kwargs).body
 
     def searchlog(self, **kwargs):
+        """Get job search log."""
         return self.get("search.log", **kwargs).body
 
     def setpriority(self, value):
+        """Set job priority."""
         self.post('control', action="setpriority", priority=value)
         return self
 
     def summary(self, **kwargs):
+        """Get job summary."""
         return self.get("summary", **kwargs).body
 
     def timeline(self, **kwargs):
+        """Get job timeline."""
         return self.get("timeline", **kwargs).body
 
     def touch(self,):
+        """Update job via touch."""
         self.post("control", action="touch")
         return self
 
     def setttl(self, value):
+        """Set job ttl."""
         self.post("control", action="setttl", ttl=value)
 
     def unpause(self):
+        """Unpause job."""
         self.post("control", action="unpause")
         return self
 
     def update(self, **kwargs):
+        """Update job."""
         self.post(**kwargs)
         return self
 
 class Jobs(Collection):
+    """Jobs class."""
     def __init__(self, service):
         Collection.__init__(self, service, PATH_JOBS, "jobs",
             item=lambda service, sid: Job(service, sid))
@@ -527,10 +563,13 @@ class Jobs(Collection):
     def list(self):
         response = self.get()
         entry = load(response).entry
-        if not isinstance(entry, list): entry = [entry] # UNDONE
+        if not isinstance(entry, list): 
+            entry = [entry] # UNDONE
         return [item.content.sid for item in entry]
 
-class SplunkError(Exception): pass
+class SplunkError(Exception): 
+    pass
 
-class NotSupportedError(Exception): pass
+class NotSupportedError(Exception): 
+    pass
 

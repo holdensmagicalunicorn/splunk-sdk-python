@@ -17,6 +17,9 @@
 # UNDONE: Figure out what to do with examples like: <a>foo<b>bar</b></a>, seems
 #  like we should at least detect and error on less 'well-formed' sdata inputs
 
+"""Data manipulation module for converting XML to python based 
+    data structure."""
+
 from pprint import pprint # UNDONE
 
 import sys
@@ -63,20 +66,24 @@ def load_dict(element, nametable = None):
 
 def load_element(element, nametable = None):
     tag = element.tag
-    if isdict(tag): return load_dict(element, nametable)
-    if islist(tag): return load_list(element, nametable)
+    if isdict(tag): 
+        return load_dict(element, nametable)
+    if islist(tag): 
+        return load_list(element, nametable)
     attrs = load_attrs(element)
     value = load_value(element, nametable)
-    if attrs is None: return value
-    if value is None: return attrs
+    if attrs is None: 
+        return value
+    if value is None: 
+        return attrs
     # If value is simple, merge into attrs dict using special key
     if isinstance(value, str):
         attrs["$text"] = value
         return attrs
     # Both attrs & value are complex, merge the two dicts
-    for k, v in attrs.items():
+    for key, val in attrs.items():
         #assert not value.has_key(k) # Assume no collisions
-        value[k] = v
+        value[key] = val
     return value
     
 # Parse a <list> element and return a Python list
@@ -90,9 +97,11 @@ def load_list(element, nametable = None):
     return value
 
 def load_attrs(element):
-    if not hasattrs(element): return None
+    if not hasattrs(element): 
+        return None
     attrs = record()
-    for k, v in element.attrib.items(): attrs[k] = v
+    for key, value in element.attrib.items(): 
+        attrs[key] = value
     return attrs
 
 def load_value(element, nametable = None):
@@ -102,17 +111,21 @@ def load_value(element, nametable = None):
     # No children, assume a simple text value
     if count == 0:
         text = element.text
-        if text is None: return None
+        if text is None: 
+            return None
         text = text.strip()
-        if len(text) == 0: return None
+        if len(text) == 0: 
+            return None
         return text
 
     # Look for the special case of a single well-known structure
     if count == 1:
         child = children[0]
         tag = child.tag
-        if isdict(tag): return load_dict(child, nametable)
-        if islist(tag): return load_list(child, nametable)
+        if isdict(tag): 
+            return load_dict(child, nametable)
+        if islist(tag): 
+            return load_list(child, nametable)
 
     value = record()
     for child in children:
@@ -121,7 +134,8 @@ def load_value(element, nametable = None):
         # If we have seen this name before, promote the value to a list
         if value.has_key(name):
             current = value[name]
-            if not isinstance(current, list): value[name] = [current]
+            if not isinstance(current, list): 
+                value[name] = [current]
             value[name].append(item)
         else:
             value[name] = item
@@ -130,9 +144,11 @@ def load_value(element, nametable = None):
 
 # UNDONE: Nametable
 def load(text, path = None):
-    if text is None: return None
+    if text is None: 
+        return None
     text = text.strip()
-    if len(text) == 0: return None
+    if len(text) == 0: 
+        return None
     nametable = {
         'namespaces': [],
         'names': {}
@@ -163,11 +179,13 @@ class Record(dict):
         self[name] = value
 
 def record(value = None): 
-    if value is None: value = {}
+    if value is None: 
+        value = {}
     return Record(value)
 
 def main():
-    def isxml(text): return text.strip().startswith('<')
+    def isxml(text): 
+        return text.strip().startswith('<')
     text = sys.stdin.read()
     if isxml(text):
         value = load(text)

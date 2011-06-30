@@ -42,14 +42,14 @@ DEFAULT_SCHEME = "https"
 
 # kwargs: scheme, host, port
 def prefix(**kwargs):
-    """ generate the 3-tuple prefix """
+    """Generate the 3-tuple prefix."""
     scheme = kwargs.get("scheme", DEFAULT_SCHEME)
     host = kwargs.get("host", DEFAULT_HOST)
     port = kwargs.get("port", DEFAULT_PORT)
     return "%s://%s:%s" % (scheme, host, port)
 
 class Context:
-    """ Context Class """
+    """Context Class."""
     # kwargs: scheme, host, port, username, password, namespace
     def __init__(self, **kwargs):
         self.token = None
@@ -73,7 +73,6 @@ class Context:
                           kwargs.get("proxyport", str(DEFAULT_PORT)))
 
     def _set_varargs(self, **kwargs):
-        """ extact variable args from context and optionally use """
         # if already present, use it, otherwise, if self
         # contains a non-None setting, add it in
         if not kwargs.has_key('proxy'):
@@ -96,10 +95,10 @@ class Context:
 
     # Shared per-context request headers
     def _headers(self):
-        """ generate HTTP authorization header portion """
         return [("Authorization", self.token)]
 
     def bind(self, path, method = "get"):
+        """Define splunk binding, and access methods."""
         func = {
             'get': self.get,
             'delete': self.delete,
@@ -123,22 +122,22 @@ class Context:
         return ssl.wrap_socket(conn) if self.scheme == "https" else conn
 
     def delete(self, path, **kwargs):
-        """ context layer delete endpoint access """
+        """Context layer delete endpoint access."""
         kwargs = self._set_varargs(**kwargs)
         return Http.delete(self.url(path), self._headers(), **kwargs)
 
     def get(self, path, **kwargs):
-        """ context layer get endpoint access """
+        """Context layer get endpoint access."""
         kwargs = self._set_varargs(**kwargs)
         return Http.get(self.url(path), self._headers(), **kwargs)
 
     def post(self, path, **kwargs):
-        """ context layer post endpoint access """
+        """Context layer post endpoint access."""
         kwargs = self._set_varargs(**kwargs)
         return Http.post(self.url(path), self._headers(), **kwargs)
 
     def request(self, path, message):
-        """ context layer request """
+        """Context layer common request method."""
         kwargs = self._set_varargs()
         return Http.request(
             self.url(path), {
@@ -148,7 +147,7 @@ class Context:
                 **kwargs)
 
     def login(self):
-        """ context layer login """
+        """Context layer login."""
         kwargs = self._set_varargs()
         response = Http.post(
             self.url("/services/auth/login"),
@@ -164,7 +163,7 @@ class Context:
         return self
 
     def logout(self):
-        """ context layer logout """
+        """Context layer logout."""
         self.token = None
         return self
 
@@ -186,7 +185,7 @@ class Context:
     # the given path with namespace segments if necessarry and then prefixing
     # with the scheme, host and port.
     def url(self, path):
-        """ fully qualified URL generation """
+        """Fully qualified URL generation."""
         return self.prefix + self.fullpath(path)
 
 # kwargs: scheme, host, port, username, password, namespace
@@ -226,13 +225,11 @@ import urllib
 DEBUG = False
 
 def _print_request(method, url, head, body):
-    """ debug print request """
     print "** %s %s" % (method, url)
     pprint(head)
     print body
 
 def _print_response(response):
-    """ debug print response """
     print "=> %d %s" % (response.status, response.reason)
     pprint(response.headers)
     # UNDONE: Dont consume the body here .. figure out a better way to show
@@ -240,7 +237,6 @@ def _print_response(response):
     # print response.body
 
 def _spliturl(url):
-    """Split the given url into (scheme, host, port, path)."""
     scheme, part = url.split(':', 1)
     host, path = urllib.splithost(part)
     host, port = urllib.splitnport(host, 80)
@@ -251,7 +247,7 @@ def _spliturl(url):
 # for example an argument such as 'foo=[1,2,3]' will be encoded as
 # 'foo=1&foo=2&foo=3'. 
 def encode(**kwargs):
-    """ encode variable arguments into HTTP safe strings """
+    """Encode variable arguments into HTTP safe strings."""
     items = []
     for key, value in kwargs.iteritems():
         if isinstance(value, list):
@@ -266,8 +262,6 @@ class Http:
     @staticmethod
     def connect(scheme, host, port, timeout = None, proxy = None,
                  key_file = None, cert_file = None, ca_file = None):
-        """Returns an HTTP connection object corresponding to the given scheme,
-           host and port."""
 
         kwargs = {}
 
@@ -298,7 +292,6 @@ class Http:
     def delete(url, headers = None, timeout = None, proxy = None, 
                key_file = None, cert_file = None, ca_file = None,
                **kwargs):
-        """ http layer delete """
         if headers is None: 
             headers = []
         if kwargs: 
@@ -314,7 +307,6 @@ class Http:
     def get(url, headers = None, timeout = None, proxy = None,
             key_file = None, cert_file = None, ca_file = None,
             **kwargs):
-        """ http layer get """
         if headers is None: 
             headers = []
         if kwargs: 
@@ -326,7 +318,6 @@ class Http:
     def post(url, headers = None, timeout = None, proxy = None,
              key_file = None, cert_file = None, ca_file = None,
              **kwargs):
-        """ http layer post """
         if headers is None: 
             headers = []
         headers.append(("Content-Type", "application/x-www-form-urlencoded")),
@@ -341,7 +332,6 @@ class Http:
     @staticmethod
     def request(url, message, timeout = None, proxy = None,
                 key_file = None, cert_file = None, ca_file = None):
-        """ http layer request """
         scheme, host, port, path = _spliturl(url)
         body = message.get("body", "")
         head = { 
@@ -380,6 +370,7 @@ class Http:
 
 # UNDONE: Complete implementation of file-like object
 class ResponseReader:
+    """Read response."""
     def __init__(self, response):
         self._response = response
 
@@ -387,9 +378,11 @@ class ResponseReader:
         return self.read()
 
     def read(self, size = None):
+        """Response reader."""
         return self._response.read(size)
 
 class HTTPError(Exception):
+    """HTTP Exception generator."""
     def __init__(self, status, reason):
         Exception.__init__(self, "HTTP %d %s" % (status, reason)) 
         self.reason = reason
