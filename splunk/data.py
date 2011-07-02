@@ -160,9 +160,9 @@ def load(text, path = None):
         return None
     if count == 1:
         item = items[0]
-        return load_value(item, nametable)
+        return load_element(item, nametable)
         # return { localname(item.tag): value }
-    return [ load_value(item, nametable) for item in items ]
+    return [ load_element(item, nametable) for item in items ]
 
 # A generic utility that enables "dot" access to dicts
 class Record(dict):
