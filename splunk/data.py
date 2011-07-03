@@ -63,7 +63,8 @@ def load_dict(element, nametable = None):
         value[name] = load_value(child, nametable)
     return value
 
-def load_element(element, nametable = None):
+# Load attrs & value into single, merged dict.
+def load_content(element, nametable=None):
     tag = element.tag
     if isdict(tag): return load_dict(element, nametable)
     if islist(tag): return load_list(element, nametable)
@@ -82,9 +83,12 @@ def load_element(element, nametable = None):
         #assert not value.has_key(k) # Assume no collisions
         value[key] = val
     return value
+
+def load_element(element, nametable=None):
+    return load_content(element, nametable) 
     
 # Parse a <list> element and return a Python list
-def load_list(element, nametable = None):
+def load_list(element, nametable=None):
     assert islist(element.tag)
     value = []
     children = list(element)
@@ -100,9 +104,8 @@ def load_attrs(element):
         attrs[key] = value
     return attrs
 
-# Load the content of the given element. Does not process the element itself 
-# or its attribtues.
-def load_value(element, nametable = None):
+# Load the content of the given element.
+def load_value(element, nametable=None):
     children = list(element)
     count = len(children)
 
@@ -126,7 +129,7 @@ def load_value(element, nametable = None):
     value = record()
     for child in children:
         name = localname(child.tag)
-        item = load_element(child, nametable)
+        item = load_content(child, nametable)
         # If we have seen this name before, promote the value to a list
         if value.has_key(name):
             current = value[name]

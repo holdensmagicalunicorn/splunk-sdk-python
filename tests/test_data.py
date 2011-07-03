@@ -12,8 +12,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from pprint import pprint # UNDONE
-
 from os import path
 import sys
 import unittest
@@ -106,19 +104,106 @@ class TestCase(unittest.TestCase):
         self.assertEqual(result.entry.content.os_name, 'Darwin')
         self.assertEqual(result.entry.content.os_version, '10.8.0')
 
-    def test_special(self):
-        """Test the 'special' elements that we recognize."""
-        result = data.load("<dict><key name='n1'>v1</key><key name='n2'>v2</key></dict>")
+    def test_dict(self):
+        result = data.load("""
+            <dict>
+              <key name='n1'>v1</key>
+              <key name='n2'>v2</key>
+            </dict>""")
         self.assertEqual(result, {'n1': "v1", 'n2': "v2"})
 
-        result = data.load("<root><content><dict><key name='n1'>v1</key><key name='n2'>v2</key></dict></content></root>")
+        result = data.load("""
+            <root>
+              <content>
+                <dict>
+                  <key name='n1'>v1</key>
+                  <key name='n2'>v2</key>
+                </dict>
+              </content>
+            </root>""")
         self.assertEqual(result, {'content': {'n1': "v1", 'n2': "v2"}})
 
-        result = data.load("<list><item>1</item><item>2</item><item>3</item><item>4</item></list>")
+        result = data.load("""
+            <root>
+              <content>
+                <dict>
+                  <key name='n1'>
+                    <dict>
+                      <key name='n1n1'>n1v1</key>
+                    </dict>
+                  </key>
+                  <key name='n2'>
+                    <dict>
+                      <key name='n2n1'>n2v1</key>
+                    </dict>
+                  </key>
+                </dict>
+              </content>
+            </root>""")
+        self.assertEqual(result, 
+            {'content': {'n1': {'n1n1': "n1v1"}, 'n2': {'n2n1': "n2v1"}}})
+
+        result = data.load("""
+            <root>
+              <content>
+                <dict>
+                  <key name='n1'>
+                    <list>
+                      <item>1</item><item>2</item><item>3</item><item>4</item>
+                    </list>
+                  </key>
+                </dict>
+              </content>
+            </root>""")
+        self.assertEqual(result, 
+            {'content': {'n1': ['1', '2', '3', '4']}})
+
+    def test_list(self):
+        result = data.load("""
+            <list>
+              <item>1</item><item>2</item><item>3</item><item>4</item>
+            </list>""")
         self.assertEqual(result, ['1', '2', '3', '4'])
 
-        result = data.load("<root><content><list><item>1</item><item>2</item><item>3</item><item>4</item></list></content></root>")
+        result = data.load("""
+            <root>
+              <content>
+                <list>
+                  <item>1</item><item>2</item><item>3</item><item>4</item>
+                </list>
+              </content>
+            </root>""")
         self.assertEqual(result, {'content': ['1', '2', '3', '4']})
+
+        result = data.load("""
+            <root>
+              <content>
+                <list>
+                  <item>
+                    <list><item>1</item><item>2</item></list>
+                  </item>
+                  <item>
+                    <list><item>3</item><item>4</item></list>
+                  </item>
+                </list>
+              </content>
+            </root>""")
+        self.assertEqual(result, {'content': [['1', '2'], ['3', '4']]})
+
+        result = data.load("""
+            <root>
+              <content>
+                <list>
+                  <item><dict><key name='n1'>v1</key></dict></item>
+                  <item><dict><key name='n2'>v2</key></dict></item>
+                  <item><dict><key name='n3'>v3</key></dict></item>
+                  <item><dict><key name='n4'>v4</key></dict></item>
+                </list>
+              </content>
+            </root>""")
+        self.assertEqual(result, 
+            {'content': 
+                [{'n1': "v1"}, {'n2': "v2"}, {'n3': "v3"}, {'n4': "v4"}]})
 
 if __name__ == "__main__":
     unittest.main()
