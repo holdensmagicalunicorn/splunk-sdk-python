@@ -85,8 +85,8 @@ def connect(**kwargs):
     return Service(**kwargs).login()
 
 # Response utilities
-def load(response):
-    return data.load(response.body.read())
+def load(response, path=None):
+    return data.load(response.body.read(), path)
 
 class Service(Context):
     """The Splunk service."""
@@ -130,7 +130,7 @@ class Service(Context):
         """Returns server information."""
         response = self.get("server/info")
         check_status(response, 200)
-        return _filter_content(load(response).entry.content)
+        return _filter_content(load(response).feed.entry.content)
 
     @property
     def inputs(self):
@@ -175,7 +175,6 @@ class Endpoint:
 
 class Collection(Endpoint):
     """A generic implementation of the Splunk collection protocol."""
-
     def __init__(self, service, path, name=None, 
                  item=None, ctor=None, dtor=None):
         Endpoint.__init__(self, service, path)
@@ -213,7 +212,7 @@ class Collection(Endpoint):
     def itemmeta(self):
         """Returns metadata for members of the collection."""
         response = self.get("/_new")
-        content = load(response).entry.content
+        content = load(response).feed.entry.content
         return record({
             'eai:acl': content['eai:acl'],
             'eai:attributes': content['eai:attributes']
@@ -222,7 +221,7 @@ class Collection(Endpoint):
     def list(self):
         """Returns a list of collection keys."""
         response = self.get(count=-1)
-        entry = load(response).get('entry', None)
+        entry = load(response).feed.get('entry', None)
         if entry is None: 
             return []
         if not isinstance(entry, list): 
@@ -246,7 +245,6 @@ def _filter_content(content, *args):
 
 class Entity(Endpoint):
     """A generic implementation of the Splunk 'entity' protocol."""
-
     def __init__(self, service, path, name=None):
         Endpoint.__init__(self, service, path)
         if name is not None: self.name = name
@@ -269,7 +267,7 @@ class Entity(Endpoint):
         """Read and return the current entity value, optionally returning
            only the requested fields, if specified."""
         response = self.get()
-        content = load(response).entry.content
+        content = load(response).feed.entry.content
         return _filter_content(content, *args)
 
     def readmeta(self):
@@ -360,6 +358,7 @@ INPUT_KINDMAP = {
 # Inputs is a kinded collection, which is a heterogenous collection where
 # each item is tagged with a kind.
 class Inputs(Endpoint):
+    """A collection of Splunk inputs."""
     def __init__(self, service, kindmap=None):
         Endpoint.__init__(self, service, PATH_INPUTS)
         if kindmap is None: kindmap = INPUT_KINDMAP
@@ -406,7 +405,7 @@ class Inputs(Endpoint):
     def itemmeta(self, kind):
         """Returns metadata for members of the given kind."""
         response = self.get("%s/_new" % self._kindmap[kind])
-        content = load(response).entry.content
+        content = load(response).feed.entry.content
         return record({
             'eai:acl': content['eai:acl'],
             'eai:attributes': content['eai:attributes']
@@ -436,7 +435,7 @@ class Inputs(Endpoint):
             # response = self.get(kind, count=-1)
             response = self.service.get(self.kindpath(kind), count=-1)
             if response.status == 404: continue # Nothing of this kind
-            entry = load(response).get('entry', None)
+            entry = load(response).feed.get('entry', None)
             if entry is None: continue
             if not isinstance(entry, list): entry = [entry] # UNDONE
             for item in entry:
@@ -506,7 +505,7 @@ class Job(Endpoint):
     def read(self, *args):
         """Read and return the jobs entity value."""
         response = self.get()
-        content = load(response).content
+        content = load(response).entry.content
         return _filter_content(content, *args)
 
     def results(self, **kwargs):
@@ -550,19 +549,19 @@ class Job(Endpoint):
         return self
 
 class Jobs(Collection):
-    """Jobs class."""
+    """A collection of search jobs."""
     def __init__(self, service):
         Collection.__init__(self, service, PATH_JOBS, "jobs",
             item=lambda service, sid: Job(service, sid))
 
     def create(self, query, **kwargs):
         response = self.post(search=query, **kwargs)
-        sid = load(response).sid
+        sid = load(response).response.sid
         return Job(self.service, sid)
 
     def list(self):
         response = self.get()
-        entry = load(response).entry
+        entry = load(response).feed.entry
         if not isinstance(entry, list): 
             entry = [entry] # UNDONE
         return [item.content.sid for item in entry]

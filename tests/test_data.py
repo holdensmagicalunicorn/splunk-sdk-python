@@ -12,6 +12,9 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+# UNDONE: Add tests that use the path argument
+# UNDONE: Add tests that use the XNAME versions of dict & list
+
 from os import path
 import sys
 import unittest
@@ -24,59 +27,59 @@ class TestCase(unittest.TestCase):
         self.assertTrue(result is None)
 
         result = data.load("<a></a>")
-        self.assertTrue(result is None) # UNDONE: BUG: Should be {}
+        self.assertEqual(result, {'a': None})
 
         result = data.load("<a>1</a>")
-        self.assertEqual(result, '1') # UNDONE: BUG: Should be {'$text': '1'}
+        self.assertEqual(result, {'a': "1"})
 
         result = data.load("<a><b></b></a>")
-        self.assertEqual(result, {'b': None})
+        self.assertEqual(result, {'a': {'b': None}})
 
         result = data.load("<a><b>1</b></a>")
-        self.assertEqual(result, {'b': '1'})
+        self.assertEqual(result, {'a': {'b': '1'}})
 
         result = data.load("<a><b></b><b></b></a>")
-        self.assertEqual(result, {'b': [None, None]})
+        self.assertEqual(result, {'a': {'b': [None, None]}})
 
         result = data.load("<a><b>1</b><b>2</b></a>")
-        self.assertEqual(result, {'b': ['1', '2']})
+        self.assertEqual(result, {'a': {'b': ['1', '2']}})
 
         result = data.load("<a><b></b><c></c></a>")
-        self.assertEqual(result, {'b': None, 'c': None})
+        self.assertEqual(result, {'a': {'b': None, 'c': None}})
 
         result = data.load("<a><b>1</b><c>2</c></a>")
-        self.assertEqual(result, {'b': '1', 'c': '2'})
+        self.assertEqual(result, {'a': {'b': '1', 'c': '2'}})
 
         result = data.load("<a><b><c>1</c></b></a>")
-        self.assertEqual(result, {'b': {'c': '1'}})
+        self.assertEqual(result, {'a': {'b': {'c': '1'}}})
 
         result = data.load("<a><b><c>1</c></b><b>2</b></a>")
-        self.assertEqual(result, {'b': [{'c': '1'}, '2']})
+        self.assertEqual(result, {'a': {'b': [{'c': '1'}, '2']}})
 
     def test_attrs(self):
         result = data.load("<e a1='v1'/>")
-        self.assertEqual(result, {'a1': 'v1'})
+        self.assertEqual(result, {'e': {'a1': 'v1'}})
 
         result = data.load("<e a1='v1' a2='v2'/>")
-        self.assertEqual(result, {'a1': 'v1', 'a2': 'v2'})
+        self.assertEqual(result, {'e': {'a1': 'v1', 'a2': 'v2'}})
 
         result = data.load("<e a1='v1'>v2</e>")
-        self.assertEqual(result, {'$text': 'v2', 'a1': 'v1'})
+        self.assertEqual(result, {'e': {'$text': 'v2', 'a1': 'v1'}})
 
         result = data.load("<e a1='v1'><b>2</b></e>")
-        self.assertEqual(result, {'a1': 'v1', 'b': '2'})
+        self.assertEqual(result, {'e': {'a1': 'v1', 'b': '2'}})
 
         result = data.load("<e a1='v1'>v2<b>bv2</b></e>")
-        self.assertEqual(result, {'a1': 'v1', 'b': 'bv2'})
+        self.assertEqual(result, {'e': {'a1': 'v1', 'b': 'bv2'}})
         # UNDONE: BUG: Dropping v2, incorrect mixed content
 
         result = data.load("<e a1='v1'><a1>v2</a1></e>")
-        self.assertEqual(result, {'a1': 'v1'})
+        self.assertEqual(result, {'e': {'a1': 'v1'}})
         # UNDONE: BUG: Should be an array
 
         result = data.load("<e1 a1='v1'><e2 a1='v1'>v2</e2></e1>")
-        self.assertEqual(
-            result, {'a1': 'v1', 'e2': {'$text': 'v2', 'a1': 'v1'}})
+        self.assertEqual(result,
+            {'e1': {'a1': 'v1', 'e2': {'$text': 'v2', 'a1': 'v1'}}})
 
     def test_real(self):
         """Test some real Splunk response examples."""
@@ -84,9 +87,10 @@ class TestCase(unittest.TestCase):
 
         fh = open(path.join(testdir, "services.xml"), 'r')
         result = data.load(fh.read())
-        self.assertTrue(result.has_key('author'))
-        self.assertTrue(result.has_key('entry'))
-        titles = [item.title for item in result.entry]
+        self.assertTrue(result.has_key('feed'))
+        self.assertTrue(result.feed.has_key('author'))
+        self.assertTrue(result.feed.has_key('entry'))
+        titles = [item.title for item in result.feed.entry]
         self.assertEqual(
             titles,
             ['alerts', 'apps', 'authentication', 'authorization', 'data',
@@ -96,13 +100,14 @@ class TestCase(unittest.TestCase):
 
         fh = open(path.join(testdir, "services.server.info.xml"), 'r')
         result = data.load(fh.read())
-        self.assertTrue(result.has_key('author'))
-        self.assertTrue(result.has_key('entry'))
-        self.assertEqual(result.title, 'server-info')
-        self.assertEqual(result.author.name, 'Splunk')
-        self.assertEqual(result.entry.content.cpu_arch, 'i386')
-        self.assertEqual(result.entry.content.os_name, 'Darwin')
-        self.assertEqual(result.entry.content.os_version, '10.8.0')
+        self.assertTrue(result.has_key('feed'))
+        self.assertTrue(result.feed.has_key('author'))
+        self.assertTrue(result.feed.has_key('entry'))
+        self.assertEqual(result.feed.title, 'server-info')
+        self.assertEqual(result.feed.author.name, 'Splunk')
+        self.assertEqual(result.feed.entry.content.cpu_arch, 'i386')
+        self.assertEqual(result.feed.entry.content.os_name, 'Darwin')
+        self.assertEqual(result.feed.entry.content.os_version, '10.8.0')
 
     def test_dict(self):
         result = data.load("""
@@ -113,48 +118,42 @@ class TestCase(unittest.TestCase):
         self.assertEqual(result, {'n1': "v1", 'n2': "v2"})
 
         result = data.load("""
-            <root>
-              <content>
-                <dict>
-                  <key name='n1'>v1</key>
-                  <key name='n2'>v2</key>
-                </dict>
-              </content>
-            </root>""")
+            <content>
+              <dict>
+                <key name='n1'>v1</key>
+                <key name='n2'>v2</key>
+              </dict>
+            </content>""")
         self.assertEqual(result, {'content': {'n1': "v1", 'n2': "v2"}})
 
         result = data.load("""
-            <root>
-              <content>
-                <dict>
-                  <key name='n1'>
-                    <dict>
-                      <key name='n1n1'>n1v1</key>
-                    </dict>
-                  </key>
-                  <key name='n2'>
-                    <dict>
-                      <key name='n2n1'>n2v1</key>
-                    </dict>
-                  </key>
-                </dict>
-              </content>
-            </root>""")
+            <content>
+              <dict>
+                <key name='n1'>
+                  <dict>
+                    <key name='n1n1'>n1v1</key>
+                  </dict>
+                </key>
+                <key name='n2'>
+                  <dict>
+                    <key name='n2n1'>n2v1</key>
+                  </dict>
+                </key>
+              </dict>
+            </content>""")
         self.assertEqual(result, 
             {'content': {'n1': {'n1n1': "n1v1"}, 'n2': {'n2n1': "n2v1"}}})
 
         result = data.load("""
-            <root>
-              <content>
-                <dict>
-                  <key name='n1'>
-                    <list>
-                      <item>1</item><item>2</item><item>3</item><item>4</item>
-                    </list>
-                  </key>
-                </dict>
-              </content>
-            </root>""")
+            <content>
+              <dict>
+                <key name='n1'>
+                  <list>
+                    <item>1</item><item>2</item><item>3</item><item>4</item>
+                  </list>
+                </key>
+              </dict>
+            </content>""")
         self.assertEqual(result, 
             {'content': {'n1': ['1', '2', '3', '4']}})
 
@@ -166,44 +165,37 @@ class TestCase(unittest.TestCase):
         self.assertEqual(result, ['1', '2', '3', '4'])
 
         result = data.load("""
-            <root>
-              <content>
-                <list>
-                  <item>1</item><item>2</item><item>3</item><item>4</item>
-                </list>
-              </content>
-            </root>""")
+            <content>
+              <list>
+                <item>1</item><item>2</item><item>3</item><item>4</item>
+              </list>
+            </content>""")
         self.assertEqual(result, {'content': ['1', '2', '3', '4']})
 
         result = data.load("""
-            <root>
-              <content>
-                <list>
-                  <item>
-                    <list><item>1</item><item>2</item></list>
-                  </item>
-                  <item>
-                    <list><item>3</item><item>4</item></list>
-                  </item>
-                </list>
-              </content>
-            </root>""")
+            <content>
+              <list>
+                <item>
+                  <list><item>1</item><item>2</item></list>
+                </item>
+                <item>
+                  <list><item>3</item><item>4</item></list>
+                </item>
+              </list>
+            </content>""")
         self.assertEqual(result, {'content': [['1', '2'], ['3', '4']]})
 
         result = data.load("""
-            <root>
-              <content>
-                <list>
-                  <item><dict><key name='n1'>v1</key></dict></item>
-                  <item><dict><key name='n2'>v2</key></dict></item>
-                  <item><dict><key name='n3'>v3</key></dict></item>
-                  <item><dict><key name='n4'>v4</key></dict></item>
-                </list>
-              </content>
-            </root>""")
+            <content>
+              <list>
+                <item><dict><key name='n1'>v1</key></dict></item>
+                <item><dict><key name='n2'>v2</key></dict></item>
+                <item><dict><key name='n3'>v3</key></dict></item>
+                <item><dict><key name='n4'>v4</key></dict></item>
+              </list>
+            </content>""")
         self.assertEqual(result, 
-            {'content': 
-                [{'n1': "v1"}, {'n2': "v2"}, {'n3': "v3"}, {'n4': "v4"}]})
+            {'content': [{'n1':"v1"}, {'n2':"v2"}, {'n3':"v3"}, {'n4':"v4"}]})
 
 if __name__ == "__main__":
     unittest.main()

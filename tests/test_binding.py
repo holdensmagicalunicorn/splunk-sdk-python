@@ -51,7 +51,7 @@ opts = None # Command line options
 
 def entry_titles(text):
     """Returns list of atom entry titles from the given atom text."""
-    entry = data.load(text).entry
+    entry = data.load(text).feed.entry
     if not isinstance(entry, list): entry = [entry]
     return [item.title for item in entry]
 
@@ -174,7 +174,7 @@ class UsersTestCase(BindingTestCase):
         self.assertEqual(response.status, 200)
         body = response.body.read()
         self.assertEqual(XML(body).tag, XNAME_FEED)
-        return data.load(body).entry.content
+        return data.load(body).feed.entry.content
 
     def users(self):
         """Returns a list of user names."""

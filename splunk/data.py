@@ -24,27 +24,33 @@
 import sys
 from xml.etree.ElementTree import XML
 
+__all__ = ["load"]
+
+LNAME_DICT = "dict"
+LNAME_ITEM = "item"
+LNAME_KEY = "key"
+LNAME_LIST = "list"
+
 XNAMEF_REST = "{http://dev.splunk.com/ns/rest}%s"
+XNAME_DICT = XNAMEF_REST % LNAME_DICT
+XNAME_ITEM = XNAMEF_REST % LNAME_ITEM
+XNAME_KEY = XNAMEF_REST % LNAME_KEY
+XNAME_LIST = XNAMEF_REST % LNAME_LIST
 
-XNAME_DICT = XNAMEF_REST % "dict"
-XNAME_ITEM = XNAMEF_REST % "item"
-XNAME_KEY  = XNAMEF_REST % "key"
-XNAME_LIST = XNAMEF_REST % "list"
-
-# Unfortunately, some responses don't use namespaces, eg: search/parse
-# so we look for both the extended and local version of the following names.
+# Some responses don't use namespaces (eg: search/parse) so we look for
+# both the extended and local versions of the following names.
 
 def isdict(name):
-    return name == XNAME_DICT or name == "dict"
+    return name == XNAME_DICT or name == LNAME_DICT
 
 def isitem(name):
-    return name == XNAME_ITEM or name == "item"
+    return name == XNAME_ITEM or name == LNAME_ITEM
 
 def iskey(name):
-    return name == XNAME_KEY or name == "key"
+    return name == XNAME_KEY or name == LNAME_KEY
 
 def islist(name):
-    return name == XNAME_LIST or name == "list"
+    return name == XNAME_LIST or name == LNAME_LIST
 
 def hasattrs(element):
     return len(element.attrib) > 0
@@ -52,6 +58,30 @@ def hasattrs(element):
 def localname(xname):
     rcurly = xname.find('}')
     return xname if rcurly == -1 else xname[rcurly+1:]
+
+def load(text, path=None):
+    """Load the given XML text into a Python structure."""
+    if text is None: return None
+    text = text.strip()
+    if len(text) == 0: return None
+    nametable = {
+        'namespaces': [],
+        'names': {}
+    }
+    root = XML(text)
+    items = [root] if path is None else root.findall(path)
+    count = len(items)
+    if count == 0: return None
+    if count == 1: return load_root(items[0], nametable)
+    return [ load_root(item, nametable) for item in items ]
+
+# Load the attributes of the given element.
+def load_attrs(element):
+    if not hasattrs(element): return None
+    attrs = record()
+    for key, value in element.attrib.iteritems(): 
+        attrs[key] = value
+    return attrs
 
 # Parse a <dict> element and return a Python dict
 def load_dict(element, nametable = None):
@@ -63,30 +93,23 @@ def load_dict(element, nametable = None):
         value[name] = load_value(child, nametable)
     return value
 
-# Load attrs & value into single, merged dict.
-def load_content(element, nametable=None):
-    tag = element.tag
-    if isdict(tag): return load_dict(element, nametable)
-    if islist(tag): return load_list(element, nametable)
+# Loads the given elements attrs & value into single merged dict.
+def load_elem(element, nametable=None):
+    name = localname(element.tag)
     attrs = load_attrs(element)
     value = load_value(element, nametable)
-    if attrs is None: 
-        return value
-    if value is None: 
-        return attrs
+    if attrs is None: return name, value
+    if value is None: return name, attrs
     # If value is simple, merge into attrs dict using special key
     if isinstance(value, str):
         attrs["$text"] = value
-        return attrs
-    # Both attrs & value are complex, merge the two dicts
-    for key, val in attrs.items():
+        return name, attrs
+    # Both attrs & value are complex, so merge the two dicts
+    for key, val in attrs.iteritems():
         #assert not value.has_key(k) # Assume no collisions
         value[key] = val
-    return value
+    return name, value
 
-def load_element(element, nametable=None):
-    return load_content(element, nametable) 
-    
 # Parse a <list> element and return a Python list
 def load_list(element, nametable=None):
     assert islist(element.tag)
@@ -97,14 +120,15 @@ def load_list(element, nametable=None):
         value.append(load_value(child, nametable))
     return value
 
-def load_attrs(element):
-    if not hasattrs(element): return None
-    attrs = record()
-    for key, value in element.attrib.items(): 
-        attrs[key] = value
-    return attrs
+# Load the given root element.
+def load_root(element, nametable=None):
+    tag = element.tag
+    if isdict(tag): return load_dict(element, nametable)
+    if islist(tag): return load_list(element, nametable)
+    k, v = load_elem(element, nametable)
+    return Record.fromkv(k, v)
 
-# Load the content of the given element.
+# Load the children of the given element.
 def load_value(element, nametable=None):
     children = list(element)
     count = len(children)
@@ -128,8 +152,7 @@ def load_value(element, nametable=None):
 
     value = record()
     for child in children:
-        name = localname(child.tag)
-        item = load_content(child, nametable)
+        name, item = load_elem(child, nametable)
         # If we have seen this name before, promote the value to a list
         if value.has_key(name):
             current = value[name]
@@ -140,24 +163,6 @@ def load_value(element, nametable=None):
             value[name] = item
 
     return value
-
-# UNDONE: Nametable
-def load(text, path=None):
-    if text is None: return None
-    text = text.strip()
-    if len(text) == 0: return None
-    nametable = {
-        'namespaces': [],
-        'names': {}
-    }
-    root = XML(text)
-    items = [root] if path is None else root.findall(path)
-    count = len(items)
-    if count == 0: return None
-    if count == 1:
-        item = items[0]
-        return load_element(item, nametable)
-    return [ load_element(item, nametable) for item in items ]
 
 # A generic utility that enables "dot" access to dicts
 class Record(dict):
@@ -172,6 +177,12 @@ class Record(dict):
 
     def __setattr__(self, name, value):
         self[name] = value
+
+    @staticmethod
+    def fromkv(k, v):
+        result = record()
+        result[k] = v
+        return result
 
 def record(value=None): 
     if value is None: value = {}
