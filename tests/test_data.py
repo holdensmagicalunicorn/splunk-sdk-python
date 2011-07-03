@@ -76,7 +76,12 @@ class TestCase(unittest.TestCase):
         self.assertEqual(result, {'a1': 'v1'})
         # UNDONE: BUG: Should be an array
 
+        result = data.load("<e1 a1='v1'><e2 a1='v1'>v2</e2></e1>")
+        self.assertEqual(
+            result, {'a1': 'v1', 'e2': {'$text': 'v2', 'a1': 'v1'}})
+
     def test_real(self):
+        """Test some real Splunk response examples."""
         testdir = path.dirname(path.abspath(__file__))
 
         fh = open(path.join(testdir, "services.xml"), 'r')
@@ -100,6 +105,20 @@ class TestCase(unittest.TestCase):
         self.assertEqual(result.entry.content.cpu_arch, 'i386')
         self.assertEqual(result.entry.content.os_name, 'Darwin')
         self.assertEqual(result.entry.content.os_version, '10.8.0')
+
+    def test_special(self):
+        """Test the 'special' elements that we recognize."""
+        result = data.load("<dict><key name='n1'>v1</key><key name='n2'>v2</key></dict>")
+        self.assertEqual(result, {'n1': "v1", 'n2': "v2"})
+
+        result = data.load("<root><content><dict><key name='n1'>v1</key><key name='n2'>v2</key></dict></content></root>")
+        self.assertEqual(result, {'content': {'n1': "v1", 'n2': "v2"}})
+
+        result = data.load("<list><item>1</item><item>2</item><item>3</item><item>4</item></list>")
+        self.assertEqual(result, ['1', '2', '3', '4'])
+
+        result = data.load("<root><content><list><item>1</item><item>2</item><item>3</item><item>4</item></list></content></root>")
+        self.assertEqual(result, {'content': ['1', '2', '3', '4']})
 
 if __name__ == "__main__":
     unittest.main()

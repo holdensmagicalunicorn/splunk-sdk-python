@@ -17,10 +17,9 @@
 # UNDONE: Figure out what to do with examples like: <a>foo<b>bar</b></a>, seems
 #  like we should at least detect and error on less 'well-formed' sdata inputs
 
-"""Data manipulation module for converting XML to python based 
-    data structure."""
+"""A generic ATOM response loader."""
 
-from pprint import pprint # UNDONE
+# UNDONE: Warn/error on mixed content
 
 import sys
 from xml.etree.ElementTree import XML
@@ -66,10 +65,8 @@ def load_dict(element, nametable = None):
 
 def load_element(element, nametable = None):
     tag = element.tag
-    if isdict(tag): 
-        return load_dict(element, nametable)
-    if islist(tag): 
-        return load_list(element, nametable)
+    if isdict(tag): return load_dict(element, nametable)
+    if islist(tag): return load_list(element, nametable)
     attrs = load_attrs(element)
     value = load_value(element, nametable)
     if attrs is None: 
@@ -97,13 +94,14 @@ def load_list(element, nametable = None):
     return value
 
 def load_attrs(element):
-    if not hasattrs(element): 
-        return None
+    if not hasattrs(element): return None
     attrs = record()
     for key, value in element.attrib.items(): 
         attrs[key] = value
     return attrs
 
+# Load the content of the given element. Does not process the element itself 
+# or its attribtues.
 def load_value(element, nametable = None):
     children = list(element)
     count = len(children)
@@ -122,10 +120,8 @@ def load_value(element, nametable = None):
     if count == 1:
         child = children[0]
         tag = child.tag
-        if isdict(tag): 
-            return load_dict(child, nametable)
-        if islist(tag): 
-            return load_list(child, nametable)
+        if isdict(tag): return load_dict(child, nametable)
+        if islist(tag): return load_list(child, nametable)
 
     value = record()
     for child in children:
@@ -143,12 +139,10 @@ def load_value(element, nametable = None):
     return value
 
 # UNDONE: Nametable
-def load(text, path = None):
-    if text is None: 
-        return None
+def load(text, path=None):
+    if text is None: return None
     text = text.strip()
-    if len(text) == 0: 
-        return None
+    if len(text) == 0: return None
     nametable = {
         'namespaces': [],
         'names': {}
@@ -156,12 +150,10 @@ def load(text, path = None):
     root = XML(text)
     items = [root] if path is None else root.findall(path)
     count = len(items)
-    if count == 0: 
-        return None
+    if count == 0: return None
     if count == 1:
         item = items[0]
         return load_element(item, nametable)
-        # return { localname(item.tag): value }
     return [ load_element(item, nametable) for item in items ]
 
 # A generic utility that enables "dot" access to dicts
@@ -178,18 +170,7 @@ class Record(dict):
     def __setattr__(self, name, value):
         self[name] = value
 
-def record(value = None): 
-    if value is None: 
-        value = {}
+def record(value=None): 
+    if value is None: value = {}
     return Record(value)
 
-def main():
-    def isxml(text): 
-        return text.strip().startswith('<')
-    text = sys.stdin.read()
-    if isxml(text):
-        value = load(text)
-        pprint(value)
-
-if __name__ == "__main__":
-    main()
