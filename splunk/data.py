@@ -59,8 +59,10 @@ def localname(xname):
     rcurly = xname.find('}')
     return xname if rcurly == -1 else xname[rcurly+1:]
 
-def load(text, path=None):
-    """Load the given XML text into a Python structure."""
+def load(text, match=None):
+    """Load the given XML text into a Python structure, optionally loading 
+       only the matching sub-elements if a match string is given. The match
+       string consists of either a tag name or path."""
     if text is None: return None
     text = text.strip()
     if len(text) == 0: return None
@@ -69,7 +71,7 @@ def load(text, path=None):
         'names': {}
     }
     root = XML(text)
-    items = [root] if path is None else root.findall(path)
+    items = [root] if match is None else root.findall(match)
     count = len(items)
     if count == 0: return None
     if count == 1: return load_root(items[0], nametable)

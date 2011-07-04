@@ -70,6 +70,12 @@ PATH_INPUTS = "data/inputs/"
 PATH_JOBS = "search/jobs/"
 PATH_JOB = "search/jobs/%s"
 
+XNAMEF_ATOM = "{http://www.w3.org/2005/Atom}%s"
+XNAME_ENTRY = XNAMEF_ATOM % "entry"
+XNAME_CONTENT = XNAMEF_ATOM % "content"
+
+MATCH_ENTRY_CONTENT = "%s/%s/*" % (XNAME_ENTRY, XNAME_CONTENT)
+
 # Constructs a path from the given conf & stanza
 def _path_stanza(conf, stanza):
     return PATH_STANZA % (conf, quote_plus(stanza))
@@ -85,8 +91,8 @@ def connect(**kwargs):
     return Service(**kwargs).login()
 
 # Response utilities
-def load(response, path=None):
-    return data.load(response.body.read(), path)
+def load(response, match=None):
+    return data.load(response.body.read(), match)
 
 class Service(Context):
     """The Splunk service."""
@@ -130,7 +136,7 @@ class Service(Context):
         """Returns server information."""
         response = self.get("server/info")
         check_status(response, 200)
-        return _filter_content(load(response).feed.entry.content)
+        return _filter_content(load(response, MATCH_ENTRY_CONTENT))
 
     @property
     def inputs(self):
@@ -212,7 +218,7 @@ class Collection(Endpoint):
     def itemmeta(self):
         """Returns metadata for members of the collection."""
         response = self.get("/_new")
-        content = load(response).feed.entry.content
+        content = load(response, MATCH_ENTRY_CONTENT)
         return record({
             'eai:acl': content['eai:acl'],
             'eai:attributes': content['eai:attributes']
@@ -222,8 +228,7 @@ class Collection(Endpoint):
         """Returns a list of collection keys."""
         response = self.get(count=-1)
         entry = load(response).feed.get('entry', None)
-        if entry is None: 
-            return []
+        if entry is None: return []
         if not isinstance(entry, list): 
             entry = [entry] # UNDONE
         return [item.title for item in entry]
@@ -267,7 +272,7 @@ class Entity(Endpoint):
         """Read and return the current entity value, optionally returning
            only the requested fields, if specified."""
         response = self.get()
-        content = load(response).feed.entry.content
+        content = load(response, MATCH_ENTRY_CONTENT)
         return _filter_content(content, *args)
 
     def readmeta(self):
@@ -275,7 +280,6 @@ class Entity(Endpoint):
         return self.read('eai:acl', 'eai:attributes')
 
     def update(self, **kwargs):
-        """Update Entity."""
         self.post(**kwargs)
         return self
 
@@ -308,8 +312,7 @@ class Index(Entity):
         self.roll_hot_buckets()
         while True: # Wait until event count goes to zero
             sleep(1)
-            if self['totalEventCount'] == '0': 
-                break
+            if self['totalEventCount'] == '0': break
         self.update(**saved)
 
     def submit(self, event, host=None, source=None, sourcetype=None):
@@ -405,7 +408,7 @@ class Inputs(Endpoint):
     def itemmeta(self, kind):
         """Returns metadata for members of the given kind."""
         response = self.get("%s/_new" % self._kindmap[kind])
-        content = load(response).feed.entry.content
+        content = load(response, MATCH_ENTRY_CONTENT)
         return record({
             'eai:acl': content['eai:acl'],
             'eai:attributes': content['eai:attributes']
@@ -470,81 +473,64 @@ class Job(Endpoint):
         self.update(**{ key: value })
 
     def cancel(self):
-        """Cancel job."""
         self.post("control", action="cancel")
         return self
 
     def disable_preview(self):
-        """Set job disable preview."""
         self.post("control", action="disablepreview")
         return self
 
     def events(self, **kwargs):
-        """Get job events."""
         return self.get("events", **kwargs).body
 
     def enable_preview(self):
-        """Set job enable preview."""
         self.post("control", action="enablepreview")
         return self
 
     def finalize(self):
-        """Finalize job."""
         self.post("control", action="finalize")
         return self
 
     def pause(self):
-        """Pause job."""
         self.post("control", action="pause")
         return self
 
     def preview(self, **kwargs):
-        """Get job preview data."""
         return self.get("results_preview", **kwargs).body
 
     def read(self, *args):
-        """Read and return the jobs entity value."""
         response = self.get()
         content = load(response).entry.content
         return _filter_content(content, *args)
 
     def results(self, **kwargs):
-        """Get job results."""
         return self.get("results", **kwargs).body
 
     def searchlog(self, **kwargs):
-        """Get job search log."""
         return self.get("search.log", **kwargs).body
 
     def setpriority(self, value):
-        """Set job priority."""
         self.post('control', action="setpriority", priority=value)
         return self
 
     def summary(self, **kwargs):
-        """Get job summary."""
         return self.get("summary", **kwargs).body
 
     def timeline(self, **kwargs):
-        """Get job timeline."""
         return self.get("timeline", **kwargs).body
 
     def touch(self,):
-        """Update job via touch."""
         self.post("control", action="touch")
         return self
 
     def setttl(self, value):
-        """Set job ttl."""
         self.post("control", action="setttl", ttl=value)
 
     def unpause(self):
-        """Unpause job."""
         self.post("control", action="unpause")
         return self
 
     def update(self, **kwargs):
-        """Update job."""
         self.post(**kwargs)
         return self
 
