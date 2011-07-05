@@ -65,7 +65,10 @@ PATH_INDEXES = "data/indexes/"
 PATH_INPUTS = "data/inputs/"
 PATH_JOB = "search/jobs/%s"
 PATH_JOBS = "search/jobs/"
-PATH_STANZA = "admin/conf-%s/%s"    # (file, stanza)
+PATH_ROLES = "authentication/roles/"
+PATH_STANZA = "admin/conf-%s/%s" # (file, stanza)
+PATH_USER = "authentication/users/%s"
+PATH_USERS = "authentication/users/"
 
 XNAMEF_ATOM = "{http://www.w3.org/2005/Atom}%s"
 XNAME_ENTRY = XNAMEF_ATOM % "entry"
@@ -160,9 +163,28 @@ class Service(Context):
         return self.get("server/control/restart")
 
     @property
+    def roles(self):
+        return Collection(self, PATH_ROLES, "roles",
+            item=lambda service, name: 
+                Entity(service, PATH_ROLES + name, name),
+            ctor=lambda service, name, **kwargs:
+                service.post(PATH_ROLES, name=name, **kwargs),
+            dtor=lambda service, name: service.delete(PATH_ROLES + name))
+
+    @property
     def settings(self):
         """Return the server settings entity."""
         return Entity(self, "server/settings")
+
+    @property
+    def users(self):
+        # UNDONE users.create : (name, password, roles) => user
+        return Collection(self, PATH_USERS, "users",
+            item=lambda service, name: 
+                Entity(service, PATH_USER % name, name),
+            ctor=lambda service, name, **kwargs:
+                service.post(PATH_USERS, name=name, **kwargs),
+            dtor=lambda service, name: service.delete(PATH_USER % name))
 
 class Endpoint:
     """The base class for all client layer endpoints."""
@@ -211,6 +233,7 @@ class Collection(Endpoint):
     def create(self, name, **kwargs):
         if self.ctor is None: raise NotSupportedError
         self.ctor(self.service, name, **kwargs)
+        # UNDONE: check response
         return self[name]
 
     def delete(self, name):

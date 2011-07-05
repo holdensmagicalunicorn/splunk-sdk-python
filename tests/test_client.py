@@ -79,8 +79,8 @@ class ServiceTestCase(unittest.TestCase):
             "rest_apps_view", "rest_properties_get", "rest_properties_set",
             "restart_splunkd", "rtsearch", "schedule_search", "search",
             "use_file_operator" ]
-        caps = self.service.capabilities
-        for item in expected: self.assertTrue(item in caps)
+        capabilities = self.service.capabilities
+        for item in expected: self.assertTrue(item in capabilities)
 
     def test_confs(self):
         for conf in self.service.confs:
@@ -291,19 +291,24 @@ class ServiceTestCase(unittest.TestCase):
                 sleep(5)
         self.assertTrue(restarted)
 
-    #def test_roles(self):
-    #    roles = self.cn.roles
-    #    capabilities = self.cn.capabilities()
-    #    for role in roles.values():
-    #        for capability in role.capabilities:
-    #            self.assertTrue(capability in capabilities)
+    def test_roles(self):
+        roles = self.service.roles
+        capabilities = self.service.capabilities
+        for role in roles:
+            entity = role.read()
+            for capability in entity.capabilities:
+                self.assertTrue(capability in capabilities)
 
-    #def test_users(self):
-    #    users = self.cn.users
-    #    roles = self.cn.roles
-    #    for user in users.values():
-    #        for role in user.roles:
-    #            self.assertTrue(role in roles.keys())
+        self.assertTrue("sdk-tester" not in roles())
+
+        role = roles.create("sdk-tester")
+        self.assertTrue("sdk-tester" in roles())
+
+        entity = role.read()
+        self.assertTrue(entity.has_key('capabilities'))
+
+        roles.delete("sdk-tester")
+        self.assertTrue("sdk-tester" not in roles())
 
     def test_settings(self):
         settings = self.service.settings.read()
@@ -313,6 +318,32 @@ class ServiceTestCase(unittest.TestCase):
             "serverName", "sessionTimeout", "startwebserver", "trustedIP"
         ]
         for key in keys: self.assertTrue(key in settings.keys())
+
+    def test_users(self):
+        users = self.service.users
+        roles = self.service.roles
+        for user in users:
+            entity = user.read()
+            for role in entity.roles:
+                self.assertTrue(role in roles())
+
+        self.assertTrue("sdk-user" not in users())
+
+        user = users.create("sdk-user", password="changeme", roles="power")
+        self.assertTrue("sdk-user" in users())
+
+        entity = user.read()
+        self.assertTrue(entity.has_key('email'))
+        self.assertTrue(entity.has_key('password'))
+        self.assertTrue(entity.has_key('realname'))
+        self.assertTrue(entity.has_key('roles'))
+
+        self.assertTrue(user['email'] is None)
+        user.update(email="foo@bar.com")
+        self.assertTrue(user['email'] == "foo@bar.com")
+
+        users.delete("sdk-user")
+        self.assertTrue("sdk-user" not in users())
 
 def runone(testname):
     suite = unittest.TestSuite()
