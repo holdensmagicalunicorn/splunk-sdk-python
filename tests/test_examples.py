@@ -33,7 +33,7 @@ class ExamplesTestCase(unittest.TestCase):
             "python conf.py --help > __stdout__",
             "python conf.py > __stdout__",
             "python conf.py props > __stdout__",
-            "python conf.py --namespace='admin:search' props > __stdout__",
+            'python conf.py --namespace="admin:search" props > __stdout__',
         ]
         for command in commands: self.assertEquals(os.system(command), 0)
 
@@ -72,8 +72,8 @@ class ExamplesTestCase(unittest.TestCase):
     def test_search(self):
         commands = [
             "python search.py --help > __stdout__",
-            "python search.py 'search * | head 10' > __stdout__",
-            "python search.py 'search * | stats count' --output_mode='csv' > __stdout__"
+            'python search.py "search * | head 10" > __stdout__',
+            'python search.py "search * | stats count" --output_mode="csv" > __stdout__'
         ]
         for command in commands: self.assertEquals(os.system(command), 0)
 
