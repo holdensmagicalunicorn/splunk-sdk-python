@@ -47,21 +47,23 @@ class ServiceTestCase(unittest.TestCase):
         pass
 
     def test_apps(self):
-        for app in self.service.apps: app.read()
+        service = self.service
 
-        self.service.apps.delete('sdk-tests')
-        self.assertTrue('sdk-tests' not in self.service.apps.list())
+        for app in service.apps: app.read()
 
-        self.service.apps.create('sdk-tests')
-        self.assertTrue('sdk-tests' in self.service.apps.list())
+        service.apps.delete('sdk-tests')
+        self.assertTrue('sdk-tests' not in service.apps.list())
 
-        testapp = self.service.apps['sdk-tests']
+        service.apps.create('sdk-tests')
+        self.assertTrue('sdk-tests' in service.apps.list())
+
+        testapp = service.apps['sdk-tests']
         self.assertTrue(testapp['author'] != "Splunk")
         testapp.update(author="Splunk")
         self.assertTrue(testapp['author'] == "Splunk")
 
-        self.service.apps.delete('sdk-tests')
-        self.assertTrue('sdk-tests' not in self.service.apps.list())
+        service.apps.delete('sdk-tests')
+        self.assertTrue('sdk-tests' not in service.apps.list())
 
     def test_capabilities(self):
         expected = [
@@ -83,11 +85,13 @@ class ServiceTestCase(unittest.TestCase):
         for item in expected: self.assertTrue(item in capabilities)
 
     def test_confs(self):
-        for conf in self.service.confs:
+        service = self.service
+
+        for conf in service.confs:
             for stanza in conf: stanza.read()
 
-        self.assertTrue(self.service.confs.contains('props'))
-        props = self.service.confs['props']
+        self.assertTrue(service.confs.contains('props'))
+        props = service.confs['props']
 
         stanza = props.create('sdk-tests')
         self.assertTrue(props.contains('sdk-tests'))
@@ -111,11 +115,13 @@ class ServiceTestCase(unittest.TestCase):
         for key in keys: self.assertTrue(key in info.keys())
 
     def test_indexes(self):
-        for index in self.service.indexes: index.read()
+        service = self.service
 
-        if not "sdk-tests" in self.service.indexes.list():
-            self.service.indexes.create("sdk-tests")
-        self.assertTrue("sdk-tests" in self.service.indexes())
+        for index in service.indexes: index.read()
+
+        if not "sdk-tests" in service.indexes.list():
+            service.indexes.create("sdk-tests")
+        self.assertTrue("sdk-tests" in service.indexes())
 
         # Scan indexes and make sure the entities look familiar
         attrs = [
@@ -134,11 +140,11 @@ class ServiceTestCase(unittest.TestCase):
             'suppressBannerList', 'rawChunkSizeBytes', 'coldPath',
             'maxTotalDataSizeMB'
         ]
-        for index in self.service.indexes:
+        for index in service.indexes:
             entity = index.read()
             for attr in attrs: self.assertTrue(attr in entity.keys())
 
-        index = self.service.indexes['sdk-tests']
+        index = service.indexes['sdk-tests']
 
         entity = index.read()
         self.assertEqual(index['disabled'], entity.disabled)
@@ -260,6 +266,23 @@ class ServiceTestCase(unittest.TestCase):
         # results Check various formats, timeline, searchlog, etc. Check 
         # events and results for both streaming and non-streaming searches. 
         # UNDONE: Need to at least create a realtime search.
+
+    def test_loggers(self):
+        service = self.service
+
+        levels = ["INFO", "WARN", "ERROR"]
+        for logger in service.loggers:
+            self.assertTrue(logger['level'] in levels)
+
+        self.assertTrue(service.loggers.contains("AuditLogger"))
+        logger = service.loggers['AuditLogger']
+
+        saved = logger['level']
+        for level in levels:
+            logger['level'] = level
+            self.assertEqual(service.loggers['AuditLogger']['level'], level)
+        logger.update(level=saved)
+        self.assertEqual(service.loggers['AuditLogger']['level'], saved)
 
     def test_parse(self):
         response = self.service.parse("search *")

@@ -65,6 +65,7 @@ PATH_INDEXES = "data/indexes/"
 PATH_INPUTS = "data/inputs/"
 PATH_JOB = "search/jobs/%s"
 PATH_JOBS = "search/jobs/"
+PATH_LOGGER = "server/logger/"
 PATH_ROLES = "authentication/roles/"
 PATH_STANZA = "admin/conf-%s/%s" # (file, stanza)
 PATH_USER = "authentication/users/%s"
@@ -152,6 +153,13 @@ class Service(Context):
     def jobs(self):
         """Returns a collection of current search jobs."""
         return Jobs(self)
+
+    @property
+    def loggers(self):
+        """Returns a collection of logging categories."""
+        return Collection(self, PATH_LOGGER, "loggers",
+            item=lambda service, name: 
+                Entity(service, PATH_LOGGER + name, name))
 
     # kwargs: enable_lookups, reload_macros, parse_only, output_mode
     def parse(self, query, **kwargs):
