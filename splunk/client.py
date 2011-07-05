@@ -55,20 +55,16 @@ __all__ = [
     "Service"
 ]
 
-PATH_APP = "apps/local/%s"
 PATH_APPS = "apps/local/"
-PATH_CAPABILITIES = "authorization/capabilities"
+PATH_CAPABILITIES = "authorization/capabilities/"
 PATH_CONF = "admin/conf-%s/"
 PATH_CONFS = "properties/"
-PATH_INDEX = "data/indexes/%s"
 PATH_INDEXES = "data/indexes/"
 PATH_INPUTS = "data/inputs/"
-PATH_JOB = "search/jobs/%s"
 PATH_JOBS = "search/jobs/"
 PATH_LOGGER = "server/logger/"
 PATH_ROLES = "authentication/roles/"
 PATH_STANZA = "admin/conf-%s/%s" # (file, stanza)
-PATH_USER = "authentication/users/%s"
 PATH_USERS = "authentication/users/"
 
 XNAMEF_ATOM = "{http://www.w3.org/2005/Atom}%s"
@@ -105,10 +101,10 @@ class Service(Context):
         """Return a collection of applications."""
         return Collection(self, PATH_APPS, "apps",
             item=lambda service, name: 
-                Entity(service, PATH_APP % name, name),
+                Entity(service, PATH_APPS + name, name),
             ctor=lambda service, name, **kwargs:
                 service.post(PATH_APPS, name=name, **kwargs),
-            dtor=lambda service, name: service.delete(PATH_APP % name))
+            dtor=lambda service, name: service.delete(PATH_APPS + name))
 
     @property
     def confs(self):
@@ -189,10 +185,10 @@ class Service(Context):
         # UNDONE users.create : (name, password, roles) => user
         return Collection(self, PATH_USERS, "users",
             item=lambda service, name: 
-                Entity(service, PATH_USER % name, name),
+                Entity(service, PATH_USERS + name, name),
             ctor=lambda service, name, **kwargs:
                 service.post(PATH_USERS, name=name, **kwargs),
-            dtor=lambda service, name: service.delete(PATH_USER % name))
+            dtor=lambda service, name: service.delete(PATH_USERS + name))
 
 class Endpoint:
     """The base class for all client layer endpoints."""
@@ -320,7 +316,7 @@ class Entity(Endpoint):
 class Index(Entity):
     """Index class access to specific operations."""
     def __init__(self, service, name):
-        Entity.__init__(self, service, PATH_INDEX % name, name)
+        Entity.__init__(self, service, PATH_INDEXES + name, name)
         self.roll_hot_buckets = lambda: self.post("roll-hot-buckets")
 
     def attach(self, host=None, source=None, sourcetype=None):
@@ -494,7 +490,7 @@ class Inputs(Endpoint):
 class Job(Endpoint): 
     """Job class access to specific operations."""
     def __init__(self, service, sid):
-        Endpoint.__init__(self, service, PATH_JOB % sid)
+        Endpoint.__init__(self, service, PATH_JOBS + sid)
         self.sid = sid
 
     def __call__(self):
