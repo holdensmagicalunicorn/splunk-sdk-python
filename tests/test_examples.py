@@ -69,6 +69,13 @@ class ExamplesTestCase(unittest.TestCase):
         ]
         for command in commands: self.assertEquals(os.system(command), 0)
         
+    def test_loggers(self):
+        commands = [
+            "python loggers.py --help > __stdout__",
+            "python loggers.py > __stdout__",
+        ]
+        for command in commands: self.assertEquals(os.system(command), 0)
+        
     def test_search(self):
         commands = [
             "python search.py --help > __stdout__",
