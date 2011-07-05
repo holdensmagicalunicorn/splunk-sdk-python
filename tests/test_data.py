@@ -83,9 +83,9 @@ class TestCase(unittest.TestCase):
 
     def test_real(self):
         """Test some real Splunk response examples."""
-        testdir = path.dirname(path.abspath(__file__))
+        testpath = path.dirname(path.abspath(__file__))
 
-        fh = open(path.join(testdir, "services.xml"), 'r')
+        fh = open(path.join(testpath, "services.xml"), 'r')
         result = data.load(fh.read())
         self.assertTrue(result.has_key('feed'))
         self.assertTrue(result.feed.has_key('author'))
@@ -98,7 +98,7 @@ class TestCase(unittest.TestCase):
              'scheduled', 'search', 'server', 'streams', 'broker', 'clustering',
              'masterlm'])
 
-        fh = open(path.join(testdir, "services.server.info.xml"), 'r')
+        fh = open(path.join(testpath, "services.server.info.xml"), 'r')
         result = data.load(fh.read())
         self.assertTrue(result.has_key('feed'))
         self.assertTrue(result.feed.has_key('author'))

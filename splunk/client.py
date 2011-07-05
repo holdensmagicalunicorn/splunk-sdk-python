@@ -55,20 +55,17 @@ __all__ = [
     "Service"
 ]
 
-PATH_APPS = "apps/local/"
 PATH_APP = "apps/local/%s"
-
-PATH_CONFS = "properties/"
+PATH_APPS = "apps/local/"
+PATH_CAPABILITIES = "authorization/capabilities"
 PATH_CONF = "admin/conf-%s/"
-PATH_STANZA = "admin/conf-%s/%s"    # (file, stanza)
-
-PATH_INDEXES = "data/indexes/"
+PATH_CONFS = "properties/"
 PATH_INDEX = "data/indexes/%s"
-
+PATH_INDEXES = "data/indexes/"
 PATH_INPUTS = "data/inputs/"
-
-PATH_JOBS = "search/jobs/"
 PATH_JOB = "search/jobs/%s"
+PATH_JOBS = "search/jobs/"
+PATH_STANZA = "admin/conf-%s/%s"    # (file, stanza)
 
 XNAMEF_ATOM = "{http://www.w3.org/2005/Atom}%s"
 XNAME_ENTRY = XNAMEF_ATOM % "entry"
@@ -121,6 +118,12 @@ class Service(Context):
                         service.post(PATH_CONF % conf, name=stanza, **kwargs),
                     dtor=lambda service, stanza:
                         service.delete(_path_stanza(conf, stanza))))
+
+    @property
+    def capabilities(self):
+        """Returns a list of all Splunk capabilities."""
+        response = self.get(PATH_CAPABILITIES)
+        return load(response, MATCH_ENTRY_CONTENT).capabilities
 
     @property
     def indexes(self):
