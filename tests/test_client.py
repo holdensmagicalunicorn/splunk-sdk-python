@@ -51,7 +51,9 @@ class ServiceTestCase(unittest.TestCase):
 
         for app in service.apps: app.read()
 
-        service.apps.delete('sdk-tests')
+        if 'sdk-tests' in service.apps.list():
+            service.apps.delete('sdk-tests')
+            
         self.assertTrue('sdk-tests' not in service.apps.list())
 
         service.apps.create('sdk-tests')
