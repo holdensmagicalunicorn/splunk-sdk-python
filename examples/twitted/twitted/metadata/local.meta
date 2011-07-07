@@ -115,3 +115,21 @@ version = 4.3
 owner = admin
 version = 4.3
 
+[indexes/twitter]
+owner = itay
+version = 4.2.2
+
+[viewstates/flashtimeline%3Agpsrhije]
+access = read : [ * ]
+owner = nobody
+version = 4.2.2
+
+[savedsearches/Top%20Tags]
+owner = itay
+version = 4.2.2
+
+[]
+access = read : [ * ], write : [ admin, power ]
+export = none
+version = 4.2.2
+
