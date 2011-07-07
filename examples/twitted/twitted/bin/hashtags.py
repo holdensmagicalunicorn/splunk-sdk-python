@@ -14,7 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import csv, StringIO, sys, urllib
+import csv, sys, urllib, re
 
 # Tees output to a logfile for debugging
 class Logger:
@@ -139,34 +139,29 @@ def main(argv):
     stdin_wrapper = Reader(sys.stdin)
     buf, settings = read_input(stdin_wrapper, has_header = True)
     events = csv.DictReader(buf)
-    
+        
     results = []
 
     for event in events:
-        # For each event, we read in the raw event data
-        raw = StringIO.StringIO(event["_raw"])
-        top_output = csv.DictReader(raw, delimiter = ' ', skipinitialspace = True)
-    
-        # And then, for each row of the output of the 'top' command
-        # (where each row represents a single process), we look at the
-        # owning user of that process.
-        usercounts = {}
-        for row in top_output:
-            user = row["USER"]
-            user = user if not user.startswith('_') else user[1:]
-    
-            usercount = 0
-            if usercounts.has_key(user):
-                usercount = usercounts[user]
-    
-            usercount += 1
-            usercounts[user] = usercount
-    
-        results.append(usercounts)
-    
+        # For each event, 
+        text = event["text"]
+        hashtags = set()
+        
+        hash_regex = re.compile(r'\s+(#[0-9a-zA-Z+_]+)', re.IGNORECASE)
+        for hashtag_match in hash_regex.finditer(text):
+            # Get the hashtag
+            hashtag = hashtag_match.group(0).strip().lower()
+
+            # Append the hashtag to the list
+            hashtags.add(hashtag)
+
+        # Now that we have the hashtags, we can add them to our event
+        event["hashtags"] = list(hashtags)
+
+        results.append(event)
+
     # And output it to the next stage of the pipeline
     output_results(results)
-
 
 if __name__ == "__main__":
     try: 

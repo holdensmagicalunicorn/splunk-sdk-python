@@ -14,7 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import csv, StringIO, sys, urllib
+import csv, sys, urllib, re
 
 # Tees output to a logfile for debugging
 class Logger:
@@ -140,30 +140,32 @@ def main(argv):
     buf, settings = read_input(stdin_wrapper, has_header = True)
     events = csv.DictReader(buf)
     
-    results = []
-
+    hashtags = dict()
+    
     for event in events:
-        # For each event, we read in the raw event data
-        raw = StringIO.StringIO(event["_raw"])
-        top_output = csv.DictReader(raw, delimiter = ' ', skipinitialspace = True)
+        # For each event, 
+        text = event["text"]
+        
+        hash_regex = re.compile(r'\s+(#[0-9a-zA-Z+_]+)', re.IGNORECASE)
+        for hashtag_match in hash_regex.finditer(text):
+            hashtag = hashtag_match.group(0).strip().lower()
     
-        # And then, for each row of the output of the 'top' command
-        # (where each row represents a single process), we look at the
-        # owning user of that process.
-        usercounts = {}
-        for row in top_output:
-            user = row["USER"]
-            user = user if not user.startswith('_') else user[1:]
-    
-            usercount = 0
-            if usercounts.has_key(user):
-                usercount = usercounts[user]
-    
-            usercount += 1
-            usercounts[user] = usercount
-    
-        results.append(usercounts)
-    
+            hashtag_count = 0
+            if hashtags.has_key(hashtag):
+                hashtag_count = hashtags[hashtag]
+            
+            hashtags[hashtag] = hashtag_count + 1
+            
+    num_hashtags = sum(hashtags.values())
+
+    results = []
+    for k, v in hashtags.iteritems():
+        results.append({
+            "hashtag": k, 
+            "count": v, 
+            "percentage": (float(v) / float(num_hashtags))
+        })
+
     # And output it to the next stage of the pipeline
     output_results(results)
 

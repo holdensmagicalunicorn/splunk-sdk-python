@@ -31,6 +31,7 @@ from utils import parse
 TWITTER_STREAM_HOST = "stream.twitter.com"
 TWITTER_STREAM_PATH = "/1/statuses/sample.json"
 
+# UNDONE: must setup a splunk TCP input on the UI (is there an API for this?)
 SPLUNK_HOST = "localhost"
 SPLUNK_PORT = 9001
 
