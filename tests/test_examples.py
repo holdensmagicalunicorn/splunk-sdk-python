@@ -103,6 +103,7 @@ class ExamplesTestCase(unittest.TestCase):
         self.assertEquals(result, 0)
 
     def test_upload(self):
+        # wkcfix -- note: test must run on machine where splunkd runs
         commands = [
             "python upload.py --help > __stdout__",
             "python upload.py --index=sdk-tests ./upload.py > __stdout__"

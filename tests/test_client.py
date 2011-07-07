@@ -170,6 +170,7 @@ class ServiceTestCase(unittest.TestCase):
         wait_event_count(index, '2', 30)
         self.assertEqual(index['totalEventCount'], '2')
 
+        # wkcfix -- note: test must run on machine where splunkd runs
         testpath = path.dirname(path.abspath(__file__))
         index.upload(path.join(testpath, "testfile.txt"))
         wait_event_count(index, '3', 30)
@@ -193,7 +194,7 @@ class ServiceTestCase(unittest.TestCase):
         for input in inputs: input.read()
 
         # Scan inputs and look for some common attributes
-        attrs = [ 'disabled', 'host', 'index' ]
+        attrs = [ 'disabled', 'index' ]
         for input in inputs:
             entity = input.read()
             for attr in attrs: self.assertTrue(attr in entity.keys())
@@ -272,7 +273,7 @@ class ServiceTestCase(unittest.TestCase):
     def test_loggers(self):
         service = self.service
 
-        levels = ["INFO", "WARN", "ERROR"]
+        levels = ["INFO", "WARN", "ERROR", "DEBUG"]
         for logger in service.loggers:
             self.assertTrue(logger['level'] in levels)
 
