@@ -21,8 +21,12 @@ This project is under active development and its contents will change at will.
 
 ## Getting Started
 
-In order to run the tools and samples from their respective SDK subdirectories, 
-simply place the SDK directory on your PYTHONPATH.
+In order to run the Splunk tools, command line utilities and samples from their respective subdirectories, 
+simply place the root of the Splunk SDK directory on your PYTHONPATH.
+
+On a MAC:  Add the following to your ~/.bash_profile
+
+export PYTHONPATH=path to Splunk SDK 
 
 ### Get a copy of the SDK
 
