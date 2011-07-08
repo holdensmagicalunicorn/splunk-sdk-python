@@ -18,14 +18,23 @@ import csv, sys, urllib, re
 
 # Tees output to a logfile for debugging
 class Logger:
-    def __init__(self, filename):
+    def __init__(self, filename, buf = None):
         self.log = open(filename, 'w')
+        self.buf = buf
 
     def flush(self):
         self.log.flush()
 
+        if self.buf is not None:
+            self.buf.flush()
+
     def write(self, message):
         self.log.write(message)
+        self.log.flush()
+        
+        if self.buf is not None:
+            self.buf.write(message)
+            self.buf.flush()
 
 # Tees input as it is being read, also logging it to a file
 class Reader:
@@ -56,7 +65,7 @@ class Reader:
         # Return to the caller
         return line
 
-def output_results(results, mvdelim = '\n'):
+def output_results(results, mvdelim = '\n', output = sys.stdout):
     """Given a list of dictionaries, each representing
     a single result, and an optional list of fields,
     output those results to stdout for consumption by the
@@ -74,9 +83,9 @@ def output_results(results, mvdelim = '\n'):
 
     # convert the fields into a list and create a CSV writer
     # to output to stdout
-    fields = list(fields)
+    fields = sorted(list(fields))
 
-    writer = csv.DictWriter(sys.stdout, fields)
+    writer = csv.DictWriter(output, fields)
 
     # Write out the fields, and then the actual results
     writer.writerow(dict(zip(fields, fields)))
@@ -156,7 +165,9 @@ def main(argv):
             hashtags.add(hashtag)
 
         # Now that we have the hashtags, we can add them to our event
-        event["hashtags"] = list(hashtags)
+        hashtags = list(hashtags)
+        hashtags.sort()
+        event["hashtags"] = hashtags
 
         results.append(event)
 

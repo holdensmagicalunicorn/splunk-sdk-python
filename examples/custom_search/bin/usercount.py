@@ -18,14 +18,23 @@ import csv, StringIO, sys, urllib
 
 # Tees output to a logfile for debugging
 class Logger:
-    def __init__(self, filename):
+    def __init__(self, filename, buf = None):
         self.log = open(filename, 'w')
+        self.buf = buf
 
     def flush(self):
         self.log.flush()
 
+        if self.buf is not None:
+            self.buf.flush()
+
     def write(self, message):
         self.log.write(message)
+        self.log.flush()
+        
+        if self.buf is not None:
+            self.buf.write(message)
+            self.buf.flush()
 
 # Tees input as it is being read, also logging it to a file
 class Reader:
@@ -56,7 +65,7 @@ class Reader:
         # Return to the caller
         return line
 
-def output_results(results, mvdelim = '\n'):
+def output_results(results, mvdelim = '\n', output = sys.stdout):
     """Given a list of dictionaries, each representing
     a single result, and an optional list of fields,
     output those results to stdout for consumption by the
@@ -74,9 +83,9 @@ def output_results(results, mvdelim = '\n'):
 
     # convert the fields into a list and create a CSV writer
     # to output to stdout
-    fields = list(fields)
+    fields = sorted(list(fields))
 
-    writer = csv.DictWriter(sys.stdout, fields)
+    writer = csv.DictWriter(output, fields)
 
     # Write out the fields, and then the actual results
     writer.writerow(dict(zip(fields, fields)))
@@ -87,7 +96,7 @@ def read_input(buf, has_header = True):
     is supplied. An optional header may be present as well"""
 
     # Use stdin if there is no supplied buffer
-    if buf == None:
+    if buf is None:
         buf = sys.stdin
 
     # Attempt to read a header if necessary
