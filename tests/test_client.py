@@ -294,6 +294,25 @@ class ServiceTestCase(unittest.TestCase):
         response = self.service.parse("xyzzy")
         self.assertEqual(response.status, 400)
 
+    def test_messages(self):
+        messages = self.service.messages
+        if messages.contains('sdk-test-message1'):
+            messages.delete('sdk-test-message1')
+        if messages.contains('sdk-test-message2'):
+            messages.delete('sdk-test-message2')
+        self.assertFalse(messages.contains('sdk-test-message1'))
+        self.assertFalse(messages.contains('sdk-test-message2'))
+        messages.create('sdk-test-message1', value="Hello!")
+        self.assertTrue(messages.contains('sdk-test-message1'))
+        self.assertEqual(messages['sdk-test-message1'].value, "Hello!")
+        messages.create('sdk-test-message2', value="World!")
+        self.assertTrue(messages.contains('sdk-test-message2'))
+        self.assertEqual(messages['sdk-test-message2'].value, "World!")
+        messages.delete('sdk-test-message1')
+        messages.delete('sdk-test-message2')
+        self.assertFalse(messages.contains('sdk-test-message1'))
+        self.assertFalse(messages.contains('sdk-test-message2'))
+
     def test_restart(self):
         response = self.service.restart()
         self.assertEqual(response.status, 200)
@@ -376,7 +395,8 @@ def runone(testname):
 def main(argv):
     global opts
     opts = parse(argv, {}, ".splunkrc")
-    unittest.main()
+    runone('test_messages')
+    #unittest.main()
 
 if __name__ == "__main__":
     main(sys.argv[1:])

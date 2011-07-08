@@ -63,6 +63,7 @@ PATH_INDEXES = "data/indexes/"
 PATH_INPUTS = "data/inputs/"
 PATH_JOBS = "search/jobs/"
 PATH_LOGGER = "server/logger/"
+PATH_MESSAGES = "messages/"
 PATH_ROLES = "authentication/roles/"
 PATH_STANZA = "admin/conf-%s/%s" # (file, stanza)
 PATH_USERS = "authentication/users/"
@@ -156,6 +157,16 @@ class Service(Context):
         return Collection(self, PATH_LOGGER, "loggers",
             item=lambda service, name: 
                 Entity(service, PATH_LOGGER + name, name))
+
+    @property
+    def messages(self):
+        """Returns a collection of service messages."""
+        return Collection(self, PATH_MESSAGES, "messages",
+            item=lambda service, name: Message(service, name),
+            ctor=lambda service, name, **kwargs:
+                service.post(PATH_MESSAGES, name=name, **kwargs), # value
+            dtor=lambda service, name:
+                service.delete(PATH_MESSAGES + name))
 
     # kwargs: enable_lookups, reload_macros, parse_only, output_mode
     def parse(self, query, **kwargs):
@@ -581,6 +592,16 @@ class Jobs(Collection):
         if not isinstance(entry, list): 
             entry = [entry] # UNDONE
         return [item.content.sid for item in entry]
+
+class Message(Entity):
+    def __init__(self, service, name):
+        Entity.__init__(self, service, PATH_MESSAGES + name, name)
+
+    @property
+    def value(self):
+        # The message value is contained in a entity property whose key is
+        # the name of the message.
+        return self[self.name]
 
 class SplunkError(Exception): 
     pass
