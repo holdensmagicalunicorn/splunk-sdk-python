@@ -13,16 +13,20 @@
 # under the License.
 
 import os
-import unittest
+import unittest2
 
 # Rudimentary sanity check for each of the examples
-class ExamplesTestCase(unittest.TestCase):
+class ExamplesTestCase(unittest2.TestCase):
     def startUp(self):
         # Ignore result, it might already exist
         os.system("python index.py create sdk-tests > __stdout__")
 
     def tearDown(self):
-        os.remove("__stdout__")
+        # Ignore exceptions when trying to remove this file
+        try:
+            os.remove("__stdout__")
+        except:
+            pass
 
     def test_binding1(self):
         result = os.system("python binding1.py > __stdout__")
@@ -109,10 +113,69 @@ class ExamplesTestCase(unittest.TestCase):
             "python upload.py --index=sdk-tests ./upload.py > __stdout__"
         ]
         for command in commands: self.assertEquals(os.system(command), 0)
+
+    # The following tests are for the custom_search examples. The way
+    # the tests work mirrors how Splunk would invoke them: they pipe in
+    # a known good input file into the custom search python file, and then
+    # compare the resulting output file to a known good one.
+    def test_custom_search(self):
+        def test_custom_search_command(command_path, known_input_path, known_output_path):
+            import tempfile
+            CUSTOM_SEARCH_OUTPUT = "../tests/temp_custom_search.out";
+
+            # Create and open the temp output file fo writing
+            temp_output_file = open(CUSTOM_SEARCH_OUTPUT, 'w')
+
+            # Execute the command
+            command = "python %s < %s > %s" % (command_path, known_input_path, temp_output_file.name)
+            os.system(command)
+
+            # Flush the temp output file and close it
+            temp_output_file.flush()
+            temp_output_file.close()
+
+            # Open the temp output file for reading
+            temp_output_file = open(CUSTOM_SEARCH_OUTPUT, 'r')
+
+            # Read in the contents of the known output and temp output
+            known_output_file = open(known_output_path, 'r')
+            known_output_contents = known_output_file.read()
+            temp_output_contents = temp_output_file.read()
+
+            # Ensure they are the same
+            self.assertMultiLineEqual(known_output_contents, temp_output_contents)
+
+            # Close the temp output file, and delete it
+            temp_output_file.close()
+            os.remove(CUSTOM_SEARCH_OUTPUT)
+
+        custom_searches = [
+            { 
+                "path": "custom_search/bin/usercount.py",
+                "known_input_path": "../tests/custom_search/usercount.in",
+                "known_output_path": "../tests/custom_search/usercount.out"
+            },
+            { 
+                "path": "twitted/twitted/bin/hashtags.py",
+                "known_input_path": "../tests/custom_search/hashtags.in",
+                "known_output_path": "../tests/custom_search/hashtags.out"
+            },
+            { 
+                "path": "twitted/twitted/bin/tophashtags.py",
+                "known_input_path": "../tests/custom_search/tophashtags.in",
+                "known_output_path": "../tests/custom_search/tophashtags.out"
+            }
+        ]
+
+        for custom_search in custom_searches:
+            path = custom_search["path"]
+            input = custom_search["known_input_path"]
+            output = custom_search["known_output_path"]
+            test_custom_search_command(path, input, output)
  
 def main():
     os.chdir("../examples")
-    unittest.main()
+    unittest2.main()
 
 if __name__ == "__main__":
     main()
