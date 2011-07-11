@@ -23,6 +23,7 @@ import unittest
 import uuid
 from xml.etree import ElementTree
 from xml.etree.ElementTree import XML
+from _ssl import SSLError
 
 from splunk.binding import *
 import splunk.data as data
@@ -67,6 +68,40 @@ class PackageTestCase(unittest.TestCase):
 
         import splunk.binding
         # ...
+
+class CaCertNegativeTest(unittest.TestCase):
+    def setUp(self):
+        global opts
+        opts.kwargs['ca_file'] = 'cacert.bad.pem'
+        try:
+            self.context = connect(**opts.kwargs)
+            response = self.context.get("/services")
+        except SSLError:
+            # expect an SSL exception
+            return
+        # should not get here
+        self.assertTrue(False)
+
+    def tearDown(self):
+        pass
+
+    def test(self):
+        pass
+
+class CaCertPositiveTest(unittest.TestCase):
+    def setUp(self):
+        global opts
+        opts.kwargs['ca_file'] = 'cacert.pem'
+        self.context = connect(**opts.kwargs)
+        response = self.context.get("/services")
+        self.assertEqual(response.status, 200)
+
+    def tearDown(self):
+        pass
+
+    def test(self):
+        pass
+
 
 # Verify that the protocol looks like what we expect
 ATOM = "http://www.w3.org/2005/Atom"
