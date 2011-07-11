@@ -12,11 +12,21 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import os
-import unittest2
+import os, difflib
+import unittest
+
+def assertMultiLineEqual(test, first, second, msg=None):
+    """Assert that two multi-line strings are equal."""
+    test.assertTrue(isinstance(first, basestring), 
+        'First argument is not a string')
+    test.assertTrue(isinstance(second, basestring), 
+        'Second argument is not a string')
+
+    if first != second:
+        test.fail("Multiline strings are not equal: %s" % msg)
 
 # Rudimentary sanity check for each of the examples
-class ExamplesTestCase(unittest2.TestCase):
+class ExamplesTestCase(unittest.TestCase):
     def startUp(self):
         # Ignore result, it might already exist
         os.system("python index.py create sdk-tests > __stdout__")
@@ -37,7 +47,7 @@ class ExamplesTestCase(unittest2.TestCase):
             "python conf.py --help > __stdout__",
             "python conf.py > __stdout__",
             "python conf.py props > __stdout__",
-            "python conf.py --namespace='admin:search' props > __stdout__",
+            'python conf.py --namespace="admin:search" props > __stdout__',
         ]
         for command in commands: self.assertEquals(os.system(command), 0)
 
@@ -73,11 +83,18 @@ class ExamplesTestCase(unittest2.TestCase):
         ]
         for command in commands: self.assertEquals(os.system(command), 0)
         
+    def test_loggers(self):
+        commands = [
+            "python loggers.py --help > __stdout__",
+            "python loggers.py > __stdout__",
+        ]
+        for command in commands: self.assertEquals(os.system(command), 0)
+        
     def test_search(self):
         commands = [
             "python search.py --help > __stdout__",
-            "python search.py 'search * | head 10' > __stdout__",
-            "python search.py 'search * | stats count' --output_mode='csv' > __stdout__"
+            'python search.py "search * | head 10" > __stdout__',
+            'python search.py "search * | stats count" --output_mode="csv" > __stdout__'
         ]
         for command in commands: self.assertEquals(os.system(command), 0)
 
@@ -100,6 +117,7 @@ class ExamplesTestCase(unittest2.TestCase):
         self.assertEquals(result, 0)
 
     def test_upload(self):
+        # wkcfix -- note: test must run on machine where splunkd runs
         commands = [
             "python upload.py --help > __stdout__",
             "python upload.py --index=sdk-tests ./upload.py > __stdout__"
@@ -135,7 +153,8 @@ class ExamplesTestCase(unittest2.TestCase):
             temp_output_contents = temp_output_file.read()
 
             # Ensure they are the same
-            self.assertMultiLineEqual(known_output_contents, temp_output_contents)
+            msg = "%s != %s" % (temp_output_file.name, known_output_file.name)
+            assertMultiLineEqual(self, known_output_contents, temp_output_contents, msg)
 
             # Close the temp output file, and delete it
             temp_output_file.close()
@@ -167,7 +186,7 @@ class ExamplesTestCase(unittest2.TestCase):
  
 def main():
     os.chdir("../examples")
-    unittest2.main()
+    unittest.main()
 
 if __name__ == "__main__":
     main()

@@ -29,7 +29,10 @@
 """An interactive command shell for Splunk.""" 
 
 from code import compile_command, InteractiveInterpreter
-import readline # Activates readline editing
+try:
+    import readline # Activates readline editing, ignore for windows
+except ImportError:
+    pass
 import sys
 
 import splunk
