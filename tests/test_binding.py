@@ -23,7 +23,9 @@ import unittest
 import uuid
 from xml.etree import ElementTree
 from xml.etree.ElementTree import XML
+from _ssl import SSLError
 
+import splunk
 from splunk.binding import *
 import splunk.data as data
 
@@ -59,6 +61,60 @@ def uname():
     """Creates a unique name."""
     return str(uuid.uuid1())
 
+class DummyHttp(splunk.binding.HttpBase):
+
+    def request(self, url, message, **kwargs):
+        return "%s:%s:%s" % (
+            message["method"] if message.has_key('method') else "GET",
+            url,
+            message["body"] if message.has_key('body') else None)
+
+class PluggableHttpTestCase(unittest.TestCase):
+    def setUp(self):
+        http = DummyHttp()
+        self.context = splunk.binding.Context(http = http)
+        self.dummy_url = "/DUMMY_URL"
+
+    def test_get(self):
+        expected_response = "%s:%s:%s" % (
+            "GET", 
+            self.context.url(self.dummy_url), 
+            None)
+
+        self.assertEqual(
+            self.context.get(self.dummy_url), 
+            expected_response)
+
+    def test_post(self):
+        expected_response = "%s:%s:%s" % (
+            "POST", 
+            self.context.url(self.dummy_url), 
+            "foo=1")
+            
+        self.assertEqual(
+            self.context.post(self.dummy_url, foo = 1), 
+            expected_response)
+
+    def test_delete(self):
+        expected_response = "%s:%s:%s" % (
+            "DELETE", 
+            self.context.url(self.dummy_url), 
+            None)
+            
+        self.assertEqual(
+            self.context.delete(self.dummy_url), 
+            expected_response)
+
+    def test_request(self):
+        expected_response = "%s:%s:%s" % (
+            "GET", 
+            self.context.url(self.dummy_url), 
+            "")
+            
+        self.assertEqual(
+            self.context.request(self.dummy_url, {}), 
+            expected_response)
+
 # UNDONE: Finish testing package namespaces
 class PackageTestCase(unittest.TestCase):
     def test_names(self):
@@ -67,6 +123,40 @@ class PackageTestCase(unittest.TestCase):
 
         import splunk.binding
         # ...
+
+class CaCertNegativeTest(unittest.TestCase):
+    def setUp(self):
+        global opts
+        opts.kwargs['ca_file'] = 'cacert.bad.pem'
+        try:
+            self.context = connect(**opts.kwargs)
+            response = self.context.get("/services")
+        except SSLError:
+            # expect an SSL exception
+            return
+        # should not get here
+        self.assertTrue(False)
+
+    def tearDown(self):
+        pass
+
+    def test(self):
+        pass
+
+class CaCertPositiveTest(unittest.TestCase):
+    def setUp(self):
+        global opts
+        opts.kwargs['ca_file'] = 'cacert.pem'
+        self.context = connect(**opts.kwargs)
+        response = self.context.get("/services")
+        self.assertEqual(response.status, 200)
+
+    def tearDown(self):
+        pass
+
+    def test(self):
+        pass
+
 
 # Verify that the protocol looks like what we expect
 ATOM = "http://www.w3.org/2005/Atom"
