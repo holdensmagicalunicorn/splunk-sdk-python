@@ -81,7 +81,7 @@ def _path_stanza(conf, stanza):
 def check_status(response, *args):
     """Checks that the given HTTP response is one of the expected values."""
     if response.status not in args:
-        raise HTTPError(response.status, response.reason)
+        raise HTTPError(response)
 
 # kwargs: scheme, host, port, username, password, namespace
 def connect(**kwargs):
