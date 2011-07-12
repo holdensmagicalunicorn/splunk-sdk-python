@@ -393,7 +393,10 @@ class UsersTestCase(BindingTestCase):
 def main(argv):
     global opts
     opts = parse(argv, {}, ".splunkrc")
-    unittest.main()
+    # override argv with just the filename, if we don't, unittest tries
+    # to parse any splunk SDK CLI argument
+    unittest.main(argv=["test_binding.py"])
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])
