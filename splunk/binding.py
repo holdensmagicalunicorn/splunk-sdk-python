@@ -29,6 +29,7 @@ import ssl
 from xml.etree.ElementTree import XML
 
 from splunk.data import record
+import splunk.data as data
 
 __all__ = [
     "connect",
@@ -120,7 +121,7 @@ class Context:
             username=self.username, 
             password=self.password)
         if response.status >= 400:
-            raise HTTPError(response.status, response.reason)
+            raise HTTPError(response)
         # assert response.status == 200
         body = response.body.read()
         session = XML(body).findtext("./sessionKey")
@@ -375,10 +376,33 @@ class ResponseReader:
         """Response reader."""
         return self._response.read(size)
 
+def extract_error_message(response):
+        error = data.load(response.body.read())
+        error_msg = ""
+        if error.has_key("response"):
+            if error["response"].has_key("messages"):
+                messages = error["response"]["messages"]
+                if messages.has_key("msg"):
+                    msg = messages["msg"]
+                    msg_type = msg["type"]
+                    msg_text = msg["$text"]
+                    error_msg = "-- %s: %s" % (msg_type, msg_text)
+
+        return (error, error_msg)
+
 class HTTPError(Exception):
     """HTTP Exception generator."""
-    def __init__(self, status, reason):
-        Exception.__init__(self, "HTTP %d %s" % (status, reason)) 
+    def __init__(self, response):
+        # Extract the status, reason and error message
+        # from the response
+        status = response.status
+        reason = response.reason
+        error, error_msg = extract_error_message(response)
+
+        message = "HTTP %d %s %s" % (status, reason, error_msg)
+
+        Exception.__init__(self, message) 
         self.reason = reason
         self.status = status
+        self.error = error
 
