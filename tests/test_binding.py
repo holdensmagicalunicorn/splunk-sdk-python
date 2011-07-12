@@ -210,20 +210,41 @@ class BindingTestCase(unittest.TestCase): # Base class
 
     def create(self, path, **kwargs):
         status = kwargs.get('status', 201)
-        response = self.context.post(path, **kwargs)
-        self.assertEqual(response.status, status)
+
+        response = None
+        try:
+            response = self.context.post(path, **kwargs)
+        except HTTPError as e:
+            self.assertEqual(e.status, status)
+        except Exception as e:
+            self.fail(e)
+
         return response
 
     def delete(self, path, **kwargs):
         status = kwargs.get('status', 200)
-        response = self.context.delete(path, **kwargs)
-        self.assertEqual(response.status, status)
+
+        response = None
+        try:
+            response = self.context.delete(path, **kwargs)
+        except HTTPError as e:
+            self.assertEqual(e.status, status)
+        except Exception as e:
+            self.fail(e)
+
         return response
 
     def update(self, path, **kwargs):
         status = kwargs.get('status', 200)
-        response = self.context.post(path, **kwargs)
-        self.assertEqual(response.status, status)
+
+        response = None
+        try:
+            response = self.context.post(path, **kwargs)
+        except HTTPError as e:
+            self.assertEqual(e.status, status)
+        except Exception as e:
+            self.fail(e)
+
         return response
 
     def test(self):
@@ -235,8 +256,12 @@ class BindingTestCase(unittest.TestCase): # Base class
         self.assertEqual(response.status, 200)
 
         self.context.logout()
-        response = self.context.get("/services")
-        self.assertEqual(response.status, 401)
+        try:
+            response = self.context.get("/services")
+        except HTTPError as e:
+            self.assertEqual(e.status, 401)
+        except Exception as e:
+            self.fail(e)
 
         self.context.login()
         response = self.context.get("/services")
@@ -304,13 +329,21 @@ class UsersTestCase(BindingTestCase):
             self.assertEquals(response.status, 200)
 
             # Test user does not have privs to create another user
-            response = usercx.post(
-                PATH_USERS, name="flimzo", password="dunno", roles="user")
-            self.assertEquals(response.status, 404) # UNDONE: Why is this a 404?
+            try:
+                response = usercx.post(
+                    PATH_USERS, name="flimzo", password="dunno", roles="user")
+            except HTTPError as e:
+                self.assertEquals(e.status, 404) # UNDONE: Why is this a 404?
+            except Exception as e:
+                self.fail(e) 
 
             # User cannot delete themselvse ..
-            response = usercx.delete(userpath)
-            self.assertEquals(response.status, 404) # UNDONE: Why is this a 404?
+            try:
+                response = usercx.delete(userpath)
+            except HTTPError as e:
+                self.assertEquals(e.status, 404) # UNDONE: Why is this a 404?
+            except Exception as e:
+                self.fail(e) 
     
         finally:
             self.delete(userpath)

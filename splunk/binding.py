@@ -120,8 +120,7 @@ class Context:
             self.url("/services/auth/login"),
             username=self.username, 
             password=self.password)
-        if response.status >= 400:
-            raise HTTPError(response)
+
         # assert response.status == 200
         body = response.body.read()
         session = XML(body).findtext("./sessionKey")
@@ -310,12 +309,19 @@ class HttpBase(object):
         return
 
     def _build_response(self, status, reason, headers, body):
-        return record({
+        response = record({
             "status": status, 
             "reason": reason,
             "headers": headers,
             "body": ResponseReader(body),
         })
+
+        # Before we return the response, we first make sure 
+        # that it is valid
+        if (400 <= response.status):
+            raise HTTPError(response) 
+
+        return response
 
 # The actual implementation of an HTTP class using
 # httplib. This class supports proxies, certificate files,
@@ -404,5 +410,6 @@ class HTTPError(Exception):
         Exception.__init__(self, message) 
         self.reason = reason
         self.status = status
+        self.response = response
         self.error = error
 
