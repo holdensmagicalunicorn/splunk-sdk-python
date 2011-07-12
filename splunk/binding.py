@@ -324,7 +324,7 @@ class Http(HttpBase):
     def request(self, url, message, **kwargs):
         # Add ssl/timeout/proxy information
         kwargs = self._add_info(**kwargs)
-        timeout = kwargs['timeout'] if kwargs.has_key('timeout') else None
+        timeout = kwargs.get('timeout', None)
 
         scheme, host, port, path = _spliturl(url)
         body = message.get("body", "")
