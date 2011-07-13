@@ -308,7 +308,8 @@ class HttpBase(object):
         raise Exception("'request' must be overridden")
         return
 
-    def _build_response(self, status, reason, headers, body):
+    @staticmethod
+    def build_response(status, reason, headers, body):
         response = record({
             "status": status, 
             "reason": reason,
@@ -358,7 +359,7 @@ class Http(HttpBase):
         finally:
             connection.close()
 
-        response = self._build_response(
+        response = HttpBase.build_response(
             response.status, 
             response.reason,
             response.getheaders(),
