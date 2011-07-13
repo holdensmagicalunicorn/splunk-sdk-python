@@ -120,8 +120,7 @@ class Context:
             self.url("/services/auth/login"),
             username=self.username, 
             password=self.password)
-        if response.status >= 400:
-            raise HTTPError(response)
+
         # assert response.status == 200
         body = response.body.read()
         session = XML(body).findtext("./sessionKey")
@@ -309,13 +308,21 @@ class HttpBase(object):
         raise Exception("'request' must be overridden")
         return
 
-    def _build_response(self, status, reason, headers, body):
-        return record({
+    @staticmethod
+    def build_response(status, reason, headers, body):
+        response = record({
             "status": status, 
             "reason": reason,
             "headers": headers,
             "body": ResponseReader(body),
         })
+
+        # Before we return the response, we first make sure 
+        # that it is valid
+        if (400 <= response.status):
+            raise HTTPError(response) 
+
+        return response
 
 # The actual implementation of an HTTP class using
 # httplib. This class supports proxies, certificate files,
@@ -324,7 +331,7 @@ class Http(HttpBase):
     def request(self, url, message, **kwargs):
         # Add ssl/timeout/proxy information
         kwargs = self._add_info(**kwargs)
-        timeout = kwargs['timeout'] if kwargs.has_key('timeout') else None
+        timeout = kwargs.get('timeout', None)
 
         scheme, host, port, path = _spliturl(url)
         body = message.get("body", "")
@@ -352,7 +359,7 @@ class Http(HttpBase):
         finally:
             connection.close()
 
-        response = self._build_response(
+        response = HttpBase.build_response(
             response.status, 
             response.reason,
             response.getheaders(),
@@ -404,5 +411,6 @@ class HTTPError(Exception):
         Exception.__init__(self, message) 
         self.reason = reason
         self.status = status
+        self.response = response
         self.error = error
 

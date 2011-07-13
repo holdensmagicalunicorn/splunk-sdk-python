@@ -78,11 +78,6 @@ MATCH_ENTRY_CONTENT = "%s/%s/*" % (XNAME_ENTRY, XNAME_CONTENT)
 def _path_stanza(conf, stanza):
     return PATH_STANZA % (conf, quote_plus(stanza))
 
-def check_status(response, *args):
-    """Checks that the given HTTP response is one of the expected values."""
-    if response.status not in args:
-        raise HTTPError(response)
-
 # kwargs: scheme, host, port, username, password, namespace
 def connect(**kwargs):
     """Establishes an authenticated connection to the specified service."""
@@ -139,7 +134,6 @@ class Service(Context):
     def info(self):
         """Returns server information."""
         response = self.get("server/info")
-        check_status(response, 200)
         return _filter_content(load(response, MATCH_ENTRY_CONTENT))
 
     @property
@@ -210,13 +204,11 @@ class Endpoint:
     def get(self, relpath="", **kwargs):
         """A generic HTTP GET to the endpoint and optional relative path."""
         response = self.service.get("%s%s" % (self.path, relpath), **kwargs)
-        check_status(response, 200)
         return response
 
     def post(self, relpath="", **kwargs):
         """A generic HTTP POST to the endpoint and optional relative path."""
         response = self.service.post("%s%s" % (self.path, relpath), **kwargs)
-        check_status(response, 200, 201)
         return response
 
 class Collection(Endpoint):
@@ -337,6 +329,10 @@ class Index(Entity):
         if source is not None: args['source'] = source
         if sourcetype is not None: args['sourcetype'] = sourcetype
         path = "receivers/stream?%s" % urlencode(args)
+
+        # Since we need to stream to the index connection, we have to keep
+        # the connection open and use the Splunk extension headers to note
+        # the input mode
         cn = self.service.connect()
         cn.write("POST %s HTTP/1.1\r\n" % self.service.fullpath(path))
         cn.write("Host: %s:%s\r\n" % (self.service.host, self.service.port))
@@ -362,10 +358,14 @@ class Index(Entity):
         if host is not None: args['host'] = host
         if source is not None: args['source'] = source
         if sourcetype is not None: args['sourcetype'] = sourcetype
+
+        # The reason we use service.request directly rather than POST
+        # is that we are not sending a POST request encoded using 
+        # x-www-form-urlencoded (as we do not have a key=value body),
+        # because we aren't really sending a "form".
         path = "receivers/simple?%s" % urlencode(args)
         message = { 'method': "POST", 'body': event }
         response = self.service.request(path, message)
-        check_status(response, 200)
 
     # kwargs: host, host_regex, host_segment, rename-source, sourcetype
     def upload(self, filename, **kwargs):
@@ -374,7 +374,6 @@ class Index(Entity):
         kwargs['index'] = self.name
         path = 'data/inputs/oneshot'
         response = self.service.post(path, name=filename, **kwargs)
-        check_status(response, 201)
 
 class Input(Entity):
     # kwargs: key, kind, name, path, links
@@ -475,10 +474,16 @@ class Inputs(Endpoint):
         """Refreshes the internal directory of entities and entity metadata."""
         self._infos = {}
         for kind in self.kinds:
-            # UNDONE: Can't use the following until I fix error propagation
-            # response = self.get(kind, count=-1)
-            response = self.service.get(self.kindpath(kind), count=-1)
-            if response.status == 404: continue # Nothing of this kind
+
+            response = None
+            try:
+                response = self.service.get(self.kindpath(kind), count=-1)
+            except HTTPError as e:
+                if e.status == 404: 
+                    continue # Nothing of this kind
+                else: 
+                    raise
+                
             entry = load(response).feed.get('entry', None)
             if entry is None: continue
             if not isinstance(entry, list): entry = [entry] # UNDONE
