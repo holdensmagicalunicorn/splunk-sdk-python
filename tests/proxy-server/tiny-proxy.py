@@ -248,7 +248,8 @@ def main ():
     port = 8000
     allowed = []
     run_event = threading.Event ()
-    local_hostname = socket.gethostname ()
+    # hard code local host
+    local_hostname = "127.0.0.1"
  
     try: opts, args = getopt.getopt (sys.argv[1:], "l:dhp:", [])
     except getopt.GetoptError, e:
