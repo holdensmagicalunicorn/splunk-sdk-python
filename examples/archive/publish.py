@@ -24,15 +24,10 @@
 
 import sys
 
-from splunk.binding import connect, HTTPError
+from splunk.binding import connect
 import splunk.data as data
 
 from utils import cmdopts
-
-def check_status(response, *args):
-    """Checks that the given HTTP response is one of the expected values."""
-    if response.status not in args:
-        raise HTTPError(response)
 
 class Stanza:
     """Provides a CRUD interface to a .conf file stanza."""
@@ -44,12 +39,10 @@ class Stanza:
 
     def _get(self, path):
         response = self.context.get(path)
-        check_status(response, 200)
         return data.load(response.body.read())
 
     def _post(self, path, **kwargs):
         response = self.context.post(path, **kwargs)
-        check_status(response, 200)
 
     def create(self, **kwargs):
         """Creates the stanza."""
@@ -60,7 +53,6 @@ class Stanza:
     def delete(self):
         """Deletes the stanza."""
         response = self.context.delete(self.path)
-        check_status(response, 200)
         return self
 
     def ensure(self):
@@ -103,7 +95,6 @@ def publish_event(context, index, event):
     body = "***SPLUNK*** sourcetype=__insert__\n" + event
     message = { 'method': "POST", 'body': body }
     response = context.request(path, message)
-    check_status(response, 200)
 
 def main(argv):
     usage = 'usage: %prog [options] <index> [<events>]'

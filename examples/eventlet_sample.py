@@ -71,7 +71,7 @@ class Urllib2Http(splunk.binding.HttpBase):
         except Exception as e:
             response = e
 
-        response = self._build_response(
+        response = splunk.binding.HttpBase.build_response(
             response.code, 
             response.msg,
             dict(response.headers),
