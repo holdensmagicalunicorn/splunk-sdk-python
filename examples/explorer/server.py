@@ -18,8 +18,7 @@ import SimpleHTTPServer
 import SocketServer
 import urllib2
 import sys
-
-from socket import SOL_SOCKET, SO_REUSEADDR
+import StringIO
 
 PORT = 8080
 
@@ -38,6 +37,7 @@ class RedirectHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_POST(self):
         redirect_url, headers = self.get_url_and_headers()
 
+        # Get the POST data
         length = int(self.headers.getheader('content-length'))
         data = self.rfile.read(length)
 
@@ -49,28 +49,28 @@ class RedirectHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self.make_request(redirect_url, "DELETE", "", headers)
 
     def do_OPTIONS(self):
-            
+        # This is some capability checking, so we only need to send the cross domain
+        # headers to show that it's all good
         self.send_response(200)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "*")
+        self.send_header("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "X-Redirect-URL, Authorization")
         self.end_headers()
 
-        return
-
     def get_url_and_headers(self):
+        # Collect all the headers
         headers = {}
         for header_name in self.headers.keys():
             headers[header_name] = self.headers.getheader(header_name)
 
+        # Get the redirect URL and remove it from the headers
         redirect_url = headers["x-redirect-url"]
         del headers["x-redirect-url"]
 
         return (redirect_url, headers)
 
     def make_request(self, url, method, data, headers):
-        msg_url = url.replace("%", "%%")
-        self.log_message("%s: %s" % (method, msg_url))
+        self.log_message("%s: %s", method, url)
 
         try:
             # Make the request
@@ -82,12 +82,13 @@ class RedirectHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.send_response(response.code, message=response.msg)
             for key, value in dict(response.headers).iteritems():
                 # Optionally log the headers
-                self.log_message("%s: %s" % (key, value))
+                #self.log_message("%s: %s" % (key, value))
 
                 self.send_header(key, value)
             
+            # Send the cross-domain headers
             self.send_header("Access-Control-Allow-Origin", "*")
-            self.send_header("Access-Control-Allow-Methods", "*")
+            self.send_header("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, OPTIONS")
             self.send_header("Access-Control-Allow-Headers", "X-Redirect-URL, Authorization")
 
             # We are done with the headers
@@ -96,21 +97,46 @@ class RedirectHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             # Copy the response to the output
             self.copyfile(response, self.wfile)
         except urllib2.HTTPError as e:
+            # On errors, log the response code and message
+            self.log_message("Code: %s (%s)", e.code, e.msg)
+
             for key, value in dict(e.hdrs).iteritems():
-                self.log_message("%s: %s" % (key, value))
+                # On errors, we always log the headers
+                self.log_message("%s: %s", key, value)
 
-            print e.fp.read()
+            response_text = e.fp.read()
+            response_file = StringIO.StringIO(response_text)
 
-            # We had an error, so send it
-            self.send_error(e.code, message=e.msg)
+            # On errors, we also log the response text
+            self.log_message("Response: %s", response_text);
+
+            # Send the error response code
+            self.send_response(e.code, message=e.msg)
+
+            # Send the cross-domain headers
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "X-Redirect-URL, Authorization")
+
+            # Send the other headers
+            self.send_header("Content-Type", self.error_content_type)
+            self.send_header('Connection', 'close')
+            self.end_headers()
+
+            # Finally, send the error itself
+            self.copyfile(response_file, self.wfile)
         
+class ReuseableSocketTCPServer(SocketServer.TCPServer):
+    def __init__(self, *args, **kwargs):
+        self.allow_reuse_address = True
+        SocketServer.TCPServer.__init__(self, *args, **kwargs)
+
 def serve(port = PORT):
     Handler = RedirectHandler
     
-    httpd = SocketServer.TCPServer(("", PORT), Handler)
-    httpd.socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+    httpd = ReuseableSocketTCPServer(("", int(port)), Handler)
     
-    print "API Explorer -- Port: %s" % port
+    print "API Explorer -- Port: %s" % int(port)
     
     httpd.serve_forever()
 

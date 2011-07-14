@@ -19,9 +19,45 @@ import webbrowser
 import sys
 import os
 
+import utils
+import urllib
+
+PORT = 8080
+
 def main(argv):
-    webbrowser.open("file://%s" % os.path.join(os.getcwd(), "explorer.html"))
-    server.main(argv)
+    usage = "usage: %prog [options]"
+
+    redirect_port_args = {
+        "redirectport": {
+            "flags": ["--redirectport"],
+            "default": PORT,
+            "help": "Port to use for redirect server (default: %s)" % PORT,
+        },
+    }
+
+    opts = utils.parse(argv, redirect_port_args, ".splunkrc", usage=usage)
+
+    # We have to provide a sensible value for namespace
+    namespace = opts.kwargs["namespace"]
+    namespace = namespace if namespace else "-"
+
+    # Encode these arguments
+    args = urllib.urlencode([
+            ("scheme", opts.kwargs["scheme"]),
+            ("host", opts.kwargs["host"]),
+            ("port", opts.kwargs["port"]),
+            ("redirecthost", "localhost"),
+            ("redirectport", opts.kwargs["redirectport"]),
+            ("username", opts.kwargs["username"]),
+            ("password", opts.kwargs["password"]),
+            ("namespace", namespace)
+        ]),
+
+    # Launch the browser
+    webbrowser.open("file://%s" % os.path.join(os.getcwd(), "explorer.html?%s" % args))
+
+    # And server the files
+    server.serve(opts.kwargs["redirectport"])
         
 if __name__ == "__main__":
     main(sys.argv[1:])
