@@ -1,0 +1,314 @@
+<html>
+<head>
+<title>Splunk API Explorer</title>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.js"></script>
+<link href="prettify/prettify.css" type="text/css" rel="stylesheet" />
+<link href="explorer.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="prettify/prettify.js"></script>
+<script type="text/javascript" src="endpoints.js"></script>
+<style>
+
+#api-dropdown-box {
+    display: block;
+    width: 95%;
+    margin: 0px auto;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+</style>
+<script type="text/javascript">
+
+/********** UTILITIES *************/
+
+// Given an API name and method, find the right API description object
+var findApi = function(name, method) {
+    for(var apiPath in apis) {
+        if (apis.hasOwnProperty(apiPath)) {
+            api = apis[apiPath]
+            if (apiPath === name && apis[apiPath]["methods"].hasOwnProperty(method)) {
+                return {
+                    "name": name,
+                    "method": method,
+                    "api": api["methods"][method],
+                };
+            }
+        }
+    }
+
+    return null;
+};
+
+// Find the currently selected API object
+var findCurrentApi = function() {
+    var val = $("#api-dropdown-box").val();
+    parts = val.trim().split(" -- ");
+    apiName = parts[0];
+    apiMethod = parts[1];
+
+    var api = findApi(apiName, apiMethod);
+
+    return api;
+};
+
+var startsWith = function(original, str) {
+    var matches = original.match("^" + str);
+    return matches && matches.length > 0 && matches[0] === str;
+};
+
+/********** END *************/
+
+/********** FORM HANDLING *************/
+
+var apiChanged = function() {
+    var api = findCurrentApi();
+    createForm(api);
+};
+
+var buildPath = function(api, urlParams) {
+    path = api.name;
+
+    for(var paramName in urlParams) {
+        if (urlParams.hasOwnProperty(paramName)) {
+            path = path.replace("{"+paramName+"}", encodeURIComponent(urlParams[paramName]))
+        }
+    }
+
+    return path;
+};
+
+var submitForm = function() {
+    var api = findCurrentApi();
+
+    // Collect the URL parameters
+    var urlParameters = api.api.urlParams || [];
+    var extractedUrlParams = {}
+    for (var paramName in urlParameters) {
+        if (urlParameters.hasOwnProperty(paramName)) {
+            urlParam = urlParameters[paramName];
+            urlParamValue = $("#api-urlparam-" + paramName).val().trim();
+
+            if (urlParam.required === "true" 
+                && (!urlParam.hasOwnProperty("default") || urlParam["default"] === "UNDONE")
+                && !urlParamValue) {
+                alert("Missing Parameter: " + paramName);
+                return;
+            }
+            else {
+                extractedUrlParams[paramName] = urlParamValue;
+            }
+        }
+    }
+
+    // Collect the regular parameters
+    var parameters = api.api.params || [];
+    var params = {}
+    for (var paramName in parameters) {
+        if (parameters.hasOwnProperty(paramName)) {
+            param = parameters[paramName];
+            paramValue = $("#api-param-" + paramName).val().trim();
+
+            if (param.required === "true" && !params["default"] && !paramValue) {
+                alert("Missing Parameter: " + paramName);
+                return;
+            }
+            else {
+                if (paramValue) {
+                    params[paramName] = paramValue;
+                }
+            }
+        }
+    }
+
+    // Now we can build the URL
+    var path = buildPath(api, extractedUrlParams);
+
+    execute = function() {
+        request(path, api.method, params, function(data) {
+            $("#api-result-div").text(data);
+            prettyPrint();
+        });
+    };
+
+    if (!window.sessionKey) {
+        login(execute);
+    }
+    else {
+        execute();
+    }
+};
+
+var createForm = function(api) {
+    var formdiv = $("#api-form-div");
+
+    // Clear the current value
+    formdiv.html("");
+
+    var name = api.name;
+    var method = api.method;
+    var description = api.api.summary;
+
+    $("<h1><span id='api-name'>" + name + "</span><span id='api-method'>" + method + "</span></h1>").appendTo("#api-form-div")
+    $("<div id='api-description'><h2>" + description + "</h2></div>").appendTo("#api-form-div")
+
+    var urlParams = api.api.urlParams || [];
+    for (var paramName in urlParams) {
+        if (urlParams.hasOwnProperty(paramName)) {
+            urlParam = urlParams[paramName];
+            $("<label>"
+            + "<div>"
+            + "<span class='title'>" + paramName + "</span>"
+            + "<input class='input_text' size='95' id='api-urlparam-" + paramName + "'/>"
+            + "</div>"
+            + "<div class='param-required'>required</div>"
+            + "</label>"
+            ).appendTo("#api-form-div");
+        }
+    }
+    var params = api.api.params || [];
+    for (var paramName in params) {
+        if (params.hasOwnProperty(paramName)) {
+            param = params[paramName];
+            $("<label>"
+            + "<div>"
+            + "<span class='title'>" + paramName + "</span>"
+            + "<input class='input_text' id='api-param-" + paramName + "'/>"
+            + "</div>"
+            + "<div class='param-required'>" + (param.required === "true" ? "required" : "") + "</div>"
+            + "<div class='param-description'>" + param.summary + "</div>"
+            + "</label>"
+            ).appendTo("#api-form-div");
+        }
+    }
+
+    $("<input id='api-form-submit' class='button' type='submit' value='Submit' onclick='submitForm();'/>").appendTo("#api-form-div");
+};
+
+var makeUrl = function(path) {
+    var scheme = $("#server-scheme").val();
+    var host = $("#server-host").val();
+    var port = $("#server-port").val();
+    var owner = $("#server-owner").val();
+    var namespace = $("#server-namespace").val();
+
+    if (startsWith(path, "/")) {
+        path = path;
+    }
+
+    if (!namespace) {
+        path = "/services/" + path;
+    }
+
+    var owner = (owner === "*" ? "-" : owner);
+    var namespace = (namespace === "*" ? "-" : namespace);
+
+    path = "servicesNS/" + owner + "/" + namespace + "/" + path;
+
+    return scheme + "://" + host + ":" + port + "/" + path;
+}
+
+/********** END *************/
+
+/********** HTTP HANDLING *************/
+
+var login = function(success) {
+    var authPath = "auth/login";
+
+    var username = $("#server-username").val();
+    var password = $("#server-password").val();
+    var data ={ "username": username, "password": password };
+
+    request(authPath, "POST", data, function(data) {
+        $(data).find("sessionKey").each(function(i) {
+            window.sessionKey = "Splunk " + $(this).text();
+            console.log(window.sessionKey);
+            success();
+        })
+    });
+};
+
+var request = function(path, method, data, success) {
+    var url = makeUrl(path);
+    
+    var headers = {};
+    if (window.sessionKey) {
+        headers["Authorization"] = window.sessionKey;
+    }
+
+    // Add special headers for redirect server
+    headers["X-Redirect-URL"] = url;
+
+    // Get the redirect proxy info
+    var redirectHost = $("#server-redirect-host").val();
+    var redirectPort = $("#server-redirect-port").val();
+
+    var redirectProxyUrl = "http://" + redirectHost + ":" + redirectPort;
+
+    requestParams = {
+        url: redirectProxyUrl,
+        type: method,
+        data: data,
+        headers: headers,
+        dataType: "text",
+        success: function(data) {
+            console.log("success");
+            success(data);
+        },
+        error: function(error) {
+            console.log("Error (" + url + "): ", error);
+        }
+    };
+
+    //console.log("Request: ", requestParams)
+
+    $.ajax(requestParams);
+};
+
+/********** END *************/
+
+$(document).ready(function() {
+    $("#api-dropdown-box").change(apiChanged);
+
+    for(var apiPath in apis) {
+        // Add all the APIs to the drop down
+        if (apis.hasOwnProperty(apiPath)) {
+            api = apis[apiPath]
+            for(var method in api["methods"]) {
+                if (api["methods"].hasOwnProperty(method)) {
+                    var value = apiPath + " -- " + method;
+                    $("<option value='" + value + "'>" + value + "</option>").appendTo("#api-dropdown-box");
+                }
+            }
+        }
+    } 
+
+    // Let us find the initial selected value
+    apiChanged();
+});
+</script>
+</head>
+<body>
+
+<!-- This DIV holds all the server information -->
+<div id="server-info" class='box'>
+    <label><span class="title">Scheme</span><input class='input_text' id="server-scheme" value="https"/></label>
+    <label><span class="title">Host</span><input class='input_text' id="server-host" value="localhost"/></label>
+    <label><span class="title">port</span><input class='input_text' id="server-port" value="8089"/></label>
+    <label><span class="title">redirect host</span><input class='input_text' id="server-redirect-host" value="localhost"/></label>
+    <label><span class="title">redirect port</span><input class='input_text' id="server-redirect-port" value="8080"/></label>
+    <label><span class="title">owner</span><input class='input_text' id="server-owner" value="-"/></label>
+    <label><span class="title">namespace</span><input class='input_text' id="server-namespace" value="-"/></label>
+    <label><span class="title">username</span><input class='input_text' id="server-username" value="itay"/></label>
+    <label><span class="title">password</span><input class='input_text' type="password" id="server-password" value="changeme"/></label>
+    
+    <!-- This SELECT box will be populated with all the API choices -->
+    <select id="api-dropdown-box" ></select>
+</div>
+    
+
+<!-- This DIV will hold the input "form" for the API -->
+<div id="api-form-div" class="box"></div>
+
+<!-- This DIV will hold the formatted response -->
+<div class="result" style='white-space: pre;'><pre class="prettyprint lang-xml" id="api-result-div"></pre></div></br>
+</body>
+</html>

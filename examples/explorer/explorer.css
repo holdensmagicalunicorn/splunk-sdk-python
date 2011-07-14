@@ -1,0 +1,126 @@
+
+/*     Creating a form without table    */
+/*     Author= "AJAY TALWAR"            */
+/*     Email- ajayslide183@gmail.com    */
+
+
+*{ margin:0; padding:0;}
+body{ font:100% normal Arial, Helvetica, sans-serif; background:#161712;}
+form,input,select,textarea{margin:0; padding:0; color:#fff;}
+
+div.box{
+    margin:0 auto;
+    width:95%;
+    background:#222;
+    position:relative;
+    top:10px;
+    border:1px solid #262626;
+    margin-bottom: 10px;
+}
+
+div.result{
+    margin: 0 auto;
+    width:95%;
+    background:#ddd;
+    position:relative;
+    top:50px;
+    border:1px solid #262626;
+    overflow: auto;
+}
+
+div.box h1{ 
+    color:#FFF5CC;
+    font-size:18px;
+    text-transform:uppercase;
+    padding:5px 5px 5px 5px;
+    border-bottom:1px solid #161712;
+    border-top:1px solid #161712; 
+}
+
+div.box h1 span#api-name{ 
+    text-align:left;
+}
+
+div.box h1 span#api-method{ 
+    text-align:left;
+    vertical-align:top;
+    float:right;
+}
+
+div.box h2{ 
+    color:#FFF7D9;
+    font-size:14px;
+    text-transform:uppercase;
+    padding:5px 0 5px 5px;
+    border-bottom:1px solid #161712;
+    border-top:1px solid #161712; 
+}
+
+div.box label{
+    width:100%;
+    display: block;
+    background:#1C1C1C;
+    border-top:1px solid #262626;
+    border-bottom:1px solid #161712;
+    padding:10px 0 10px 0;
+}
+div.box label div{
+    width:100%;
+}
+div.box label span.title {
+    display: inline;
+    color:#ddd;
+    font-size:13px;
+    float:left;
+    width:20%;
+    text-align:left;
+    margin-left: 10px;
+    margin-top: -5px;
+    padding:5px 20px 0 0;
+}
+
+div.box label div.param-required{
+    display: block;
+    color:#888;
+    font-size:11px;
+    text-align:left;
+    margin-right: 5px;
+    margin-left: 10px;
+    padding:5px 0px 0 0;
+}
+
+div.box label div.param-description{
+    display: block;
+    color:#888;
+    font-size:11px;
+    text-align:left;
+    margin-right: 5px;
+    margin-left: 10px;
+    padding:5px 0px 0 0;
+}
+
+div.box .input_text{
+    padding:0px 10px;
+    background:#eee;
+    color:#111;
+    border-bottom: 1px double #171717;
+    border-top: 1px double #171717;
+    border-left:1px double #333;
+    border-right:1px double #333;
+    display: block; 
+    height: 20px;
+    width: 75%;
+}
+
+div.box .button
+{
+    padding:4px 4px;
+    width:100%;
+    margin: 0px auto;
+    background:#CC0000;
+    border: 0px;
+    border-bottom: 1px double #660000;
+    border-top: 1px double #660000;
+    border-left:1px double #FF0033;
+    border-right:1px double #FF0033;
+}
