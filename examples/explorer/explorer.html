@@ -163,7 +163,7 @@ var submitForm = function() {
         request(path, api.method, params, function(data, textStatus, xhr) {
             setSuccess(textStatus, xhr.status);
             $("#api-result-div").text(data);
-            prettyPrint();
+            //prettyPrint();
         });
     };
 
