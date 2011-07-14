@@ -273,7 +273,7 @@ class ServiceTestCase(unittest.TestCase):
     def test_loggers(self):
         service = self.service
 
-        levels = ["INFO", "WARN", "ERROR", "DEBUG"]
+        levels = ["INFO", "WARN", "ERROR", "DEBUG", "CRIT"]
         for logger in service.loggers:
             self.assertTrue(logger['level'] in levels)
 
