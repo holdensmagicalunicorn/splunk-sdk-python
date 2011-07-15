@@ -109,7 +109,7 @@ class Service(Context):
             item=lambda service, conf: 
                 Collection(service, PATH_CONF % conf, conf,
                     item=lambda service, stanza:
-                        Entity(service, _path_stanza(conf, stanza), stanza),
+                        Conf(service, _path_stanza(conf, stanza), stanza),
                     ctor=lambda service, stanza, **kwargs:
                         service.post(PATH_CONF % conf, name=stanza, **kwargs),
                     dtor=lambda service, stanza:
@@ -315,6 +315,21 @@ class Entity(Endpoint):
     def update(self, **kwargs):
         self.post(**kwargs)
         return self
+
+class Conf(Entity):
+    def submit(self, event, host=None, source=None, sourcetype=None):
+        """Submits an event to the index via HTTP POST."""
+        args = { 'index': self.name }
+        if host is not None: args['host'] = host
+        if source is not None: args['source'] = source
+        if sourcetype is not None: args['sourcetype'] = sourcetype
+
+        # The reason we use service.request directly rather than POST
+        # is that we are not sending a POST request encoded using 
+        # x-www-form-urlencoded. The body, although should be in
+        # key=value, it is an arbitrary string 
+        message = { 'method': "POST", 'body': event }
+        response = self.service.request(self.path, message)
 
 class Index(Entity):
     """Index class access to specific operations."""
