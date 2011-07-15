@@ -24,33 +24,146 @@
 
 import sys
 
-import splunk
-
+from splunk.client import connect
 from utils import error, parse
 
-def main(argv):
-    usage = 'usage: %prog [options] [conf]'
+class Program:
+    """Break up operations into specific methods."""
+    def __init__(self, service):
+        self.service = service
+
+    def create(self, opts):
+        """Create a conf stanza."""
+
+        argv = opts.args
+        count = len(argv)
+
+        # unflagged arguments are conf, stanza, key. In this order
+        # but all are optional.
+        cpres = True if count > 0 else False
+        spres = True if count > 1 else False
+        kpres = True if count > 2 else False 
+
+        if kpres:
+            kvpair = argv[2].split("=")
+            if len(kvpair) != 2:
+                error("Creating a k/v pair requires key and value", 2)
+
+        if not cpres and not spres:
+            error("Conf name and stanza name is required for create", 2)
+
+        name = argv[0]
+        stan = argv[1]
+        conf = self.service.confs[name]
+
+        if not kpres:
+            # create stanza
+            conf.create(stan)
+            return 
+
+        # create key/value pair under existing stanza
+        stanza = conf[stan]
+        stanza.submit(argv[2])
+
+
+    def delete(self, opts):
+        """Delete a conf stanza."""
+
+        argv = opts.args
+        count = len(argv)
+
+        # unflagged arguments are conf, stanza, key. In this order
+        # but all are optional.
+        cpres = True if count > 0 else False
+        spres = True if count > 1 else False
+        kpres = True if count > 2 else False 
+        
+        if not cpres:
+            error("Conf name is required for delete", 2)
+
+        if not cpres and not spres:
+            error("Conf name and stanza name is required for delete", 2)
+
+        if kpres:
+            error("Cannot delete individual keys from a stanza", 2)
+
+        name = argv[0]
+        stan = argv[1]
+        conf = self.service.confs[name]
+        conf.delete(stan)
+        
+    def list(self, opts):
+        """List all confs or if a conf is given, all the stanzas in it."""
+
+        argv = opts.args
+        count = len(argv)
+
+        # unflagged arguments are conf, stanza, key. In this order
+        # but all are optional
+        cpres = True if count > 0 else False
+        spres = True if count > 1 else False
+        kpres = True if count > 2 else False 
+        
+        if not cpres:
+            # List out the available confs
+            for conf in self.service.confs: 
+                print conf.name
+        else:
+            # Print out detail on the requested conf
+            # check for optional stanza, or key requested (or all)
+            name = argv[0]
+            conf = self.service.confs[name]
+            
+            for stanza in conf:
+                if (spres and argv[1] == stanza.name) or not spres:
+                    print "[%s]" % stanza.name
+                    entity = stanza.read()
+                    for key, value in entity.iteritems():
+                        if (kpres and argv[2] == key) or not kpres:
+                            print "%s = %s" % (key, value)
+                print
+
+    def run(self, command, opts):
+        """Dispatch the given command & args."""
+        handlers = { 
+            'create': self.create,
+            'delete': self.delete,
+            'list': self.list
+        }
+        handler = handlers.get(command, None)
+        if handler is None:
+            error("Unrecognized command: %s" % command, 2)
+        handler(opts)
+
+def main():
+    """Main program."""
+
+    usage = "usage: %prog [options] <command> [<args>]"
+
+    argv = sys.argv[1:]
+
+    command = None
+    commands = ['create', 'delete', 'list']
+
+    # parse args, connect and setup 
     opts = parse(argv, {}, ".splunkrc", usage=usage)
-    service = splunk.client.connect(**opts.kwargs)
+    service = connect(**opts.kwargs)
+    program = Program(service)
 
-    count = len(opts.args)
-    if count > 1: error("Requires at most one conf", 2)
-
-    if count == 0:
-        # List out the available confs
-        for conf in service.confs: 
-            print conf.name
+    if len(opts.args) == 0:
+        # no args means list
+        command = "list"
+    elif opts.args[0] in commands:
+        # args and the first in our list of commands, extract 
+        # command and remove from regular args
+        command = opts.args[0]
+        opts.args.remove(command)
     else:
-        # Print out detail on the requested conf
-        name = opts.args[0]
-        conf = service.confs[name]
-        for stanza in conf:
-            print "[%s]" % stanza.name
-            entity = stanza.read()
-            for k, v in entity.iteritems():
-                print "%s = %s" % (k, v)
-            print
+        # first one not in our list, default to list
+        command = "list"
+
+    program.run(command, opts)
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()
 
