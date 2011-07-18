@@ -93,7 +93,10 @@ class XMLStream:
                 head[:index], "<doc>", head[index:], file_, "</doc>\n")
 
     def read(self, size):
-        return self.file.read(size)
+        if self.file is not None:
+            return self.file.read(size)
+        else:
+            raise StopIteration
             
 # A simplified XML 'reader' interface, that also abstracts the pulldom
 # implementation which I want to replace someday.

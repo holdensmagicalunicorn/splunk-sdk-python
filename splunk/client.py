@@ -603,8 +603,12 @@ class Jobs(Collection):
 
     def create(self, query, **kwargs):
         response = self.post(search=query, **kwargs)
-        sid = load(response).response.sid
-        return Job(self.service, sid)
+
+        if kwargs.get("exec_mode", None) == "oneshot":
+            return response.body
+        else:
+            sid = load(response).response.sid
+            return Job(self.service, sid)
 
     def list(self):
         response = self.get()
