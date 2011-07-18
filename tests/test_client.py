@@ -18,7 +18,7 @@ from time import sleep
 import unittest
 
 import splunk
-
+from splunk.binding import HTTPError
 from utils import parse
 
 opts = None # Command line options
@@ -42,6 +42,21 @@ class ServiceTestCase(unittest.TestCase):
     def setUp(self):
         self.service = splunk.client.Service(**opts.kwargs)
         self.service.login()
+
+    def assertHttp(self, allowed_error_codes, fn, *args, **kwargs):
+        # This is a special case of "assertRaises", where we want to check
+        # that HTTP calls return the right status.
+        try:
+            returnVal = fn(*args, **kwargs)
+            return returnVal
+        except HTTPError as e:
+            error_msg = "Unexpected error code: %d" % e.status
+            if (isinstance(allowed_error_codes, list)):
+                self.assertTrue(e.status in allowed_error_Codes, error_msg)
+            else:
+                self.assertTrue(e.status == allowed_error_codes, error_msg)
+        except Exception as e:
+            self.fail("HTTPError not raised, caught %s instead", str(type(e)))
 
     def tearDown(self):
         pass
@@ -294,8 +309,7 @@ class ServiceTestCase(unittest.TestCase):
         response = self.service.parse("search index=twitter status_count=* | stats count(status_source) as count by status_source | sort -count | head 20")
         self.assertEqual(response.status, 200)
 
-        response = self.service.parse("xyzzy")
-        self.assertEqual(response.status, 400)
+        self.assertHttp(400, self.service.parse, "xyzzy")
 
     def test_messages(self):
         messages = self.service.messages
@@ -399,7 +413,7 @@ def main(argv):
     global opts
     opts = parse(argv, {}, ".splunkrc")
     runone('test_messages')
-    #unittest.main()
+    unittest.main()
 
 if __name__ == "__main__":
     main(sys.argv[1:])
