@@ -75,6 +75,45 @@ var setSuccess = function(successMsg, statusCode) {
     $("#api-result-status").css('display', 'block');
 };
 
+// The following functions are to handle parameters of the form
+// <param_name>, which we see as &lt;param_name&gt;
+var hasGreaterThan = function(str) {
+    return str.indexOf("&gt;") != -1;
+}
+
+var hasLessThan = function(str) {
+    return str.indexOf("&lt;") != -1;
+}
+
+var replaceGreaterThan = function(str) {
+    return str.replace("&gt;", "");
+}
+
+var replaceLessThan = function(str) {
+    return str.replace("&lt;", "postbody_");
+}
+
+// We normalize a parameter name by removing all angle brackets
+var normalizeParamName = function(paramName) {
+    normalizedParamName = paramName;
+    if (hasGreaterThan(paramName) && hasLessThan(paramName)) {
+        normalizedParamName = replaceGreaterThan(replaceLessThan(paramName));
+    }
+
+    return normalizedParamName;
+}
+
+var urlEncode = function(params) {
+    encodedURL = "?";
+    for(var key in params) {
+        if (params.hasOwnProperty(key)) {
+            encodedURL += (key + "=" + encodeURIComponent(params[key]) + "&");
+        }
+    }
+
+    return encodedURL;
+}
+
 /********** END *************/
 
 /********** FORM HANDLING *************/
@@ -136,17 +175,30 @@ var submitForm = function() {
         }
     }
 
+    // We need to see whether this is a regular form-style 
+    // request, or if it is one the few special ones.
+    var nonFormRequest = false;
+    var postBody = null;
+
     // Collect the regular parameters
     var parameters = api.api.params || [];
     var params = {}
     for (var paramName in parameters) {
         if (parameters.hasOwnProperty(paramName)) {
-            param = parameters[paramName];
-            paramValue = $("#api-param-" + paramName).val().trim();
+            var param = parameters[paramName];
+            var normalizedParamName = normalizeParamName(paramName);
+            var paramValue = $("#api-param-" + normalizedParamName).val().trim();
 
             if (param.required === "true" && !params["default"] && !paramValue) {
                 alert("Missing Parameter: " + paramName);
                 return;
+            }
+
+            // If this is the case, this means we have a non-form based
+            // request, for which we need to do special things
+            if (normalizedParamName !== paramName) {
+                nonFormRequest = true;
+                postBody = paramValue;
             }
             else {
                 if (paramValue) {
@@ -159,12 +211,35 @@ var submitForm = function() {
     // Now we can build the URL
     var path = buildPath(api, extractedUrlParams);
 
-    execute = function() {
+    if (nonFormRequest) {
+        // Since this is a non-form request, we need to encode the parameters
+        // in the URL proper
+        path += urlEncode(params);
+
+        // Replace the parameters with the POST body
+        params = postBody;
+
+        // And we delete the namespace temporarily
+        var namespace = $("#server-namespace").val();
+    }
+
+    execute = function() {    
+        // Save the old namespace
+        var namespace = $("#server-namespace").val();
+
+        if (nonFormRequest) {
+            // If it is a non-form request, we have to erase the namespace
+            $("#server-namespace").val(null);
+        }
+
         request(path, api.method, params, function(data, textStatus, xhr) {
             setSuccess(textStatus, xhr.status);
             $("#api-result-div").text(data);
             //prettyPrint();
         });
+
+        // And we can restore the namespace regardless
+        $("#server-namespace").val(namespace);
     };
 
     // If we haven't logged in yet, then log in,
@@ -195,7 +270,7 @@ var createForm = function(api) {
     var urlParams = api.api.urlParams || [];
     for (var paramName in urlParams) {
         if (urlParams.hasOwnProperty(paramName)) {
-            urlParam = urlParams[paramName];
+            var urlParam = urlParams[paramName];
             $("<label>"
                 + "<div>"
                     + "<span class='title'>" + paramName + "</span>"
@@ -211,11 +286,12 @@ var createForm = function(api) {
     var params = api.api.params || [];
     for (var paramName in params) {
         if (params.hasOwnProperty(paramName)) {
-            param = params[paramName];
+            var param = params[paramName];
+            var normalizedParamName = normalizeParamName(paramName);
             $("<label>"
                 + "<div>"
                     + "<span class='title'>" + paramName + "</span>"
-                    + "<input class='input_text' id='api-param-" + paramName + "'/>"
+                    + "<input class='input_text' id='api-param-" + normalizedParamName + "'/>"
                 + "</div>"
                 + "<div class='param-required'>" + (param.required === "true" ? "required" : "") + "</div>"
                 + "<div class='param-description'>" + param.summary + "</div>"
@@ -238,16 +314,18 @@ var makeUrl = function(path) {
 
     if (startsWith(path, "/")) {
         path = path;
+        return path;
     }
 
     if (!namespace) {
-        path = "/services/" + path;
+        path = "services/" + path;
     }
-
-    var owner = (owner === "*" ? "-" : owner);
-    var namespace = (namespace === "*" ? "-" : namespace);
-
-    path = "servicesNS/" + owner + "/" + namespace + "/" + path;
+    else {
+        var owner = (owner === "*" ? "-" : owner);
+        var namespace = (namespace === "*" ? "-" : namespace);
+    
+        path = "servicesNS/" + owner + "/" + namespace + "/" + path;
+    }
 
     return scheme + "://" + host + ":" + port + "/" + path;
 }
