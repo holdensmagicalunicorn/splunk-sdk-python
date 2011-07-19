@@ -28,12 +28,14 @@ import os
 # splunk support files
 import splunk.binding as binding
 from splunk.binding import connect
-from utils import cmdopts
+from utils import parse
 
 # hidden file
 RESTART_FILE = "./.export_restart_log"
 OUTPUT_FILE = "./export.out"
 REQUEST_LIMIT = 100000
+OUTPUT_MODE = "csv"
+OUTPUT_MODES = ["csv", "xml", "json"]
 
 CLIRULES = {
    'index': {
@@ -65,6 +67,11 @@ CLIRULES = {
         'flags': ["--limit"],
         'default': REQUEST_LIMIT,
         'help': "Events per request limit (default is %d)" % REQUEST_LIMIT
+    },
+   'omode': {
+        'flags': ["--omode"],
+        'default': OUTPUT_MODE,
+        'help': "output format %s default is %s" % (OUTPUT_MODES, OUTPUT_MODE)
     },
    'restart': {
         'flags': ["--restart"],
@@ -383,7 +390,7 @@ def export(options, context, bucket_list):
                 # file for splunkd says. 
                 result = context.get('search/jobs/export', 
                                  search=squery, 
-                                 output_mode='csv',
+                                 output_mode=options.kwargs['omode'],
                                  count=0)
                                  #count=int(bucket[0])+1)
 
@@ -413,10 +420,20 @@ def export(options, context, bucket_list):
                 firstline = data[0]
                 data.pop(0)
 
-                if not header:
+                # special handling for each output mode
+                if options.kwargs['omode'] == "xml":
+                    # for xml, always write the first line, which is just an XML
+                    # signifier
                     options.kwargs['fd'].write(firstline)
                     options.kwargs['fd'].write("\n")
-                    header = True
+                elif options.kwargs['omode'] == "csv":
+                    # for csv, only print out the field specifier once
+                    if not header:
+                        options.kwargs['fd'].write(firstline)
+                        options.kwargs['fd'].write("\n")
+                        header = True
+                # for json, we never print out the first line which is always
+                # an empty/dangling bracket "["
 
                 for line in data:
                     options.kwargs['fd'].write(line)
@@ -436,7 +453,13 @@ def main():
 
     # perform idmpotent login/connect -- get login creds from ~/.splunkrc
     # if not specified in the command line arguments.
-    options = cmdopts.parse(sys.argv[1:], CLIRULES, ".splunkrc")
+    options = parse(sys.argv[1:], CLIRULES, ".splunkrc")
+
+    if options.kwargs['omode'] not in OUTPUT_MODES:
+        print "output mode must be one of %s, found %s" % (OUTPUT_MODES,
+              options.kwargs['omode'])
+        sys.exit(1)
+
     connection = connect(**options.kwargs)
 
     # get lower level context.
