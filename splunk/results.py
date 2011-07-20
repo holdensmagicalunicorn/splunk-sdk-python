@@ -249,7 +249,7 @@ class ResultsReader:
             self._error()
     
     def _checkval(self):
-        if not self._isval(): 
+        if (not self._isval() and not self._isend()): 
             self._error()
 
     def _error(self):
@@ -323,8 +323,21 @@ class ResultsReader:
         while True:
             self._checktag("value")
             self._scantag("text")
-            value.append(self._scanval())
-            self._scanend("text")
+            val = self._scanval()
+
+            if val:
+                # If a value exists, then
+                # we append it, and we need
+                # to scan the end tag
+                value.append(val)
+                self._scanend("text")
+            else:
+                # Since a value didn't exist,
+                # we append an empty item.
+                # Also, we already scanned the 
+                # end tag, because no value was there
+                value.append("")
+                
             self._scanend("value")
             self._scan()
             if self._isend("field"): 
@@ -355,8 +368,8 @@ class ResultsReader:
         return (self.kind, self.value)
 
     def next(self):
-        self.read()
-        if self.value is None: 
+        kind = self.read()
+        if kind is None or self.value is None: 
             raise StopIteration()
         return self.item
 
