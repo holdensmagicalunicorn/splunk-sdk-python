@@ -104,12 +104,11 @@ class AnalyticsRetriever:
 
         return values
 
-    def event_over_time(self, event_name, time_range = TimeRange.MONTH, property = ""):
-        query = 'search index=%s application=%s event="%s" | bucket _time span=%s | stats count by _time,%s | rename %s as %s' % (
-            ANALYTICS_INDEX_NAME, self.application_name, event_name, 
+    def events_over_time(self, event_name = "", time_range = TimeRange.MONTH, property = ""):
+        query = 'search index=%s application=%s event="%s" | timechart span=%s count by %s | fields - _span*' % (
+            ANALYTICS_INDEX_NAME, self.application_name, (event_name or "*"), 
             time_range,
-            (PROPERTY_PREFIX + property) if property else "",
-            PROPERTY_PREFIX + property, property or "none"
+            (PROPERTY_PREFIX + property) if property else "event",
         )
         job = self.splunk.jobs.create(query, exec_mode="blocking")
 
@@ -117,42 +116,19 @@ class AnalyticsRetriever:
         reader = results.ResultsReader(job.results())
         for kind,result in reader:
             if kind == results.RESULT:
-                key = None
-                if property:
-                    key = result[property]
-                else:
-                    key = event_name
+                # Get the time for this entry
+                time = result["_time"]
+                del result["_time"]
 
-                # Add another entry for this key
-                entry = over_time.get(key, [])
-                entry.append({
-                    "count": int(result["count"] or 0),
-                    "time": result["_time"]
-                })
-                over_time[key] = entry
-
-        return over_time
-
-    def events_over_time(self, time_range = TimeRange.MONTH):        
-        query = 'search index=%s application=%s | bucket _time span=%s | stats count by _time,event' % (
-            ANALYTICS_INDEX_NAME, self.application_name, 
-            time_range,
-        )
-        job = self.splunk.jobs.create(query, exec_mode="blocking")
-
-        over_time = {}
-        reader = results.ResultsReader(job.results())
-        for kind,result in reader:
-            if kind == results.RESULT:
-                key = result["event"]
-
-                # Add another entry for this key
-                entry = over_time.get(key, [])
-                entry.append({
-                    "count": int(result["count"] or 0),
-                    "time": result["_time"]
-                })
-                over_time[key] = entry
+                # The rest is in the form of [event/property]:count
+                # pairs, so we decode those
+                for key,count in result.iteritems():
+                    entry = over_time.get(key, [])
+                    entry.append({
+                        "count": int(count or 0),
+                        "time": time,
+                    })
+                    over_time[key] = entry
 
         return over_time
 
@@ -182,10 +158,10 @@ def main():
     #    print retriever.properties(event["name"])
 
     #print retriever.property_values("critical", "version")
-    #print retriever.event_over_time("critical", property = "version", time_range = TimeRange.MONTH)
+    #print retriever.events_over_time(time_range = TimeRange.MONTH)
     #print retriever.applications()
     #print retriever.events_over_time()
-    print retriever.events_summary()
+    #print retriever.events_summary()
 
 if __name__ == "__main__":
     main()

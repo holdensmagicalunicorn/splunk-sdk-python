@@ -14,11 +14,14 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import sqlite3, sys, json
+import sys, json
+
 from bottle import route, run, debug, template, static_file, request
+
+from time import strptime, mktime
+
 from output import AnalyticsRetriever
 import utils
-from time import strptime, mktime
 
 splunk_opts = None
 retrievers = {}
@@ -34,19 +37,9 @@ def get_retriever(name):
 
     return retriever
 
-@route('/static/:file')
+@route('/static/:file#.+#')
 def help(file):
     raise static_file(file, root='/Users/itay/Work/splunk-sdk-python/examples/analytics')
-
-@route('/todo')
-def todo_list():
-    conn = sqlite3.connect('todo.db')
-    c = conn.cursor()
-    c.execute("SELECT id, task FROM todo WHERE status LIKE '1'")
-    result = c.fetchall()
-    c.close()
-    output = template('templates/make_table', rows=result)
-    return output
 
 @route('/applications')
 def applications():
@@ -56,6 +49,43 @@ def applications():
     output = template('templates/applications', applications=applications)
     return output
 
+@route('/api/application/:name')
+def application(name):
+    retriever = get_retriever(name)
+    events = retriever.events()
+    event_name = request.GET.get("event_name", "")
+    property_name = request.GET.get("property", "")
+
+    events_over_time = retriever.events_over_time(event_name=event_name, property=property_name) 
+    properties = []
+    if event_name:
+        properties = retriever.properties(event_name)
+
+    # We need to format the events to something the graphing library can handle
+    data = []
+    for name, ticks in events_over_time.iteritems():
+        event_ticks = []
+        for tick in ticks:
+            time = strptime(tick["time"][:-6] ,'%Y-%m-%dT%H:%M:%S.%f')
+            count = tick["count"]
+            event_ticks.append([int(mktime(time)*1000),count])
+        
+        data.append({
+            "label": name,
+            "data": event_ticks,
+        })
+
+    result = {    
+        "events": events,
+        "event_name": event_name,
+        "application_name": retriever.application_name, 
+        "properties": properties,
+        "data": data,
+        "property_name": property_name,
+    }
+
+    return result
+
 @route('/application/:name')
 def application(name):
     retriever = get_retriever(name)
@@ -63,13 +93,10 @@ def application(name):
     event_name = request.GET.get("event_name", "")
     property_name = request.GET.get("property", "")
 
-    events_over_time = []
+    events_over_time = retriever.events_over_time(event_name=event_name, property=property_name) 
     properties = []
-    if not event_name:
-        events_over_time = retriever.events_over_time()
-    else:
-        events_over_time = retriever.event_over_time(event_name, property=property_name)  
-        properties = retriever.properties(event_name) 
+    if event_name:
+        properties = retriever.properties(event_name)
 
     # We need to format the events to something the graphing library can handle
     data = []
@@ -93,7 +120,9 @@ def application(name):
                 application_name=retriever.application_name, 
                 properties=properties,
                 json_events=json_events,
-                property_name=property_name)
+                property_name=property_name,
+                open_tag="{{",
+                close_tag="}}")
 
     return output
 
