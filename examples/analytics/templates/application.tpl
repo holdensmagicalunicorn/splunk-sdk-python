@@ -8,6 +8,8 @@
 <!-- JQUERY UI -->
 <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.js"></script>
+<script src="/static/js/jquery.ui.selectmenu.js"></script>
+<link href="/static/css/jquery.ui.selectmenu.css" rel="stylesheet" type="text/css"/>
 
 <!-- JQUERY TEMPLATES -->
 <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
@@ -19,6 +21,9 @@
 <!-- JQUERY SHOWLOADING -->
 <link href="/static/css/showLoading.css" rel="stylesheet" type="text/css"/>
 <script src="/static/js/jquery.showLoading.js"></script>
+
+<!-- DATE FORMATTING -->
+<script src="/static/js/date.format.js"></script>
 
 <!-- OUR CSS -->
 <link href="/static/css/analytics.css" rel="stylesheet" type="text/css"/>
@@ -36,13 +41,40 @@
 
 <script id="tooltipTemplate" type="text/x-jquery-tmpl">
     <div id="tooltip">
-        <div id="tooltip-label">${label}</div>: ${value}
+        <div><div id="tooltip-label">${label}</div>: ${value}</div>
+        <div id="tooltip-time">${time}</div>
     </div>
 </script>
 
 <!-- LOGIC -->
 <script type="text/javascript">
     
+    var TimeRange = {
+        "Hour": "1h",
+        "Day": "1d",
+        "Week": "1w",
+        "Month": "1mon",
+    }
+
+    var TickSize = {
+        "Hour": [24, "hour"],
+        "Day": [1, "day"],
+        "Week": [7, "day"],
+        "Month": [15, "day"],
+    }
+
+    var TimeFormat = {
+        "Hour": "ddd, mmm dS, yyyy, htt",
+        "Day": "ddd, mmm dS, yyyy",
+        "Week": "ddd, mmm dS, yyyy",
+        "Month": "ddd, mmm dS, yyyy",
+    }
+
+    var currentTimeKey = "Month";
+    var currentTimeRange = TimeRange[currentTimeKey];
+    var currentTickSize = TickSize[currentTimeKey];
+    var currentTimeFormat = TimeFormat[currentTimeKey]
+
     var request = function(event_name, property, callback) {
         event_name = event_name || "";
         property = property || "";
@@ -53,7 +85,8 @@
             url: "/api/application/{{application_name}}",
             data: {
                 event_name: event_name,
-                property: property
+                property: property,
+                time_range: currentTimeRange,
             },
             method: "GET", 
             success: function(data) {
@@ -72,8 +105,8 @@
         $.ajax(req);
     }
 
-    var showTooltip = function(x, y, label, value) {
-        $("#tooltipTemplate").tmpl({label: label, value: value}).css({
+    var showTooltip = function(x, y, label, value, time) {
+        $("#tooltipTemplate").tmpl({label: label, value: value, time: time}).css({
             top: y + 5,
             left: x + 5,
         }).appendTo("body").fadeIn(200);
@@ -88,11 +121,12 @@
             events[i].color = i;
         }
         
+        console.log(currentTickSize);
         // Our default graph options
         var options = {
                 xaxis: { 
                     mode: "time" ,
-                    minTickSize: [15, "day"],
+                    minTickSize: currentTickSize,
                     autoscaleMargin: 0.05,
                 },
                 yaxis: {
@@ -160,8 +194,9 @@
                     $("#tooltip").remove();
                     var label = item.series.label;
                     var count = item.datapoint[1];
+                    var date = new Date(item.datapoint[0]);
 
-                    showTooltip(item.pageX, item.pageY, label, count);
+                    showTooltip(item.pageX, item.pageY, label, count, date.format(currentTimeFormat));
                 }
             }
             else {
@@ -205,6 +240,7 @@
 
             // Set the data and redraw
             plot.setData(newData);
+            plot.setupGrid();
             plot.draw();
         });
     };
@@ -234,13 +270,6 @@
                 });
             });
 
-            // Setup the ability to clear the event
-            $("#clear-event-link").unbind("click");
-            $("#clear-event-link").click(function(e) {
-                e.preventDefault();
-                request("", "", updateAll);
-            });
-
             // And we can enable the properties accordion
             $("#properties-accordion").accordion({collapsible: true});
         }
@@ -268,6 +297,21 @@
             // time to hide it
             $("#property-title").addClass("hidden");
         }
+
+        // Reset the time-range menu, so we can capture the data
+        $('select#time-range').selectmenu({
+            style:'dropdown', 
+            width: 150,
+            maxHeight: 300,
+            change: function(e,object) {
+                timeValue = object.value;
+                currentTimeRange = TimeRange[timeValue];
+                currentTickSize = TickSize[timeValue];
+                currentTimeFormat = TimeFormat[timeValue];
+                request(data.event_name, data.property_name, updateAll);
+            },
+        });
+        $('#time-range-div').removeClass("hidden");
     }
 
     var updateAll = function(data) {
@@ -289,11 +333,22 @@
     </div>
     <div id="event-title" class="mini-title hidden">
         Event: <span id="event-title-name"></span>
-        <sup>[<a href="" class="clear-link" id="clear-event-link">clear</a>]</sup>
+        <sup>[<a href="{{application_name}}" class="clear-link">clear</a>]</sup>
     </div>
     <div id="property-title" class="mini-title hidden">
         Property: <span id="property-title-name"></span>
         <sup>[<a href="" class="clear-link" id="clear-property-link">clear</a>]</sup>
+    </div>
+
+    <!-- TIME RANGE SELECTION MENU -->
+    <div id="time-range-div" class="hidden">
+        <label for="time-range-options"></label> 
+        <select name="time-range-options" id="time-range"> 
+            <option value="Hour">Hour</option> 
+            <option value="Day">Day</option> 
+            <option value="Week">Week</option> 
+            <option value="Month" selected="selected">Month</option> 
+        </select> 
     </div>
 </div>
 
@@ -334,5 +389,6 @@
   </tr>
 %end
 </table>
+
 </body>
 </html>

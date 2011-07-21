@@ -210,3 +210,26 @@ div.mini-title sup {
 .clear-link {
     display: inline;
 }
+
+
+#header {
+    position: relative;
+    min-height: 40px;
+}
+#time-range-div {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    height: 100%;
+}
+
+#time-range-div .ui-selectmenu {
+    height: 100%;
+    border: 0px;
+}
+
+#tooltip-time {
+    font-size: 10pt;
+    margin-top: 2px;
+    color: #777;
+}

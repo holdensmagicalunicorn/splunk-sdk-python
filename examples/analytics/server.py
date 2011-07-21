@@ -20,7 +20,7 @@ from bottle import route, run, debug, template, static_file, request
 
 from time import strptime, mktime
 
-from output import AnalyticsRetriever
+from output import AnalyticsRetriever, TimeRange
 import utils
 
 splunk_opts = None
@@ -55,8 +55,9 @@ def application(name):
     events = retriever.events()
     event_name = request.GET.get("event_name", "")
     property_name = request.GET.get("property", "")
+    time_range = request.GET.get("time_range", TimeRange.MONTH)
 
-    events_over_time = retriever.events_over_time(event_name=event_name, property=property_name) 
+    events_over_time = retriever.events_over_time(event_name=event_name, property=property_name, time_range=time_range) 
     properties = []
     if event_name:
         properties = retriever.properties(event_name)
