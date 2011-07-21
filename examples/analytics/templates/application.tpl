@@ -11,7 +11,6 @@
 
 <!-- JQUERY TEMPLATES -->
 <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
-  
 
 <!-- JQUERY FLOT -->
 <script type="text/javascript" src="/static/jquery.flot.js"></script>
@@ -36,24 +35,7 @@
 
 <!-- LOGIC -->
 <script type="text/javascript">
-    var events = {{json_events}};
     
-    /*var showTooltip = function(x, y, label, value) {
-        $('<div id="tooltip">' + contents + '</div>').css( {
-            position: 'absolute',
-            display: 'none',
-            top: y + 5,
-            left: x + 5,
-            border: '1px solid #fdd',
-            padding: '2px',
-            'background-color': '#fee',
-            opacity: 0.80,
-            "text-overflow": "ellipsis",
-            overflow: "hidden",
-            "white-space": "nowrap",
-            "max-width": "100px",
-        }).appendTo("body").fadeIn(200);
-    }*/
     var showTooltip = function(x, y, label, value) {
         $("#tooltipTemplate").tmpl({label: label, value: value}).css({
             top: y + 5,
@@ -61,12 +43,16 @@
         }).appendTo("body").fadeIn(200);
     }
 
-    for(var i = 0; i < events.length; i++) {
-        events[i].color = i;
-    }
-
     $(document).ready(function() {
-        var placeholder = $("#placeholder");        
+        // The events we need to graph
+        var events = {{json_events}};
+
+        // We need to assign each of the events a color
+        for(var i = 0; i < events.length; i++) {
+            events[i].color = i;
+        }
+        
+        // Our default graph options
         var options = {
                 xaxis: { 
                     mode: "time" ,
@@ -91,17 +77,22 @@
                 }
         };
 
+        // Get the graph placeholder
+        var graphPlaceholder = $("#graph-placeholder");
+
+        // Plot the initial events
         var plot = $.plot(
-            placeholder, 
+            graphPlaceholder, 
             events, 
             options);
 
         // Save the original zoom
         var zoomed = plot.getAxes();
         
-        placeholder.bind("plotselected", function (event, ranges) {
+        // Whenever the plot selection changes, this will zoom in
+        graphPlaceholder.bind("plotselected", function (event, ranges) {
             plot = $.plot(
-                        placeholder, events,
+                        graphPlaceholder, events,
                         $.extend(
                             true, 
                             {},
@@ -113,12 +104,14 @@
                     );
         });
  
+        // Revert the zoom back to the original settings
         $("#clearSelection").click(function () {
             plot.setSelection({xaxis: {from: zoomed.xaxis.min, to: zoomed.xaxis.max }});
         });
 
+        // When we hover over a point, show a tooltip with the label and value
         var previousPoint = null;
-        $("#placeholder").bind("plothover", function (event, pos, item) {
+        $("#graph-placeholder").bind("plothover", function (event, pos, item) {
             if (item) {
                 if (previousPoint != item.dataIndex) {
                     previousPoint = item.dataIndex;
@@ -136,28 +129,27 @@
             }
         });
 
+        // Get the data in the plot, and the legend element
         var data = plot.getData();
         var legend = $("#legend");
-        console.log(data);
 
+        // For each series, we add it to the legend
         for(var i = 0; i < data.length; i++) {
             var label = data[i].label;
             var color = data[i].color;
             $("#legendEntryTemplate").tmpl({index: i, label: label, color: color}).appendTo(legend);
-            /*legend.append('<input type="checkbox" id="legend-label-'+i+'" checked/>'
-            +'<label for="legend-label-'+i+'" id="'+label+'">'
-                + '<div>'
-                    + '<div class="legend-color" style="background-color:'+color+';"></div>'
-                    + '<div class="legend-text" style="float:left;">' + label + '</div>'
-                + '</div>'
-            + '</label>');*/
         }
 
+        // Make it into a buttonset
         $("#legend").buttonset();
+
         $("#legend").click(function() {
+
+            // When any series button is clicked, we will loop over all
+            // the selected series, and display them
             var newData = [];
             $('#legend').find('label.ui-state-active').each(function() {
-                label = $(this).attr("id");
+                label = $(this).attr("id").trim();
                 
                 for(var i = 0; i < events.length; i++) {
                     if (events[i].label.trim() === label) {
@@ -166,12 +158,29 @@
                 }
             }); 
 
+            // Set the data and redraw
             plot.setData(newData);
             plot.draw();
         });
+
+
+        $("#property-choices").buttonset();
+        $("#property-choices").click(function() {
+
+            $('#property-choices').find('label.ui-state-active').each(function() {
+                property = $(this).attr("id").replace("radio-","").trim();
+
+                if (property !== "{{property_name}}".trim()) {                
+                    window.location.href = "{{application_name}}?event_name={{event_name}}&property=" + property; 
+                }
+            });
+        });
+
+        $("#properties-accordion").accordion({collapsible: true});
     });
 </script>
 <style>
+
 body {
     width: 90%;
     margin: 0px auto;
@@ -179,6 +188,7 @@ body {
 .event-table {
     width: 100%;
     margin-top: 30px;
+    margin-bottom: 30px;
     display: table;
     cellspacing: 0;
     border-collapse: collapse;
@@ -233,6 +243,7 @@ body {
 }
 .graph {
     margin-top: 30px;
+    margin-right: 10px;
 }
 .left {
     float: left;
@@ -294,23 +305,23 @@ a:hover {
     display: block;
 }
 
-.ui-button {
+#legend .ui-button {
     width: 23%;
     margin: 5px 5px 5px 5px !important;
     border: 0px;
     height: 30px;
 }
 
-.ui-state-default {
+#legend .ui-state-default {
     background: white !important;
     color: #DADADA !important;
 }
-.ui-state-active {
+#legend .ui-state-active {
     background: white !important;
     color: black !important;
 }
 
-label.ui-widget[aria-pressed=false] .legend-color {
+#legend label.ui-widget[aria-pressed=false] .legend-color {
     background-color: #DADADA !important;
 }
 
@@ -356,11 +367,16 @@ label.ui-widget[aria-pressed=false] .legend-color {
     font-size: 14pt;
     margin-left: 20px;
 }
+
 div.mini-title sup {
    font-size: 8pt;
 }
 .arrows {
     font-size: 8pt;
+}
+
+#properties-accordion {
+    margin-top: 30px;
 }
 </style>
 </head>
@@ -372,38 +388,38 @@ div.mini-title sup {
     </div>
 %if event_name:
     <div id="event-title" class="mini-title">
-        <span class="arrows">&gt;&gt;</span> 
-        {{ event_name }} 
+        <!--<span class="arrows">&gt;&gt;</span> -->
+        Event: {{ event_name }} 
         <sup>[<a href="{{application_name}}">clear</a>]</sup>
     </div>
-%if property_name:
+    %if property_name:
     <div id="property-title" class="mini-title">
-        <span class="arrows">&gt;&gt;</span> 
-        {{ property_name }} 
+        <!--<span class="arrows">&gt;&gt;</span> -->
+        Property: {{ property_name }} 
         <sup>[<a href="{{application_name}}?event_name={{event_name}}">clear</a>]</sup>
     </div>
-%end
+    %end
 %end
 </div>
 <div id="graph-and-legend">
-    <div id="placeholder" class="graph"></div> 
+    <div id="graph-placeholder" class="graph"></div> 
     <div id="legend"></div>
 </div>
 <input id="clearSelection" type="button" value="Default Zoom" /> 
 
 %if event_name:
-<table class="event-table">
-<tr class="table-head">
-    <th class="table-head-cell center">Property Name</th>
-    <th class="table-head-cell center">Property Count</th>
-</tr>
-%for property in properties:
-  <tr class="event-table-row">
-    <td class="event-name-cell"><a href='{{application_name}}?event_name={{event_name}}&property={{property["name"]}}'>{{property["name"]}}</a></td>
-    <td class="event-table-cell">{{property["count"]}}</td>
-  </tr>
-%end
-</table>
+<div id="properties-accordion">
+    <h3 class="uppercase"><a href="#">properties</a></h3>
+    <div>
+    <div id="property-choices">
+    %for property in properties:
+        % name = property["name"]
+        <input type="radio" id="radio-{{name}}" name="radio" {{"checked" if name == property_name else ""}}/>
+        <label for="radio-{{name}}" id="radio-{{name}}">{{name}}</label>
+    %end
+    </div>
+    </div>
+</div>
 %end
 
 <table class="event-table">
