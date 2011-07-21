@@ -4,19 +4,41 @@
 
 <!-- JQUERY -->
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.js"></script> 
+
+<!-- JQUERY UI -->
 <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.js"></script>
+
+<!-- JQUERY TEMPLATES -->
+<script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
   
 
 <!-- JQUERY FLOT -->
 <script type="text/javascript" src="/static/jquery.flot.js"></script>
 <script type="text/javascript" src="/static/jquery.flot.selection.js"></script>
 
+<!-- TEMPLATES -->
+<script id="legendEntryTemplate" type="text/x-jquery-tmpl">
+    <input type="checkbox" id="legend-label-${index}" checked/>
+    <label for="legend-label-${index}" id="${label}">
+        <div>
+            <div class="legend-color" style="background-color:${color};"></div>
+            <div class="legend-text" style="float:left;">${label}</div>
+        </div>
+    </label>
+</script>
+
+<script id="tooltipTemplate" type="text/x-jquery-tmpl">
+    <div id="tooltip">
+        <div id="tooltip-label">${label}</div>: ${value}
+    </div>
+</script>
+
 <!-- LOGIC -->
 <script type="text/javascript">
     var events = {{json_events}};
     
-    var showTooltip = function(x, y, contents) {
+    /*var showTooltip = function(x, y, label, value) {
         $('<div id="tooltip">' + contents + '</div>').css( {
             position: 'absolute',
             display: 'none',
@@ -25,7 +47,17 @@
             border: '1px solid #fdd',
             padding: '2px',
             'background-color': '#fee',
-            opacity: 0.80
+            opacity: 0.80,
+            "text-overflow": "ellipsis",
+            overflow: "hidden",
+            "white-space": "nowrap",
+            "max-width": "100px",
+        }).appendTo("body").fadeIn(200);
+    }*/
+    var showTooltip = function(x, y, label, value) {
+        $("#tooltipTemplate").tmpl({label: label, value: value}).css({
+            top: y + 5,
+            left: x + 5,
         }).appendTo("body").fadeIn(200);
     }
 
@@ -92,11 +124,10 @@
                     previousPoint = item.dataIndex;
                     
                     $("#tooltip").remove();
-                    console.log(item);
                     var label = item.series.label;
                     var count = item.datapoint[1];
 
-                    showTooltip(item.pageX, item.pageY, label + ": " + count);
+                    showTooltip(item.pageX, item.pageY, label, count);
                 }
             }
             else {
@@ -112,13 +143,14 @@
         for(var i = 0; i < data.length; i++) {
             var label = data[i].label;
             var color = data[i].color;
-            legend.append('<input type="checkbox" id="legend-label-'+i+'" checked/>'
+            $("#legendEntryTemplate").tmpl({index: i, label: label, color: color}).appendTo(legend);
+            /*legend.append('<input type="checkbox" id="legend-label-'+i+'" checked/>'
             +'<label for="legend-label-'+i+'" id="'+label+'">'
                 + '<div>'
-                    + '<div class="legend-color" style="display:inline;background-color:'+color+';width:20px;height:20px;float:left;"></div>'
-                    + '<div style="float:left;">' + label + '</div>'
+                    + '<div class="legend-color" style="background-color:'+color+';"></div>'
+                    + '<div class="legend-text" style="float:left;">' + label + '</div>'
                 + '</div>'
-            + '</label>');
+            + '</label>');*/
         }
 
         $("#legend").buttonset();
@@ -141,7 +173,7 @@
 </script>
 <style>
 body {
-    width: 80%;
+    width: 90%;
     margin: 0px auto;
 }
 .event-table {
@@ -228,31 +260,45 @@ a:hover {
     color: #416590;
 }
 .graph {
-    width: 100%;
+    width: 95%;
     height: 400px;
-}
-div#legend table {
-    table-layout: fixed;
-    width: 90%;
     margin: 0px auto;
+    margin-top: 10px;
 }
+
+#graph-and-legend {
+    border: 1px solid #565656;
+    margin-top: 10px;
+}
+
 #legend {
     width: 90%;
     margin: 0px auto;
     margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid black;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    border-radius: 5px;
 }
-#legend span.ui-button-text > div div {
+
+.legend-text {
     text-overflow: ellipsis;
     overflow: hidden !important;
     white-space: nowrap !important;
-    width: 75%;
-    margin-left: 5px;
+    width: 100%;
+    margin-left: 2px;
+    margin-top: 5px;
+    font-size: 12px;
+    display: block;
 }
 
 .ui-button {
     width: 23%;
     margin: 5px 5px 5px 5px !important;
     border: 0px;
+    height: 30px;
 }
 
 .ui-state-default {
@@ -260,7 +306,7 @@ div#legend table {
     color: #DADADA !important;
 }
 .ui-state-active {
-    background: white !important;/*#DADADA !important;*/
+    background: white !important;
     color: black !important;
 }
 
@@ -268,15 +314,29 @@ label.ui-widget[aria-pressed=false] .legend-color {
     background-color: #DADADA !important;
 }
 
-td.legendLabel {
-    text-overflow: ellipsis;
+.legend-color {
+    display: block;
+    width: 100%;
+    height: 5px;
+}
+
+#tooltip {
+    position: absolute;
+    display: none;
+    border: 1px solid #fdd;
+    padding: 2px;
+    background-color: #fee;
+    opacity: 0.8;
+}
+
+#tooltip #tooltip-label {
+    text-overflow: ellipsis !important;
     overflow: hidden !important;
     white-space: nowrap !important;
-    width: 100%;
+    max-width: 150px !important;
+    float: left;
 }
-td.legendColorBox {
-    width: 20px;
-}
+
 .gray-gradient-box {
     border: 1px solid #CFCFCF;
     background: #F2F2F2;
@@ -284,22 +344,51 @@ td.legendColorBox {
     background: -webkit-gradient(linear,left top,left bottom,from(white),to(#E4E4E4));
     background: -moz-linear-gradient(top,white,#E4E4E4);
 }
-#title {
+.big-title {
     color: #4E74A1;
-    font-size: 20px;
+    font-size: 16pt;
     font-weight: bold;
     line-height: 18px;
     margin: 5px;
+}
+.mini-title {
+    color: #4E74A1;
+    font-size: 14pt;
+    margin-left: 20px;
+}
+div.mini-title sup {
+   font-size: 8pt;
+}
+.arrows {
+    font-size: 8pt;
 }
 </style>
 </head>
 
 <body>
 <div id="header" class="gray-gradient-box">
-    <div id="title" class="uppercase">{{application_name}}{{ " -- " if event_name else ""}}{{ event_name }} {{" -- " if property_name else ""}}{{property_name}}</div>
+    <div id="app-title" class="big-title uppercase">
+        {{application_name}}
+    </div>
+%if event_name:
+    <div id="event-title" class="mini-title">
+        <span class="arrows">&gt;&gt;</span> 
+        {{ event_name }} 
+        <sup>[<a href="{{application_name}}">clear</a>]</sup>
+    </div>
+%if property_name:
+    <div id="property-title" class="mini-title">
+        <span class="arrows">&gt;&gt;</span> 
+        {{ property_name }} 
+        <sup>[<a href="{{application_name}}?event_name={{event_name}}">clear</a>]</sup>
+    </div>
+%end
+%end
 </div>
-<div id="placeholder" class="graph"></div> 
-<div id="legend"></div>
+<div id="graph-and-legend">
+    <div id="placeholder" class="graph"></div> 
+    <div id="legend"></div>
+</div>
 <input id="clearSelection" type="button" value="Default Zoom" /> 
 
 %if event_name:
