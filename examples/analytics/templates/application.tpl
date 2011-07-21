@@ -121,7 +121,6 @@
             events[i].color = i;
         }
         
-        console.log(currentTickSize);
         // Our default graph options
         var options = {
                 xaxis: { 
@@ -289,6 +288,9 @@
             $("#clear-property-link").unbind("click");
             $("#clear-property-link").click(function(e) {
                 e.preventDefault();
+                $('input[name="radio"]').each(function(t) {
+                    this.checked = false;
+                });
                 request(data.event_name, "", updateAll);
             });
         }

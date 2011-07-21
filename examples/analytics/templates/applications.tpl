@@ -4,62 +4,42 @@
 
 <!-- JQUERY -->
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.js"></script>
+
+<!-- JQUERY UI -->
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.js"></script>
+<script src="/static/js/jquery.ui.selectmenu.js"></script>
+<link href="/static/css/jquery.ui.selectmenu.css" rel="stylesheet" type="text/css"/>
+
+<!-- JQUERY TEMPLATES -->
+<script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+
+<!-- JQUERY FLOT -->
+<script type="text/javascript" src="/static/js/jquery.flot.js"></script>
+<script type="text/javascript" src="/static/js/jquery.flot.selection.js"></script>
+
+<!-- JQUERY SHOWLOADING -->
+<link href="/static/css/showLoading.css" rel="stylesheet" type="text/css"/>
+<script src="/static/js/jquery.showLoading.js"></script>
+
+<!-- DATE FORMATTING -->
+<script src="/static/js/date.format.js"></script>
+
+<!-- OUR CSS -->
+<link href="/static/css/analytics.css" rel="stylesheet" type="text/css"/>
 <style>
-body {
-    width: 50%;
-}
-.application-info {
-    margin-bottom: 6px;
-    background: #aaa;
-    border: 1px solid #DBDBDB;
-    font-weight: bold;
-    height: 44px;
-    line-height: 44px;
-    padding-left: 20px;
 
-    background: -webkit-gradient(linear,left top,left bottom,from(white),to(#EEE));
-    background: -moz-linear-gradient(top,white,#EEE);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='white',endColorstr='#EEE');
-
-}
-.application-name {
-    font-size: 14px;
-    padding-left: 10px;
-}
-.application-event-count {
-    font-size: 14px;
-    padding-right: 10px;
-}
-.application-info a {
-    color: #416590;
-}
-a, a:visited {
-    text-decoration: none;
-    outline: 0;
-}
-a:hover {
-    text-decoration: underline;
-}
-.left {
-    float: left;
-}
-.right {
-    float: right;
-}
-.clear {
-    clear: both;
-}
-.uppercase {
-    text-transform:uppercase;
-}
 </style>
-<title>APPLICATIONS</title>
+<title>Splunk Analytics Sample</title>
 </head>
 <body>
+<div id="title">
+    <span id="title-text" class="uppercase">Splunk Analytics Sample</span>
+</div>
 <div id="applications">
 %for application in applications:
     <div class="application-info">
-        <div class="application-name left uppercase">
+        <div class="application-name left">
             <a href='application/{{application["name"]}}'>{{application["name"]}}</a>
         </div>
         <div class="application-event-count right uppercase">

@@ -81,7 +81,7 @@ class AnalyticsRetriever:
                         "name": field,
                         "count": int(count or 0)
                     })
-        
+
         return properties
 
     def property_values(self, event_name, property):

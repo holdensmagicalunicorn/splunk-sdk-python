@@ -233,3 +233,47 @@ div.mini-title sup {
     margin-top: 2px;
     color: #777;
 }
+
+.application-info {
+    margin-bottom: 6px;
+    background: #aaa;
+    border: 1px solid #DBDBDB;
+    font-weight: bold;
+    height: 44px;
+    line-height: 44px;
+    padding-left: 20px;
+
+    background: -webkit-gradient(linear,left top,left bottom,from(white),to(#EEE));
+    background: -moz-linear-gradient(top,white,#EEE);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='white',endColorstr='#EEE');
+
+}
+.application-name {
+    padding-left: 10px;
+}
+.application-event-count {
+    font-size: 14px;
+    padding-right: 10px;
+}
+.application-info a {
+    color: #416590;
+}
+#title {
+    margin-bottom: 6px;
+    background: #aaa;
+    border: 1px solid #DBDBDB;
+    font-weight: bold;
+    height: 44px;
+    line-height: 44px;
+    padding-left: 20px;
+
+    background: -webkit-gradient(linear,left top,left bottom,from(white),to(#EEE));
+    background: -moz-linear-gradient(top,white,#EEE);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='white',endColorstr='#EEE');
+}
+#title-text {
+    font-size: 20px;
+    color: black;
+    padding-left: 10px;
+    text-align: center;
+}
