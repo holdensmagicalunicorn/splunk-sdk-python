@@ -39,7 +39,7 @@ class Program:
         count = len(argv)
 
         # unflagged arguments are conf, stanza, key. In this order
-        # but all are optional.
+        # however, we must have a conf and stanza.
         cpres = True if count > 0 else False
         spres = True if count > 1 else False
         kpres = True if count > 2 else False 
@@ -73,7 +73,7 @@ class Program:
         count = len(argv)
 
         # unflagged arguments are conf, stanza, key. In this order
-        # but all are optional.
+        # however, we must have a conf and stanza.
         cpres = True if count > 0 else False
         spres = True if count > 1 else False
         kpres = True if count > 2 else False 
