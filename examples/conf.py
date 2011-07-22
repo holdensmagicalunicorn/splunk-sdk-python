@@ -14,8 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""A command line that will list out Splunk confs, or if given a conf name
-   will list the contents of the given conf."""
+"""Create, delete or list stanza information from/to Splunk confs."""
 
 # UNDONE: Add support for a conf 'path' to list out contents of individual
 # stanza, or key value.
