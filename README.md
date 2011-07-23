@@ -128,7 +128,7 @@ some of the lower level details of the _binding_ layer.
     for user in service.users:
         pprint(user())
 
-## Runing the units
+### Unit tests
 
 The SDK contains a small but growing collection of unit tests. Running the
 tests is simple and rewarding:
