@@ -12,22 +12,17 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# UNDONE: Add tests that use the path argument
-# UNDONE: Add tests that use the XNAME versions of dict & list
-
 import os
 import sys
 import time
 
 from utils import parse
-#import splunk.data as data
 
 opts = None # Command line options
 
 PROXYPORT=8080
 
 def test_proxy():
-
     # start a tiny-proxy.py server, and run all our tests via shell
     os.system("python proxy-server/tiny-proxy.py -d -p %d" % PROXYPORT)
     time.sleep(1)
@@ -43,7 +38,6 @@ def test_proxy():
     # kill proxy server and remove its log
     os.system("kill -9 %s" % pid)
     os.remove("./proxy.log")
-
 
 def main(argv):
     global opts

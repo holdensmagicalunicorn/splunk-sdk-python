@@ -412,7 +412,7 @@ def runone(testname):
 def main(argv):
     global opts
     opts = parse(argv, {}, ".splunkrc")
-    runone('test_messages')
+    #runone('test_messages')
     unittest.main()
 
 if __name__ == "__main__":
