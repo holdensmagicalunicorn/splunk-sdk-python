@@ -96,11 +96,15 @@ You can find additional information about building applications using the
 
 The Splunk library included in this SDK consists of two layers of API that 
 can be used to interact with splunkd. The lower layer is referred to as the
-_binding_ layer and is basically a thin wrapper over a pluggable HTTP library
-(httplib by default) that handles tasks such as Splunk authentication and
-optional mapping of Splunk namespaces to URL paths and that provides a low
-level HTTP interface to Splunk for devlopers who want full control over the
-calls made to splunkd and who basically want to code "close to the wire".
+_binding_ layer. It is a thin wrapper around low-level HTTP capabilities, 
+including:
+
+* A pluggable HTTP component that can be user-supplied.
+* Handles authentication and namespace URL management
+* Accessible low-level HTTP interface for use by developers who want
+    to be close to the wire.
+
+You can see an example use of the library here:
 
     import splunk.binding as binding
 
@@ -109,9 +113,7 @@ calls made to splunkd and who basically want to code "close to the wire".
 
     response = context.get('/services/authentication/users')
 
-    if response.status != 200:
-        raise binding.HTTPError(response)
-
+    print "Status: %s" % response.status
     print response.body.read()
 
 The second layer is referred to as the _client_ layer and builds on the 
@@ -173,9 +175,17 @@ For a gentle introduction to the Splunk product and some of its capabilities:
 * UNDONE: Mailing list
 * UNDONE: Issues
 * UNDONE: Answers
+* UNDONE: Blog
+* UNDONE: Twitter (@splunkdev?)
 
 ### How to contribute
 
 We need you to submit a [contributor agreement form] before we can accept your
 contributions. The agreement allows us to .. UNDONE
+
+### Support
+
+* UNDONE: no support
+* UNDONE: issues should be filed on GitHub Issues 
+    (https://github.com/splunk/splunk-sdk-python/issues)
 
