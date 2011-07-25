@@ -192,13 +192,14 @@ def get_buckets(context, start, end, index, limit, span):
 def normalize_export_buckets(options, context):
     """ query splunk to get the buckets of events and attempt to normalize """
 
-    ## TODO: figure out time conversion format for user-friendliness,
-    ## but for now, for now use seconds -- start/end time should also
-    ## start on a day boundary for the downsampling chunking to work
-    ## properly.
+    # round to nearest 'start of day'
+    start = int(options.kwargs['start']) / 86400
+    if start != int(options.kwargs['start'])*86400:
+        print "INFO: start time rounded down to start of day"
+    start = start * 86400
 
     # start with a bucket size of one day: 86400 seconds.
-    buckets = get_buckets(context, int(options.kwargs['start']), 
+    buckets = get_buckets(context, start, 
                           int(options.kwargs['end']), 
                           options.kwargs['index'], 
                           int(options.kwargs['limit']), 
@@ -458,6 +459,15 @@ def main():
     if options.kwargs['omode'] not in OUTPUT_MODES:
         print "output mode must be one of %s, found %s" % (OUTPUT_MODES,
               options.kwargs['omode'])
+        sys.exit(1)
+
+    # minor sanity check on start/end time
+    try:
+        int(options.kwargs['start'])
+        int(options.kwargs['end'])
+    except ValueError:
+        print "ERROR: start and end times most be expressed as an integer."
+        print "       An integer that represents seconds from 1970."
         sys.exit(1)
 
     connection = connect(**options.kwargs)
