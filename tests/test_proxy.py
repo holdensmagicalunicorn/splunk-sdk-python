@@ -18,6 +18,7 @@
 import os
 import sys
 import time
+import subprocess
 
 from utils import parse
 #import splunk.data as data
@@ -28,21 +29,37 @@ PROXYPORT=8080
 
 def test_proxy():
 
+    if os.name == "nt":
+        cwd = os.getcwd()
+    else:
+        cwd = os.getenv('PWD')
+
+    pidfile = os.path.join(cwd, "proxypid")
+
     # start a tiny-proxy.py server, and run all our tests via shell
-    os.system("python proxy-server/tiny-proxy.py -d -p %d" % PROXYPORT)
-    time.sleep(1)
+    script = os.path.join(cwd, "tiny-proxy.py")
+    os.system("python %s -d -p %d" % (script, PROXYPORT))
+    time.sleep(r21)
+
     # git PID, and cleanup file
-    fd = open("./proxypid", "r")
+    fd = open(pidfile, "r")
     pid = fd.read()
     fd.close()
-    os.remove("./proxypid")
+    os.remove(pidfile)
 
     # run binding test using proxy server
     os.system("python test_binding.py --proxyhost=127.0.0.1 --proxyport=%d" % PROXYPORT)
 
     # kill proxy server and remove its log
-    os.system("kill -9 %s" % pid)
-    os.remove("./proxy.log")
+
+    if os.name == "nt":
+        subprocess.Popen("taskkill /PID %s /t /f" % pid, shell=True)
+    else:
+        os.system("kill -9 %s" % pid)
+
+    time.sleep(2)
+    logname = os.path.join(cwd, "proxy.log")
+    os.remove(logname)
 
 
 def main(argv):
