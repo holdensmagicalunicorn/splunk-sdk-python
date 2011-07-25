@@ -94,7 +94,7 @@ class ExamplesTestCase(unittest.TestCase):
         commands = [
             "python search.py --help > __stdout__",
             'python search.py "search * | head 10" > __stdout__',
-            'python search.py "search * | stats count" --output_mode="csv" > __stdout__'
+            'python search.py "search * | head 10 | stats count" --output_mode="csv" > __stdout__'
         ]
         for command in commands: self.assertEquals(os.system(command), 0)
 
