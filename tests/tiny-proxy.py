@@ -258,7 +258,7 @@ def daemonize(logger, opts):
             if opt == "-d":
                 pass # skip the daemonize flag
             else:
-                cmdline = cmdline + " %s %s " % (str(opt), str(value))
+                cmdline = cmdline + " %s %s" % (str(opt), str(value))
 
         subprocess.Popen(cmdline.split(" "), shell=True, cwd=cwd)
         time.sleep(1)
