@@ -9,13 +9,13 @@ in `test_examples.py`.
 
 There are no dependencies to run the tests. You can simply execute:
 
-> cd tests
-> python runtests.py
+    cd tests
+    python runtests.py
 
 or:
 
-> cd tests
-> ./runtests.py
+    cd tests
+    ./runtests.py
 
 ## Code Coverage
 
@@ -25,22 +25,22 @@ at the author's website: http://nedbatchelder.com/code/coverage/
 
 To install it, simply use `easy_install` or `pip`:
 
-> easy_install coverage
+    easy_install coverage
 
 or
 
-> pip install coverage
+    pip install coverage
 
 Once you have `coverage.py` installed, you can run get coverage information
 as follows:
 
-> cd tests
-> coverage run runtests.py
-> coverage combine
-> coverage report
+    cd tests
+    coverage run runtests.py
+    coverage combine
+    coverage report
 
 Should you want to get an HTML report:
 
-> coverage html
+    coverage html
 
 and open `coverage_html_report/index.html` in your favorite browser.
