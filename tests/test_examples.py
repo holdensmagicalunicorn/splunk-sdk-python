@@ -48,6 +48,9 @@ class ExamplesTestCase(unittest.TestCase):
             "python conf.py > __stdout__",
             "python conf.py props > __stdout__",
             'python conf.py --namespace="admin:search" props > __stdout__',
+            "python conf.py create server SDK-STANZA",
+            "python conf.py create server SDK-STANZA testkey=testvalue",
+            "python conf.py delete server SDK-STANZA"
         ]
         for command in commands: self.assertEquals(os.system(command), 0)
 
