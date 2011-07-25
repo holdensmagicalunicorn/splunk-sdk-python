@@ -2,89 +2,180 @@
 
 *Welcome to the Splunk SDK for Python!*
 
-This repository contains source code, tools, examples and documentation
-designed to enable developers to build applications using the Splunk platform.
+This SDK contains library code and examples designed to enable developers to
+build applications using Splunk.
 
-<what is Splunk?>
+Splunk is a search engine and analytic environment that uses a distributed
+map-reduce architecture to efficiently index, search and process large 
+time-varying data sets.
 
-## Status
+The Splunk product is popular with system administrators for aggregation and
+monitoring of IT machine data, security, compliance and a wide variety of other
+scenarios that share a requirement to efficiently index, search, analyze and
+generate real-time notifications from large volumes of time series data.
 
-This project is under active development and its contents will change at will.
+The Splunk developer platform enables developers to take advantage of the same
+technology used by the Splunk product to build exciting new applications that
+are enabled by Splunk's unique capabilities.
 
-## Contents
+You can learn more about the Splunk developer platform at http://dev.splunk.com
 
-* splunk: Source code for the splunk package.
+* UNDONE: Note on the preview status of the SDK
 
-* tests: Unit tests for the splunk package
+## License
 
-* tools: Command line tools
+The Splunk Software Development Kit for Python is licensed under the Apache
+License 2.0. Details can be found in the file LICENSE.
 
 ## Getting Started
 
-In order to run the Splunk tools, command line utilities and samples from their respective subdirectories, 
-simply place the root of the Splunk SDK directory on your PYTHONPATH.
+In order to use the SDK you are going to need a copy of Splunk. If you don't 
+already have a copy you can download one from http://www.splunk.com/download.
 
-On a MAC:  Add the following to your ~/.bash_profile
+You can get a copy of the SDK by cloning into the repository with git:
 
-export PYTHONPATH=path to Splunk SDK 
+    git clone git@github.com:splunk/splunk-sdk-python.git
 
-### Get a copy of the SDK
+#### Installing
 
-You can get a copy of the sdk by downloading from <here> or by using git
-to clone this repository:
+You can install the Splunk SDK libraries by running:
 
-`git clone git://github.com/splunk/splunk-sdk-python`
+    [sudo] python setup.py install
 
-### Get a copy of Splunk
+However, it's not necessarry to install the libraries in order to run the
+examples and unit tests from the SDK.
 
-If you dont already have a copy of splunk, you can download it at http://splunk.com
+#### Requirements
 
-### Running spcmd
+The SDK requires Python 2.6+. 
 
-...
+#### Running the examples and units
 
-## Documentation
+In order to run the Splunk examples and unit tests, you must put the root of
+the SDK on your PYTHONPATH.
 
-Proxy support: HTTPS and HTTP proxy is supported by adding proxyhost=<hostname> proxyport=<proxyport> to the CLI (or .splunkrc file) or the **kwargs in the connect API.
-               host and port should still continue to address the splunkd server.
+The SDK command line examples require a common set of command line arguments
+that specify things like the Splunk host and port and login credentials. You
+can get a full list of command line arguments by typing `--help` as an argument
+to any of the command line examples. 
 
-Socket timeout: Socket timeout is supported in the following manner:
-               If not specified, the system default is used.
-               If specified in the connect api **kwargs (timeout=<value>) the initial connection and subsequent get/post/delete/etc operations all use the timeout value.
-               If specified on the connect api, individual get/post/delete can be individually overridden by adding timeout=<value>.
+#### .splunkrc
 
+The examples and units are also desigend to receive arguments from an optional
+`.splunkrc` file located in your home directory. The format of the file is
+simply a list of key=value pairs, same as the options that are taken on the
+command line, for example:
 
-SSL Certificate: Add a ca file specification to the connect request. For example:
+    host=localhost
+    username=admin
+    password=changeme
 
-     opts.kwargs['ca_file'] = "/home/wcolgate/ca.pem"
-     service = connect(**opts.kwargs)
+The `.splunkrc` file is a feature of the SDK examples and unit tests and not
+the Splunk platform or SDK libraries and is indended simply as convenience for
+developers using the SDK. 
 
-Where the ca.pem file is in the standard form. Below is the pem file for a test splunk server:
+The `.splunkrc` file should not be used for storing user credentials for apps
+built on Splunk and should not be used if you are concerned about the security
+of the credentails used in your development environment.
 
------BEGIN CERTIFICATE-----
-MIICdTCCAd4CCQDAsfQhOfrWaTANBgkqhkiG9w0BAQUFADB/MQswCQYDVQQGEwJV
-UzELMAkGA1UECBMCQ0ExFjAUBgNVBAcTDVNhbiBGcmFuY2lzY28xDzANBgNVBAoT
-BlNwbHVuazEXMBUGA1UEAxMOU3BsdW5rQ29tbW9uQ0ExITAfBgkqhkiG9w0BCQEW
-EnN1cHBvcnRAc3BsdW5rLmNvbTAeFw0wNjA3MjQxNzEyMTlaFw0xNjA3MjExNzEy
-MTlaMH8xCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZy
-YW5jaXNjbzEPMA0GA1UEChMGU3BsdW5rMRcwFQYDVQQDEw5TcGx1bmtDb21tb25D
-QTEhMB8GCSqGSIb3DQEJARYSc3VwcG9ydEBzcGx1bmsuY29tMIGfMA0GCSqGSIb3
-DQEBAQUAA4GNADCBiQKBgQDJmb55yvam1GqGgTK0dfHXWJiB0Fh8fsdJFRc5dxBJ
-PFaC/klmtbLFLbYuXdC2Jh4cm/uhj1/FWmA0Wbhb02roAV03Z3SX0pHyFa3Udyqr
-9f5ERJ0AYFA+y5UhbMnD9zlhs7J8ucub3XvA8rn79ejkYtDX2rMQWPNZYPcrxUEh
-iwIDAQABMA0GCSqGSIb3DQEBBQUAA4GBAKW37NFwTikJOMo9Z8cjmJDz9wa4yckB
-MlEA1/s6k6OmzZH0gkAssLstRkBavlr1uIBPZ2Jfse6FjoJ5ekC1AoXkInwmCspW
-GTVCoe8rwhU0xaj0GsC+wA3ykL+UKuXz6iE3oDcnLr0qxiNT2OxdTxz+EB9T0ynR
-x/F2KL1hdfCR
------END CERTIFICATE-----
+## Overview
 
+The Splunk developer platform consists of two primary components: `splunkd`, 
+the engine and `splunkweb` the app framework that sits on top of the engine
+and is used to build the Splunk application.
 
+This SDK enables developers to target `splunkd` by making calls against the
+engine's REST API and by accessing the various `splunkd` extension points such
+as custom search commands, lookup functions, scripted inputs and custom REST
+handlers.
 
-<outline of SDK docs and additional resources>
+You can find additional information about building applications using the
+'splunkweb' framework on the Splunk developer portal at http://dev.splunk.com.
+
+### Hello Splunk
+
+The Splunk library included in this SDK consists of two layers of API that 
+can be used to interact with splunkd. The lower layer is referred to as the
+_binding_ layer and is basically a thin wrapper over a pluggable HTTP library
+(httplib by default) that handles tasks such as Splunk authentication and
+optional mapping of Splunk namespaces to URL paths and that provides a low
+level HTTP interface to Splunk for devlopers who want full control over the
+calls made to splunkd and who basically want to code "close to the wire".
+
+    import splunk.binding as binding
+
+    # host defaults to localhost and port defaults to 8089
+    context = binding.connect(username="admin", password="changeme")
+
+    response = context.get('/services/authentication/users')
+
+    if response.status != 200:
+        raise binding.HTTPError(response)
+
+    print response.body.read()
+
+The second layer is referred to as the _client_ layer and builds on the 
+_binding_ layer to provide a friendlier interface to Splunk that abstracts away
+some of the lower level details of the _binding_ layer.
+
+    from pprint import pprint
+
+    import splunk.client as client
+
+    # host defaults to localhost and port defaults to 8089
+    service = client.connect(username="admin", password="changeme")
+
+    for user in service.users:
+        pprint(user())
+
+### Unit tests
+
+The SDK contains a small but growing collection of unit tests. Running the
+tests is simple and rewarding:
+
+    cd tests
+    make
+
+### Layout of the repository
+
+<dl>
+<dt>./docs</dt>
+<dd>Contains a few detailed notes specific to the SDK. In general documentation
+    about developing on Splunk can be found on dev.splunk.com.</dd>
+<dt>./examples</dt>
+<dd>Contains s variety of Splunk samples demonstrating the various library
+    modules.</dd>
+<dt>./splunk</dt>
+<dd>The Splunk library modules.</dd>
+<dt>./tests</dt>
+<dd>The SDK unit tests.</dd>
+<dt>./utils</dt>
+<dd>Generic utility code shared by the examples and unit tests.</dd>
+</dl>
+
+## Resources
+
+You can find anything having to do with developing on Splunk at the Splunk
+developer portal:
+
+* http://dev.splunk.com
+
+Splunk REST API reference documentation: 
+
+* UNDONE
+
+For a gentle introduction to the Splunk product and some of its capabilities:
+
+* http://www.innovato.com/splunk/
 
 ## Community
 
-<how to contact us, issues, answers, etc>
+* UNDONE: Mailing list
+* UNDONE: Issues
+* UNDONE: Answers
 
-<how to contribute>
+### How to contribute
+
+We need you to submit a [contributor agreement form] before we can accept your
+contributions. The agreement allows us to .. UNDONE
 

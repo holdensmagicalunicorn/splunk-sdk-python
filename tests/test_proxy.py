@@ -12,16 +12,12 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# UNDONE: Add tests that use the path argument
-# UNDONE: Add tests that use the XNAME versions of dict & list
-
 import os
 import sys
 import time
 import subprocess
 
 from utils import parse
-#import splunk.data as data
 
 opts = None # Command line options
 
@@ -39,7 +35,7 @@ def test_proxy():
     # start a tiny-proxy.py server, and run all our tests via shell
     script = os.path.join(cwd, "tiny-proxy.py")
     os.system("python %s -d -p %d" % (script, PROXYPORT))
-    time.sleep(r21)
+    time.sleep(2)
 
     # git PID, and cleanup file
     fd = open(pidfile, "r")
@@ -51,7 +47,6 @@ def test_proxy():
     os.system("python test_binding.py --proxyhost=127.0.0.1 --proxyport=%d" % PROXYPORT)
 
     # kill proxy server and remove its log
-
     if os.name == "nt":
         subprocess.Popen("taskkill /PID %s /t /f" % pid, shell=True)
     else:
@@ -60,7 +55,6 @@ def test_proxy():
     time.sleep(2)
     logname = os.path.join(cwd, "proxy.log")
     os.remove(logname)
-
 
 def main(argv):
     global opts
