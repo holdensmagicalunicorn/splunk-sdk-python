@@ -2,7 +2,7 @@
 
 *Welcome to the Splunk SDK for Python!*
 
-The SDK contains library code and examples designed to enable developers to
+This SDK contains library code and examples designed to enable developers to
 build applications using Splunk.
 
 Splunk is a search engine and analytic environment that uses a distributed
@@ -10,13 +10,13 @@ map-reduce architecture to efficiently index, search and process large
 time-varying data sets.
 
 The Splunk product is popular with system administrators for aggregation and
-monitoring of IT machine data and in security, compliance and a wide variety of
-other scenarios that share a requirement to efficiently index, search, analyze
-and generate real-time notifications from large volumes of time series data.
+monitoring of IT machine data, security, compliance and a wide variety of other
+scenarios that share a requirement to efficiently index, search, analyze and
+generate real-time notifications from large volumes of time series data.
 
 The Splunk developer platform enables developers to take advantage of the same
 technology used by the Splunk product to build exciting new applications that
-are enabled by the Splunk platform's unique capabilities.
+are enabled by Splunk's unique capabilities.
 
 You can learn more about the Splunk developer platform at http://dev.splunk.com
 
@@ -29,7 +29,7 @@ License 2.0. Details can be found in the file LICENSE.
 
 ## Getting Started
 
-In order to use thet SDK you are going to need a copy of Splunk. If you don't 
+In order to use the SDK you are going to need a copy of Splunk. If you don't 
 already have a copy you can download one from http://www.splunk.com/download.
 
 You can get a copy of the SDK by cloning into the repository with git:
