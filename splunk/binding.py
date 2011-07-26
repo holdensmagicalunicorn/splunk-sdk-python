@@ -29,7 +29,6 @@ import ssl
 from xml.etree.ElementTree import XML
 
 from splunk.data import record
-import splunk.data as data
 
 __all__ = [
     "connect",
@@ -159,9 +158,9 @@ def connect(**kwargs):
     return Context(**kwargs).login() 
 
 #
-# The HTTP interface below, used by the Splunk binding layer, abstracts the 
-# unerlying HTTP library using request & response 'messages' which are dicts
-# with the following structure:
+# The HTTP interface used by the Splunk binding layer abstracts the unerlying
+# HTTP library using request & response 'messages' which are implemented as
+# dictionaries with the following structure:
 #
 #   # HTTP request message (all keys optional)
 #   request {
@@ -179,15 +178,13 @@ def connect(**kwargs):
 #   }
 #
 
-# UNDONE: Make sure timeout arg works!
-# UNDONE: Consider moving timeout arg into kwargs
 # UNDONE: http.post does not support: file upload, 'raw' body data, streaming,
-#   multipart/form-data, query args
+# multipart/form-data, query args
 
 import splunk.ehttplib as httplib
 import urllib
 
-DEBUG = False
+debug = False
 
 def _print_request(method, url, head, body):
     print "** %s %s" % (method, url)
@@ -263,6 +260,7 @@ class HttpBase(object):
                 kwargs['ca_file'] = self.ca_file
 
         return kwargs
+
     def connect(self, scheme, host, port, **kwargs):
         # Add ssl/timeout/proxy information
         kwargs = self._add_info(**kwargs)
@@ -319,7 +317,7 @@ class HttpBase(object):
 
         # Before we return the response, we first make sure 
         # that it is valid
-        if (400 <= response.status):
+        if 400 <= response.status:
             raise HTTPError(response) 
 
         return response
@@ -347,8 +345,8 @@ class Http(HttpBase):
 
         method = message.get("method", "GET")
 
-        if DEBUG: 
-            _print_request(method, url, head, body)
+        if debug: _print_request(method, url, head, body)
+
         connection = self.connect(scheme, host, port, timeout = timeout)
 
         try:
@@ -365,14 +363,12 @@ class Http(HttpBase):
             response.getheaders(),
             response)
 
-        if DEBUG: 
-            _print_response(response)
+        if debug: _print_response(response)
 
         return response
 
-# UNDONE: Complete implementation of file-like object
+# UNDONE: Complete implementation of file-like object, eg: __iter__
 class ResponseReader:
-    """Read response."""
     def __init__(self, response):
         self._response = response
 
@@ -380,37 +376,24 @@ class ResponseReader:
         return self.read()
 
     def read(self, size = None):
-        """Response reader."""
         return self._response.read(size)
 
-def extract_error_message(response):
-        error = data.load(response.body.read())
-        error_msg = ""
-        if error.has_key("response"):
-            if error["response"].has_key("messages"):
-                messages = error["response"]["messages"]
-                if messages.has_key("msg"):
-                    msg = messages["msg"]
-                    msg_type = msg["type"]
-                    msg_text = msg["$text"]
-                    error_msg = "-- %s: %s" % (msg_type, msg_text)
-
-        return (error, error_msg)
+# Note: the error response schema supports multiple messages but we only
+# return the first, although we do return the body so that an exception 
+# handler that wants to read multiple messages can do so.
+def read_error_message(response):
+    body = response.body.read()
+    return body, XML(body).findtext("./messages/msg")
 
 class HTTPError(Exception):
-    """HTTP Exception generator."""
     def __init__(self, response):
-        # Extract the status, reason and error message
-        # from the response
         status = response.status
         reason = response.reason
-        error, error_msg = extract_error_message(response)
-
-        message = "HTTP %d %s %s" % (status, reason, error_msg)
-
+        body, detail = read_error_message(response)
+        message = "HTTP %d %s%s" % (
+            status, reason, "" if detail is None else " -- %s" % detail)
         Exception.__init__(self, message) 
-        self.reason = reason
         self.status = status
-        self.response = response
-        self.error = error
-
+        self.reason = reason
+        self.headers = response.headers
+        self.body = body
