@@ -205,7 +205,7 @@ def handler (signo, frame):
  
 def daemonize_part2 (logger):
     class DevNull (object):
-        def __init__ (self): self.fd = os.open ("/dev/null", os.O_WRONLY)
+        def __init__ (self): self.fd = os.open (os.path.devnull, os.O_WRONLY)
         def write (self, *args, **kwargs): return 0
         def read (self, *args, **kwargs): return 0
         def fileno (self): return self.fd
@@ -220,23 +220,23 @@ def daemonize_part2 (logger):
     filename = "./proxypid"
     if os.name == "nt":
         filename = "proxypid"
-
-    if os.name != "nt":
+    else:
         os.setsid ()
-        fd = os.open (os.path.devnull, os.O_RDONLY)
-        if fd != 0:
-            os.dup2 (fd, 0)
-            os.close (fd)
-        null = DevNull ()
-        log = ErrorLog (logger)
-        sys.stdout = null
-        sys.stderr = log
-        sys.stdin = null
-        fd = os.open (os.path.devnull, os.O_WRONLY)
-        #if fd != 1: os.dup2 (fd, 1)
-        os.dup2 (sys.stdout.fileno (), 1)
-        if fd != 2: os.dup2 (fd, 2)
-        if fd not in (1, 2): os.close (fd)
+
+    fd = os.open (os.path.devnull, os.O_RDONLY)
+    if fd != 0:
+        os.dup2 (fd, 0)
+        os.close (fd)
+    null = DevNull ()
+    log = ErrorLog (logger)
+    sys.stdout = null
+    sys.stderr = log
+    sys.stdin = null
+    fd = os.open (os.path.devnull, os.O_WRONLY)
+    #if fd != 1: os.dup2 (fd, 1)
+    os.dup2 (sys.stdout.fileno (), 1)
+    if fd != 2: os.dup2 (fd, 2)
+    if fd not in (1, 2): os.close (fd)
     # write PID to pidfile
     fd = open(filename, "w")
     fd.write("%s" % os.getpid())

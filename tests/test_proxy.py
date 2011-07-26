@@ -22,6 +22,8 @@ from utils import parse
 opts = None # Command line options
 
 PROXYPORT=8080
+LOGFILE="proxy.log"
+KILLFILE="kill.log"
 
 def test_proxy():
 
@@ -44,17 +46,23 @@ def test_proxy():
     os.remove(pidfile)
 
     # run binding test using proxy server
-    os.system("python test_binding.py --proxyhost=127.0.0.1 --proxyport=%d" % PROXYPORT)
+    os.system("python test_binding.py --proxyhost=127.0.0.1 --proxyport=%d" % \
+              PROXYPORT)
 
     # kill proxy server and remove its log
     if os.name == "nt":
-        subprocess.Popen("taskkill /PID %s /t /f" % pid, shell=True)
+        # redirect text from taskkill to dummy file, and then remove it after 
+        # process is dead
+        kfile = os.open(KILLFILE, os.O_CREAT)
+        subprocess.Popen("taskkill /PID %s /t /f" % pid, shell=True, stdout=kfile)
+        time.sleep(3)
+        os.close(kfile)
+        os.remove(KILLFILE)
     else:
         os.system("kill -9 %s" % pid)
+        time.sleep(3)
 
-    time.sleep(2)
-    logname = os.path.join(cwd, "proxy.log")
-    os.remove(logname)
+    os.remove(LOGFILE)
 
 def main(argv):
     global opts
