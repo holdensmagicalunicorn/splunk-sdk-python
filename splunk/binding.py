@@ -91,7 +91,7 @@ class Context:
         """Open a connection (socket) to the service (host:port)."""
         conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         conn.connect((self.host, int(self.port)))
-        #return socket.ssl(cn) if self.scheme == "https" else cn
+        
         return ssl.wrap_socket(conn) if self.scheme == "https" else conn
 
     def delete(self, path, **kwargs):
