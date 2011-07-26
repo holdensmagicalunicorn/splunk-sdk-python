@@ -87,9 +87,9 @@ class Context:
 
     def connect(self):
         """Open a connection (socket) to the service (host:port)."""
-        conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        conn.connect((self.host, int(self.port)))
-        return ssl.wrap_socket(conn) if self.scheme == "https" else conn
+        cn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        cn.connect((self.host, int(self.port)))
+        return ssl.wrap_socket(cn) if self.scheme == "https" else cn
 
     def delete(self, path, **kwargs):
         """Issue a DELETE request to the given path."""
