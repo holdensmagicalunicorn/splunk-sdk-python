@@ -14,19 +14,24 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# You can run the example both synchronously and using eventlet. Just comment
-# and uncomment the relevant parts (marked EVENTLET and SYNCHRONOUS)
+# A sample that demonstrates a custom HTTP handler for the Splunk service,
+# as well as showing how you could use the Splunk Python SDK with coroutine
+# based systems like Eventlet.
 
-import splunk, sys
+#### Main Code
+
+import sys, datetime
 import urllib
-from utils import parse
+import eventlet
 from time import sleep
 
-# EVENTLET
-from eventlet.green import urllib2  
+import splunk
+from utils import parse, error
 
-# SYNCHRONOUS
-#import urllib2
+# Placeholder for a specific implementation of `urllib2`,
+# to be defined depending on whether or not we are running
+# this sample in async or sync mode.
+urllib2 = None
 
 def _spliturl(url):
     scheme, part = url.split(':', 1)
@@ -34,43 +39,163 @@ def _spliturl(url):
     host, port = urllib.splitnport(host, 80)
     return scheme, host, port, path
 
+def main(argv):
+    global urllib2
+
+    # Parse the command line args.
+    opts = parse(argv, {}, ".splunkrc")
+
+    # We have to see if we got either the "sync" or
+    # "async" command line arguments.
+    allowed_args = ["sync", "async"]
+    if len(opts.args) == 0 or opts.args[0] not in allowed_args:
+        error("Must supply either of: %s" % allowed_args, 2)
+
+    # Note whether or not we are async.
+    is_async = opts.args[0] == "async"
+
+    # If we're async, we'' import `eventlet` and `eventlet`'s version
+    # of `urllib2`. Otherwise, import the stdlib version of `urllib2`.
+    #
+    # The reason for the funky import syntax is that Python imports
+    # are scoped to functions, and we need to make it global. 
+    # In a real application, you would only import one of these.
+    if is_async:
+        urllib2 = __import__('eventlet.green', globals(), locals(), 
+                            ['urllib2'], -1).urllib2
+    else:
+        urllib2 = __import__("urllib2", globals(), locals(), [], -1)
+
+
+    # Create and store the `urllib2` HTTP implementation.
+    http = Urllib2Http()
+    opts.kwargs["http"] = http
+
+    # Create the service and log in.
+    service = splunk.client.Service(**opts.kwargs)
+    service.login()
+
+    # Create an `eventlet` pool of workers.
+    pool = eventlet.GreenPool(8)
+
+    # Record the current time at the start of the
+    # "benchmark".
+    oldtime = datetime.datetime.now()
+
+    def do_search(query):
+        # Create a search job for the query.
+        job = service.jobs.create(query)
+
+        # While the job is still running, we want
+        # to sleep.
+        while job["dispatchState"] != "DONE":
+            # Check if we are async.
+            if is_async:
+                # If we are async, then we execute an `eventlet`
+                # sleep, which will just relinquish controller
+                # of the current worker in the pool.
+                eventlet.sleep(1)
+            else:
+                # We execute a real sleep, which will block the
+                # current thread.
+                sleep(1)
+
+            
+        # Acquire and return the job results.
+        return job.results()
+
+    # We specify many queries to get show the advantages
+    # of paralleism.
+    queries = [
+        'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
+    ]
+
+    # Check if we are async or not, and execute all the
+    # specified queries.
+    if is_async:
+        # If we are async, we use our worker pool to farm
+        # out all the queries. We just pass, as we don't
+        # actually care about the result.
+        for results in pool.imap(do_search, queries):
+            pass
+    else:
+        # If we are sync, then we just execute the queries one by one,
+        # and we can also ignore the result.
+        for query in queries:
+            do_search(query)
+    
+    # Record the current time at the end of the benchmark,
+    # and print the delta elapsed time.
+    newtime = datetime.datetime.now()
+    print "Elapsed Time: %s" % (newtime - oldtime)
+    
+
+##### Custom `urllib2`-based HTTP handler
+
 class Urllib2Http(splunk.binding.HttpBase):
     def request(self, url, message, **kwargs):
-        # Add ssl/timeout/proxy information
+        # Add ssl/timeout/proxy information.
         kwargs = self._add_info(**kwargs)
         timeout = kwargs['timeout'] if kwargs.has_key('timeout') else None
 
+        # Split the URL into constituent components.
         scheme, host, port, path = _spliturl(url)
         body = message.get("body", "")
+
+        # Setup the default headers.
         head = { 
             "Content-Length": str(len(body)),
             "Host": host,
             "User-Agent": "http.py/1.0",
             "Accept": "*/*",
-        } # defaults
+        }
 
+        # Add in the passed in headers.
         for key, value in message["headers"]: 
             head[key] = value
 
+        # Note the HTTP method we're using, defaulting
+        # to `GET`.
         method = message.get("method", "GET")
 
         handlers = []
+
+        # Check if we're going to be using a proxy.
         if (self.proxy):
+            # If we are going to be using a proxy, then we setup
+            # an `urllib2.ProxyHandler` with the passed in 
+            # proxy arguments.
             proxy = "%s:%s" % self.proxy
             proxy_handler = urllib2.ProxyHandler({"http": proxy, "https": proxy})
             handlers.append(proxy_handler)
         
         opener = urllib2.build_opener(*handlers)
 
+        # Unfortunately, we need to use the hack of 
+        # "overriding" `request.get_method` to specify
+        # a method other than `GET` or `POST`.
         request = urllib2.Request(url, body, head)
         request.get_method = lambda: method
 
+        # Make the request and get the resposne
         response = None
         try:
             response = opener.open(request)
         except Exception as e:
             response = e
 
+        # Normalize the response to something the SDK expects, and 
+        # return it.
         response = splunk.binding.HttpBase.build_response(
             response.code, 
             response.msg,
@@ -78,82 +203,6 @@ class Urllib2Http(splunk.binding.HttpBase):
             response)
 
         return response
-
-opts = None # Command line options
-def main(argv):
-    global opts
-
-    # Parse the command line args
-    opts = parse(argv, {}, ".splunkrc")
-
-    # Create and store the urllib2 HTTP implementation
-    http = Urllib2Http()
-    opts.kwargs["http"] = http
-
-    # Create the service and log in
-    service = splunk.client.Service(**opts.kwargs)
-    service.login()
-
-    import eventlet, datetime
-    pool = eventlet.GreenPool(8)
-
-    oldtime = datetime.datetime.now()
-
-    def do_search(query):
-        job = service.jobs.create(query)
-
-        while job["dispatchState"] != "DONE":
-
-            # EVENTLET
-            eventlet.sleep(1)
-
-            # SYNCHRONOUS
-            #sleep(1)
-
-        results = job.results()
-
-        return results
-
-    # Many queries
-    queries = [
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-        'search sourcetype="top" | head 100',
-    ]
-
-    # EVENTLET
-    for results in pool.imap(do_search, queries):
-        # No need to do anything with the result
-        pass
-
-    # SYNCHRONOUS
-    #for query in queries:
-    #    results = do_search(query)
-
-    newtime = datetime.datetime.now()
-    print "Elapsed Time: %s" % (newtime - oldtime)
-    
 
 if __name__ == "__main__":
     main(sys.argv[1:])

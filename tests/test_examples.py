@@ -27,9 +27,10 @@ def assertMultiLineEqual(test, first, second, msg=None):
 
 # Rudimentary sanity check for each of the examples
 class ExamplesTestCase(unittest.TestCase):
-    def startUp(self):
+    def setUp(self):
         # Ignore result, it might already exist
         os.system("python index.py create sdk-tests > __stdout__")
+        os.system("python index.py create sdk-tests-two > __stdout__")
 
     def tearDown(self):
         # Ignore exceptions when trying to remove this file
@@ -46,23 +47,36 @@ class ExamplesTestCase(unittest.TestCase):
         commands = [
             "python conf.py --help > __stdout__",
             "python conf.py > __stdout__",
-            "python conf.py props > __stdout__",
-            'python conf.py --namespace="admin:search" props > __stdout__',
+            "python conf.py viewstates > __stdout__",
+            'python conf.py --namespace="admin:search" viewstates > __stdout__',
             "python conf.py create server SDK-STANZA",
             "python conf.py create server SDK-STANZA testkey=testvalue",
             "python conf.py delete server SDK-STANZA"
         ]
         for command in commands: self.assertEquals(os.system(command), 0)
 
+    def test_eventlet_sample(self):
+        result = os.system("python eventlet_sample.py sync > __stdout__")
+        self.assertEquals(result, 0)
+
+        try:
+            # Only try running the async version of the test if eventlet
+            # is present on the system
+            import eventlet
+            result = os.system("python eventlet_sample.py async > __stdout__")
+            self.assertEquals(result, 0)
+        except:
+            pass
+
     def test_index(self):
         commands = [
             "python index.py --help > __stdout__",
             "python index.py > __stdout__",
             "python index.py list > __stdout__",
-            "python index.py list sdk-tests > __stdout__",
-            "python index.py disable sdk-tests > __stdout__",
-            "python index.py enable sdk-tests > __stdout__",
-            "python index.py clean sdk-tests > __stdout__",
+            "python index.py list sdk-tests-two > __stdout__",
+            "python index.py disable sdk-tests-two > __stdout__",
+            "python index.py enable sdk-tests-two > __stdout__",
+            "python index.py clean sdk-tests-two > __stdout__",
         ]
         for command in commands: self.assertEquals(os.system(command), 0)
 
@@ -92,6 +106,10 @@ class ExamplesTestCase(unittest.TestCase):
             "python loggers.py > __stdout__",
         ]
         for command in commands: self.assertEquals(os.system(command), 0)
+
+    def test_oneshot(self):
+        result = os.system("python oneshot.py 'search * | head 10' > __stdout__")
+        self.assertEquals(result, 0)
         
     def test_search(self):
         commands = [

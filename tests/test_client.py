@@ -106,6 +106,8 @@ class ServiceTestCase(unittest.TestCase):
 
         for conf in service.confs:
             for stanza in conf: stanza.read()
+            # no need to read every conf file for the test
+            break;
 
         self.assertTrue(service.confs.contains('props'))
         props = service.confs['props']
