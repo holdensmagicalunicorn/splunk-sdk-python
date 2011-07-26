@@ -338,8 +338,15 @@ class ServiceTestCase(unittest.TestCase):
             'isFinalized': '1'
         })
 
-        # Run a new job to get the results
-        job = self.runjob("search * | head 1 | stats count", 10)
+        # Run a new job to get the results, but we also make
+        # sure that there is at least one event in the index already
+        index = self.service.indexes['sdk-tests']
+        old_event_count = int(index['totalEventCount'])
+        if old_event_count == 0:
+            index.submit("test event")
+            wait_event_count(index, 1, 10)
+
+        job = self.runjob("search index=sdk-tests | head 1 | stats count", 10)
 
         # Fetch the results
         reader = results.ResultsReader(job.results())
