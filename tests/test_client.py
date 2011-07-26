@@ -248,6 +248,27 @@ class ServiceTestCase(unittest.TestCase):
             done = bool(int(job['isDone']))
         return job
 
+    def check_properties(self, job, properties, secs = 10):
+        while secs > 0 and len(properties) > 0:
+            read_props = job()
+            asserted = []
+
+            # Try and check every property we specified. If we fail,
+            # we'll try again later. If we succeed, delete it so we
+            # don't check it again.
+            for prop_name in properties.keys():
+                try:
+                    expected_value = properties[prop_name]
+                    self.assertEqual(read_props[prop_name], expected_value)
+                    
+                    # Since we succeeded, delete it
+                    del properties[prop_name]
+                except:
+                    pass
+
+            secs -= 1
+            sleep(1)
+
     def test_jobs(self):
         for job in self.service.jobs: job.read()
 
@@ -298,11 +319,12 @@ class ServiceTestCase(unittest.TestCase):
         job.touch()
 
         # Assert that the properties got set properly
-        props = job.read()
-        self.assertFalse(bool(int(props['isPreviewEnabled'])))
-        self.assertTrue(bool(int(props['isPaused'])))
-        self.assertEqual(int(props['ttl']), 1000)
-        self.assertEqual(int(props['priority']), 5)
+        self.check_properties(job, {
+            'isPreviewEnabled': '0',
+            'isPaused': '1',
+            'ttl': '1000',
+            'priority': '5'
+        })
 
         # Set more properties
         job.enable_preview()
@@ -310,11 +332,11 @@ class ServiceTestCase(unittest.TestCase):
         job.finalize()
 
         # Assert that they got set properly
-        sleep(2)
-        props = job.read()
-        self.assertTrue(bool(int(props['isPreviewEnabled'])))
-        self.assertFalse(bool(int(props['isPaused'])))
-        self.assertTrue(bool(int(props['isFinalized'])))
+        self.check_properties(job, {
+            'isPreviewEnabled': '1',
+            'isPaused': '0',
+            'isFinalized': '1'
+        })
 
         # Run a new job to get the results
         job = self.runjob("search * | head 1 | stats count", 10)

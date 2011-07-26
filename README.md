@@ -136,7 +136,9 @@ The SDK contains a small but growing collection of unit tests. Running the
 tests is simple and rewarding:
 
     cd tests
-    make
+    ./runtests.py
+
+Alternatively, you can read more about our testing "framework" [here](https://github.com/splunk/splunk-sdk-python/tree/master/tests).
 
 ### Layout of the repository
 
