@@ -7,3 +7,4 @@
 proxypid
 proxy.log
 __stdout__
+.coverage
