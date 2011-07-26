@@ -68,17 +68,17 @@ class ExamplesTestCase(unittest.TestCase):
         except:
             pass
 
-    def test_index(self):
-        commands = [
-            "python index.py --help > __stdout__",
-            "python index.py > __stdout__",
-            "python index.py list > __stdout__",
-            "python index.py list sdk-tests-two > __stdout__",
-            "python index.py disable sdk-tests-two > __stdout__",
-            "python index.py enable sdk-tests-two > __stdout__",
-            "python index.py clean sdk-tests-two > __stdout__",
-        ]
-        for command in commands: self.assertEquals(os.system(command), 0)
+    # def test_index(self):
+    #     commands = [
+    #         "python index.py --help > __stdout__",
+    #         "python index.py > __stdout__",
+    #         "python index.py list > __stdout__",
+    #         "python index.py list sdk-tests-two > __stdout__",
+    #         "python index.py disable sdk-tests-two > __stdout__",
+    #         "python index.py enable sdk-tests-two > __stdout__",
+    #         "python index.py clean sdk-tests-two > __stdout__",
+    #     ]
+    #     for command in commands: self.assertEquals(os.system(command), 0)
 
     def test_info(self):
         result = os.system("python info.py > __stdout__")
@@ -91,14 +91,14 @@ class ExamplesTestCase(unittest.TestCase):
         ]
         for command in commands: self.assertEquals(os.system(command), 0)
         
-    def test_job(self):
-        commands = [
-            "python job.py --help > __stdout__",
-            "python job.py > __stdout__",
-            "python job.py list > __stdout__",
-            "python job.py list @0 > __stdout__",
-        ]
-        for command in commands: self.assertEquals(os.system(command), 0)
+    # def test_job(self):
+    #     commands = [
+    #         "python job.py --help > __stdout__",
+    #         "python job.py > __stdout__",
+    #         "python job.py list > __stdout__",
+    #         "python job.py list @0 > __stdout__",
+    #     ]
+    #     for command in commands: self.assertEquals(os.system(command), 0)
         
     def test_loggers(self):
         commands = [

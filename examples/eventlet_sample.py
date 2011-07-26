@@ -22,7 +22,6 @@
 
 import sys, datetime
 import urllib
-import eventlet
 from time import sleep
 
 import splunk
@@ -75,33 +74,17 @@ def main(argv):
     service = splunk.client.Service(**opts.kwargs)
     service.login()
 
-    # Create an `eventlet` pool of workers.
-    pool = eventlet.GreenPool(8)
-
     # Record the current time at the start of the
     # "benchmark".
     oldtime = datetime.datetime.now()
 
     def do_search(query):
         # Create a search job for the query.
-        job = service.jobs.create(query)
+        job = service.jobs.create(query, exec_mode="blocking")
 
-        # While the job is still running, we want
-        # to sleep.
-        while job["dispatchState"] != "DONE":
-            # Check if we are async.
-            if is_async:
-                # If we are async, then we execute an `eventlet`
-                # sleep, which will just relinquish controller
-                # of the current worker in the pool.
-                eventlet.sleep(1)
-            else:
-                # We execute a real sleep, which will block the
-                # current thread.
-                sleep(1)
-
-            
-        # Acquire and return the job results.
+        # In the async case, eventlet will "relinquish" the coroutine
+        # worker, and let others go through. In the sync case, we will
+        # block the entire thread waiting for the request to complete.
         return job.results()
 
     # We specify many queries to get show the advantages
@@ -118,11 +101,27 @@ def main(argv):
         'search * | head 100',
         'search * | head 100',
         'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
+        'search * | head 100',
     ]
 
     # Check if we are async or not, and execute all the
     # specified queries.
     if is_async:
+        import eventlet
+
+        # Create an `eventlet` pool of workers.
+        pool = eventlet.GreenPool(16)
+
         # If we are async, we use our worker pool to farm
         # out all the queries. We just pass, as we don't
         # actually care about the result.
