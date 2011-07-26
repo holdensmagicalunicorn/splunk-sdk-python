@@ -521,9 +521,6 @@ class Job(Endpoint):
     def __getitem__(self, key):
         return self.read()[key]
 
-    def __setitem__(self, key, value):
-        self.update(**{ key: value })
-
     def cancel(self):
         self.post("control", action="cancel")
         return self
@@ -580,10 +577,6 @@ class Job(Endpoint):
 
     def unpause(self):
         self.post("control", action="unpause")
-        return self
-
-    def update(self, **kwargs):
-        self.post(**kwargs)
         return self
 
 class Jobs(Collection):

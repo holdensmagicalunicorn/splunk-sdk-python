@@ -144,7 +144,7 @@ class Program:
             output(job.results(**opts.kwargs)))
 
     def sid(self, spec):
-        """Convert the given search specifier into a serch-id (sid)."""
+        """Convert the given search specifier into a search-id (sid)."""
         if spec.startswith('@'):
             index = int(spec[1:])
             sids = self.service.jobs.list()
