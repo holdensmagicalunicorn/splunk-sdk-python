@@ -22,11 +22,11 @@ import os
 os.environ["COVERAGE_PROCESS_START"] = "../tests/.coveragerc"
 
 files = [
-    "test_client.py",
-    "test_examples.py",
     "test_data.py",
     "test_binding.py",
     "test_proxy.py",
+    "test_client.py",
+    "test_examples.py",
 ]
 
 for file in files: 
