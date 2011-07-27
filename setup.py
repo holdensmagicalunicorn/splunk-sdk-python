@@ -18,12 +18,30 @@ from distutils.core import setup
 
 setup(
     author="Splunk, Inc.",
-    #author_email="UNDONE", # Email of SDK group
+
+    author_email="devinfo@splunk.com",
+
     description="The Splunk Software Development Kit for Python.",
+
     license="http://www.apache.org/licenses/LICENSE-2.0",
-    name="splunk-sdk-python",
+
+    name="splunk-sdk",
+
     packages = ["splunk"],
+
     url="http://github.com/splunk/splunk-sdk-python",
+
     version="0.0.1",
+
+    classifiers = [
+        "Programming Language :: Python",
+        "Development Status :: 3 - Alpha",
+        "Environment :: Other Environment",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: Apache Software License",
+        "Operating System :: OS Independent",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Topic :: Software Development :: Libraries :: Application Frameworks",
+    ],
 )
 

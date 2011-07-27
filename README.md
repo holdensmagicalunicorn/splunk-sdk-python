@@ -191,3 +191,7 @@ contributions. The agreement allows us to .. UNDONE
 * UNDONE: issues should be filed on GitHub Issues 
     (https://github.com/splunk/splunk-sdk-python/issues)
 
+
+### Contact Us
+
+You can reach the Dev Platform team at `devinfo@splunk.com`

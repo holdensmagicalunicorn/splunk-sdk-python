@@ -8,3 +8,6 @@ proxypid
 proxy.log
 __stdout__
 .coverage
+MANIFEST
+build/*
+dist/*
