@@ -32,13 +32,21 @@ License 2.0. Details can be found in the file LICENSE.
 In order to use the SDK you are going to need a copy of Splunk. If you don't 
 already have a copy you can download one from http://www.splunk.com/download.
 
-You can get a copy of the SDK by cloning into the repository with git:
+You can get a copy of the SDK sources by cloning into the repository with git:
 
     git clone git@github.com:splunk/splunk-sdk-python.git
 
 #### Installing
 
-You can install the Splunk SDK libraries by running:
+You can install the Splunk SDK libraries by using `easy_install` or `pip`:
+
+    [sudo] easy_install splunk-sdk
+
+Or
+
+    [sudo] pip install splunk-sdk
+
+Alternatively, you can use `setup.py` on the sources you cloned from GitHub:
 
     [sudo] python setup.py install
 
