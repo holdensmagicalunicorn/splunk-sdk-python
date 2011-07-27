@@ -21,12 +21,15 @@ import os
 # Set up the environment for coverage, even though it might not get used
 os.environ["COVERAGE_PROCESS_START"] = "../tests/.coveragerc"
 
-commands = [
-    "python test_data.py",
-    "python test_binding.py",
-    "python test_proxy.py",
-    "python test_client.py",
-    "python test_examples.py",
+files = [
+    "test_data.py",
+    "test_binding.py",
+    "test_proxy.py",
+    "test_client.py",
+    "test_examples.py",
 ]
 
-for command in commands: os.system(command)
+for file in files: 
+    command = "python %s" % file
+    print "Running Test: %s" % file
+    os.system(command)

@@ -19,6 +19,7 @@ import unittest
 
 import splunk
 from splunk.binding import HTTPError
+import splunk.results as results
 from utils import parse
 
 opts = None # Command line options
@@ -237,12 +238,36 @@ class ServiceTestCase(unittest.TestCase):
         """Create a job to run the given search and wait up to (approximately)
            the given number of seconds for it to complete.""" 
         job = self.service.jobs.create(query)
+        return self.wait_for_completion(job, secs = secs)
+
+    def wait_for_completion(self, job, secs = 30):
         done = False
         while not done and secs > 0:
             sleep(1)
             secs -= 1 # Approximate
-            done = bool(job['isDone'])
+            done = bool(int(job['isDone']))
         return job
+
+    def check_properties(self, job, properties, secs = 10):
+        while secs > 0 and len(properties) > 0:
+            read_props = job()
+            asserted = []
+
+            # Try and check every property we specified. If we fail,
+            # we'll try again later. If we succeed, delete it so we
+            # don't check it again.
+            for prop_name in properties.keys():
+                try:
+                    expected_value = properties[prop_name]
+                    self.assertEqual(read_props[prop_name], expected_value)
+                    
+                    # Since we succeeded, delete it
+                    del properties[prop_name]
+                except:
+                    pass
+
+            secs -= 1
+            sleep(1)
 
     def test_jobs(self):
         for job in self.service.jobs: job.read()
@@ -279,8 +304,62 @@ class ServiceTestCase(unittest.TestCase):
 
         # Search for non-existant data
         job = self.runjob("search index=sdk-tests TERM_DOES_NOT_EXIST", 10)
-        self.assertTrue(bool(job['isDone']))
+        self.assertTrue(bool(int(job['isDone'])))
         self.assertEqual(int(job['eventCount']), 0)
+        job.finalize()
+        
+        # Create a new job
+        job = self.service.jobs.create("search * | head 1 | stats count")
+
+        # Set various properties on it
+        job.disable_preview()
+        job.pause()
+        job.setttl(1000)
+        job.setpriority(5)
+        job.touch()
+
+        # Assert that the properties got set properly
+        self.check_properties(job, {
+            'isPreviewEnabled': '0',
+            'isPaused': '1',
+            'ttl': '1000',
+            'priority': '5'
+        })
+
+        # Set more properties
+        job.enable_preview()
+        job.unpause()
+        job.finalize()
+
+        # Assert that they got set properly
+        self.check_properties(job, {
+            'isPreviewEnabled': '1',
+            'isPaused': '0',
+            'isFinalized': '1'
+        })
+
+        # Run a new job to get the results, but we also make
+        # sure that there is at least one event in the index already
+        index = self.service.indexes['sdk-tests']
+        old_event_count = int(index['totalEventCount'])
+        if old_event_count == 0:
+            index.submit("test event")
+            wait_event_count(index, 1, 10)
+
+        job = self.runjob("search index=sdk-tests | head 1 | stats count", 10)
+
+        # Fetch the results
+        reader = results.ResultsReader(job.results())
+
+        # The first one should always be RESULTS
+        kind, result = reader.next()
+        self.assertEqual(results.RESULTS, kind)
+        self.assertEqual(int(result["preview"]), 0)
+
+        # The second is always the actual result
+        kind, result = reader.next()
+        self.assertEqual(results.RESULT, kind)
+        self.assertEqual(int(result["count"]), 1)
 
         # UNDONE: Need to submit test data and test searches for actual 
         # results Check various formats, timeline, searchlog, etc. Check 

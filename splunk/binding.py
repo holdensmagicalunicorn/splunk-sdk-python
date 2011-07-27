@@ -15,10 +15,8 @@
 # UNDONE: HTTP POST does not support file upload
 # UNDONE: Validate Context.get|post|delete path args are paths and not urls
 # UNDONE: self.namespace should default to actual string and not None
-# UNDONE: CONSIDER: __del__ on Context
-# UNDONE: CONSIDER: __enter__/__exit__ on Context
 
-"""Low-level bindings to the Splunk REST API."""
+"""Low-level 'binding' interface to the Splunk REST API."""
 
 from pprint import pprint # debug
 
@@ -29,7 +27,6 @@ import ssl
 from xml.etree.ElementTree import XML
 
 from splunk.data import record
-import splunk.data as data
 
 __all__ = [
     "connect",
@@ -50,7 +47,6 @@ def prefix(**kwargs):
     return "%s://%s:%s" % (scheme, host, port)
 
 class Context:
-    """Context Class."""
     # kwargs: scheme, host, port, username, password, namespace
     def __init__(self, http = None, **kwargs):
         # We use the default HTTP implementation unless we are 
@@ -71,7 +67,9 @@ class Context:
         return [("Authorization", self.token)]
 
     def bind(self, path, method = "get"):
-        """Define splunk binding, and access methods."""
+        """Returns a lambda that 'captures' the current context and the
+           given path and method and that can be used to simplify subsequent
+           requests using the context, path & method."""
         func = {
             'get': self.get,
             'delete': self.delete,
@@ -89,25 +87,24 @@ class Context:
 
     def connect(self):
         """Open a connection (socket) to the service (host:port)."""
-        conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        conn.connect((self.host, int(self.port)))
-        #return socket.ssl(cn) if self.scheme == "https" else cn
-        return ssl.wrap_socket(conn) if self.scheme == "https" else conn
+        cn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        cn.connect((self.host, int(self.port)))
+        return ssl.wrap_socket(cn) if self.scheme == "https" else cn
 
     def delete(self, path, **kwargs):
-        """Context layer delete endpoint access."""
+        """Issue a DELETE request to the given path."""
         return self.http.delete(self.url(path), self._headers(), **kwargs)
 
     def get(self, path, **kwargs):
-        """Context layer get endpoint access."""
+        """Issue a GET request to the given path."""
         return self.http.get(self.url(path), self._headers(), **kwargs)
 
     def post(self, path, **kwargs):
-        """Context layer post endpoint access."""
+        """Issue a POST request to the given path."""
         return self.http.post(self.url(path), self._headers(), **kwargs)
 
     def request(self, path, message):
-        """Context layer common request method."""
+        """Issue the given HTTP request message to the given endpoint."""
         return self.http.request(
             self.url(path), {
                 'method': message.get("method", "GET"),
@@ -115,20 +112,19 @@ class Context:
                 'body': message.get("body", "")})
 
     def login(self):
-        """Context layer login."""
+        """Issue a Splunk login request using the context's credentials and
+           store the session token for use on subsequent requests."""
         response = self.http.post(
             self.url("/services/auth/login"),
             username=self.username, 
             password=self.password)
-
-        # assert response.status == 200
         body = response.body.read()
         session = XML(body).findtext("./sessionKey")
         self.token = "Splunk %s" % session
         return self
 
     def logout(self):
-        """Context layer logout."""
+        """Forget the current session token."""
         self.token = None
         return self
 
@@ -159,9 +155,9 @@ def connect(**kwargs):
     return Context(**kwargs).login() 
 
 #
-# The HTTP interface below, used by the Splunk binding layer, abstracts the 
-# unerlying HTTP library using request & response 'messages' which are dicts
-# with the following structure:
+# The HTTP interface used by the Splunk binding layer abstracts the unerlying
+# HTTP library using request & response 'messages' which are implemented as
+# dictionaries with the following structure:
 #
 #   # HTTP request message (all keys optional)
 #   request {
@@ -179,15 +175,13 @@ def connect(**kwargs):
 #   }
 #
 
-# UNDONE: Make sure timeout arg works!
-# UNDONE: Consider moving timeout arg into kwargs
 # UNDONE: http.post does not support: file upload, 'raw' body data, streaming,
-#   multipart/form-data, query args
+# multipart/form-data, query args
 
 import splunk.ehttplib as httplib
 import urllib
 
-DEBUG = False
+debug = False
 
 def _print_request(method, url, head, body):
     print "** %s %s" % (method, url)
@@ -201,7 +195,8 @@ def _print_response(response):
     # contents without consuming body or reading an arbitrary response stream.
     # print response.body
 
-def _spliturl(url):
+# Crack the givne url into (scheme, host, port, path)
+def spliturl(url):
     scheme, part = url.split(':', 1)
     host, path = urllib.splithost(part)
     host, port = urllib.splitnport(host, 80)
@@ -212,7 +207,6 @@ def _spliturl(url):
 # for example an argument such as 'foo=[1,2,3]' will be encoded as
 # 'foo=1&foo=2&foo=3'. 
 def encode(**kwargs):
-    """Encode variable arguments into HTTP safe strings."""
     items = []
     for key, value in kwargs.iteritems():
         if isinstance(value, list):
@@ -221,11 +215,10 @@ def encode(**kwargs):
             items.append((key, value))
     return urllib.urlencode(items)
 
-# Base HTTP class implementation, containing the vast majority
-# of the logic. Base classes merely need to implement
-# the request(...) method, and pass the appropriate parameters
-# to _build_response, which will construct an SDK-compliant
-# response object.
+# Base HTTP class implementation, containing the vast majority of the logic.
+# Base classes merely need to implement the request(...) method, and pass the
+# appropriate parameters to _build_response, which will construct an 
+# SDK-compliant response object.
 class HttpBase(object):    
     def __init__(self, **kwargs):
         # Extract timeout information
@@ -263,6 +256,7 @@ class HttpBase(object):
                 kwargs['ca_file'] = self.ca_file
 
         return kwargs
+
     def connect(self, scheme, host, port, **kwargs):
         # Add ssl/timeout/proxy information
         kwargs = self._add_info(**kwargs)
@@ -319,7 +313,7 @@ class HttpBase(object):
 
         # Before we return the response, we first make sure 
         # that it is valid
-        if (400 <= response.status):
+        if 400 <= response.status:
             raise HTTPError(response) 
 
         return response
@@ -333,7 +327,7 @@ class Http(HttpBase):
         kwargs = self._add_info(**kwargs)
         timeout = kwargs.get('timeout', None)
 
-        scheme, host, port, path = _spliturl(url)
+        scheme, host, port, path = spliturl(url)
         body = message.get("body", "")
         head = { 
             "Content-Length": str(len(body)),
@@ -347,8 +341,8 @@ class Http(HttpBase):
 
         method = message.get("method", "GET")
 
-        if DEBUG: 
-            _print_request(method, url, head, body)
+        if debug: _print_request(method, url, head, body)
+
         connection = self.connect(scheme, host, port, timeout = timeout)
 
         try:
@@ -365,14 +359,12 @@ class Http(HttpBase):
             response.getheaders(),
             response)
 
-        if DEBUG: 
-            _print_response(response)
+        if debug: _print_response(response)
 
         return response
 
-# UNDONE: Complete implementation of file-like object
+# UNDONE: Complete implementation of file-like object, eg: __iter__
 class ResponseReader:
-    """Read response."""
     def __init__(self, response):
         self._response = response
 
@@ -380,37 +372,24 @@ class ResponseReader:
         return self.read()
 
     def read(self, size = None):
-        """Response reader."""
         return self._response.read(size)
 
-def extract_error_message(response):
-        error = data.load(response.body.read())
-        error_msg = ""
-        if error.has_key("response"):
-            if error["response"].has_key("messages"):
-                messages = error["response"]["messages"]
-                if messages.has_key("msg"):
-                    msg = messages["msg"]
-                    msg_type = msg["type"]
-                    msg_text = msg["$text"]
-                    error_msg = "-- %s: %s" % (msg_type, msg_text)
-
-        return (error, error_msg)
+# Note: the error response schema supports multiple messages but we only
+# return the first, although we do return the body so that an exception 
+# handler that wants to read multiple messages can do so.
+def read_error_message(response):
+    body = response.body.read()
+    return body, XML(body).findtext("./messages/msg")
 
 class HTTPError(Exception):
-    """HTTP Exception generator."""
     def __init__(self, response):
-        # Extract the status, reason and error message
-        # from the response
         status = response.status
         reason = response.reason
-        error, error_msg = extract_error_message(response)
-
-        message = "HTTP %d %s %s" % (status, reason, error_msg)
-
+        body, detail = read_error_message(response)
+        message = "HTTP %d %s%s" % (
+            status, reason, "" if detail is None else " -- %s" % detail)
         Exception.__init__(self, message) 
-        self.reason = reason
         self.status = status
-        self.response = response
-        self.error = error
-
+        self.reason = reason
+        self.headers = response.headers
+        self.body = body

@@ -5,7 +5,7 @@ branch = True
 data_file = ../tests/.coverage
 
 source = 
-    ../splunk
+    splunk
     ../examples
     ../tests
     ../utils
