@@ -108,16 +108,13 @@ class HTTPConnection(httplib.HTTPConnection):
             conn = HttpProxy((self.host, self.port), self.proxy)
             conn.establish()
             sock = conn.socket
-            self.sock = ssl.wrap_socket(sock, self.key_file, 
-                                        self.cert_file, 
-                                        cert_reqs=ssl.CERT_NONE)
         else:
             sock = socket.create_connection((self.host, self.port), 
                                             self.timeout)
 
-            self.sock = ssl.wrap_socket(sock, self.key_file, 
-                                        self.cert_file, 
-                                        cert_reqs=ssl.CERT_NONE)
+        self.sock = ssl.wrap_socket(sock, self.key_file, 
+                                    self.cert_file, 
+                                    cert_reqs=ssl.CERT_NONE)
 
 class HTTPSConnection(httplib.HTTPSConnection):
     """Class to make a HTTPS connection, with support for full 
@@ -148,27 +145,17 @@ class HTTPSConnection(httplib.HTTPSConnection):
             conn = HttpProxy((self.host, self.port), self.proxy)
             conn.establish()
             sock = conn.socket
-            # If there's no CA File, don't force Server Certificate Check
-            if self.ca_file:
-                self.sock = ssl.wrap_socket(sock, self.key_file, 
-                                        self.cert_file, 
-                                        ca_certs=self.ca_file, 
-                                        cert_reqs=ssl.CERT_REQUIRED)
-            else:
-                self.sock = ssl.wrap_socket(sock, self.key_file, 
-                                        self.cert_file, 
-                                        cert_reqs=ssl.CERT_NONE)
         else:
             sock = socket.create_connection((self.host, self.port), 
                                             self.timeout)
 
-            # If there's no CA File, don't force Server Certificate Check
-            if self.ca_file:
-                self.sock = ssl.wrap_socket(sock, self.key_file, 
-                                            self.cert_file, 
-                                            ca_certs=self.ca_file, 
-                                            cert_reqs=ssl.CERT_REQUIRED)
-            else:
-                self.sock = ssl.wrap_socket(sock, self.key_file, 
-                                            self.cert_file, 
-                                            cert_reqs=ssl.CERT_NONE)
+        # If there's no CA File, don't force Server Certificate Check
+        if self.ca_file:
+            self.sock = ssl.wrap_socket(sock, self.key_file, 
+                                        self.cert_file, 
+                                        ca_certs=self.ca_file, 
+                                        cert_reqs=ssl.CERT_REQUIRED)
+        else:
+            self.sock = ssl.wrap_socket(sock, self.key_file, 
+                                        self.cert_file, 
+                                        cert_reqs=ssl.CERT_NONE)
