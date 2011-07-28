@@ -86,7 +86,7 @@ class Parser(OptionParser):
         return self
 
     def loadrc(self, filename):
-        filepath = path.expanduser("~/%s" % filename) # UNDONE: Windows
+        filepath = path.expanduser(path.join("~", "%s" % filename))
         self.loadif(filepath)
         return self
 
