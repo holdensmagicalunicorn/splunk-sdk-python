@@ -29,10 +29,6 @@
 """Client interface to the Splunk REST API."""
 
 # UNDONE: Cases below where we need to pass schema to data.load (eg: Collection)
-# UNDONE: Check status needs to attempt to retrive error message from the
-#  the resonse body. Eg: a call to index.disable on the defaultDatabase will
-#  return a 404 (which is a little misleading) but the response body contains
-#  a message indicating that disable cant be called on the default database.
 # UNDONE: Consider Entity.delete (if entity has 'remove' link?)
 
 # UNDONE: A note on collections ..

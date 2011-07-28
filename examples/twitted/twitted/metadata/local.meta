@@ -133,3 +133,7 @@ access = read : [ * ], write : [ admin, power ]
 export = none
 version = 4.2.2
 
+[inputs/tcp%3A%2F%2F9002]
+owner = itay
+version = 4.2.2
+

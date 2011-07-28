@@ -8,12 +8,11 @@
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the # License for the specific language governing permissions and limitations # under the License.  """This utility reads the Twitter 'spritzer' and writes status results (aka tweets) to Splunk for indexing.""" 
-# UNDONE: Hardening ..
-#   * Script doesn't handle loss of the twitter HTTP connection or the Splunk
-#     TCP connection
-# UNDONE: Command line args - Splunk host/port
-# UNDONE: Basic auth will be disabled in August/2010 .. need to support OAuth2
+# Unless required by applicable law or agreed to in writing, software 
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+# License for the specific language governing permissions and limitations 
+# under the License.  
 
 from pprint import pprint
 
@@ -27,11 +26,11 @@ import sys
 import splunk
 
 from utils import parse
+from utils import error
 
 TWITTER_STREAM_HOST = "stream.twitter.com"
 TWITTER_STREAM_PATH = "/1/statuses/sample.json"
 
-# UNDONE: must setup a splunk TCP input on the UI (is there an API for this?)
 SPLUNK_HOST = "localhost"
 SPLUNK_PORT = 9001
 
@@ -71,6 +70,14 @@ RULES = {
     'tpassword': { 
         'flags': ["--twitter:password"],
         'help': "Twitter password",
+    },
+    'inputhost': {
+        'flags': ["--input:host"],
+        'help': "Host address for Splunk (default: localhost)",
+    },
+    'inputport': {
+        'flags': ["--input:port"],
+        'help': "Port to use for Splunk TCP input (default: 9001)",
     },
     'verbose': {
         'flags': ["--verbose"],
@@ -137,18 +144,34 @@ def flatten(value, prefix=None):
 
     return value
 
+# Sometimes twitter just stops sending us data on the HTTP connection.
+# In these cases, we'll try up to MAX_TRIES to read 2048 bytes, and if 
+# fail,w e'll 
+MAX_TRIES = 100
+
 def listen(username, password):
-    twitter = Twitter(username, password)
-    stream = twitter.connect()
+    try:
+        twitter = Twitter(username, password)
+        stream = twitter.connect()
+    except Exception as e:
+        error("There wasn an error logging in to Twitter:\n%s" % str(e), 2)
+
     buffer = ""
-    while True:
+    tries = 0
+    while True and tries < MAX_TRIES:
         offset = buffer.find("\r\n")
         if offset != -1:
             status = buffer[:offset]
             buffer = buffer[offset+2:]
             process(status)
+            tries = 0
             continue # Consume all statuses in buffer before reading more
         buffer += stream.read(2048)
+        tries += 1
+
+    if tries == MAX_TRIES:
+        error("""Twitter seems to have closed the connection. Make sure 
+you don't have any other open instances of the 'twitted' sample app.""", 2)
 
 def output(record):
     if verbose == 1: print_record(record)
@@ -180,7 +203,10 @@ def output(record):
         ingest.send(result)
 
     end = "\r\n---end-status---\r\n"
-    ingest.send(end)
+    try: 
+        ingest.send(end)
+    except:
+        error("There was an error with the TCP connection to Splunk.", 2)
 
 def print_record(record):
     if record.has_key('delete_status_id'):
@@ -214,17 +240,31 @@ def main():
         print "Creating index 'twitter' .."
         service.indexes.create("twitter")
 
-    # UNDONE: Ensure index exists
-    # UNDONE: Ensure TCP input is configured
-    # UNDONE: Ensure twitter sourcetype is defined
+    input_host = kwargs.get("inputhost", SPLUNK_HOST)
+    input_port = int(kwargs.get("inputport", SPLUNK_PORT))
+    input_name = "tcp:%s" % (input_port)
+    if input_name not in service.inputs.list():
+        service.inputs.create("tcp", 
+                            input_port,
+                            index="twitter", 
+                            sourcetype="twitter")
+    
     # UNDONE: Ensure rules are created
 
     global ingest
     ingest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    ingest.connect((SPLUNK_HOST, SPLUNK_PORT))
+    ingest.connect((input_host, input_port))
 
-    print "Listening .."
-    listen(kwargs['tusername'], kwargs['tpassword'])
+    print "Listening (and sending data to %s:%s).." % (input_host, input_port)
+    try: 
+        listen(kwargs['tusername'], kwargs['tpassword'])
+    except KeyboardInterrupt:
+        pass
+    except Exception as e:
+        error("""There was an error with the connection to Twitter. Make sure
+you don't have other running instances of the 'twitted' sample app, and try 
+again.""", 2)
+        print e
         
 if __name__ == "__main__":
     main()
