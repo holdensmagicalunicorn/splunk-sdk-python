@@ -16,11 +16,6 @@
 
 """Create, delete or list stanza information from/to Splunk confs."""
 
-# UNDONE: Add support for a conf 'path' to list out contents of individual
-# stanza, or key value.
-# UNDONE: Support for adding and deleting stanzas
-# UNDONE: Extra credit points for support for modifying key/value pairs
-
 import sys
 
 from splunk.client import connect
