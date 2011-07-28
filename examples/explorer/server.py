@@ -25,6 +25,8 @@ PORT = 8080
 class RedirectHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_GET(self):
         redirect_url, headers = self.get_url_and_headers()
+        if redirect_url is None:
+            return
 
         # Append the GET parameters to the URL
         redirect_url += self.path
@@ -64,8 +66,12 @@ class RedirectHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             headers[header_name] = self.headers.getheader(header_name)
 
         # Get the redirect URL and remove it from the headers
-        redirect_url = headers["x-redirect-url"]
-        del headers["x-redirect-url"]
+        redirect_url = None
+        if headers.has_key("x-redirect-url"):
+            redirect_url = headers["x-redirect-url"]
+            del headers["x-redirect-url"]
+        else:
+            self.send_error(500, "Request is missing X-Redirect-URL header.")
 
         return (redirect_url, headers)
 
