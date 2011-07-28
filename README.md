@@ -190,7 +190,7 @@ For a gentle introduction to the Splunk product and some of its capabilities:
 
 ### How to contribute
 
-We aren't ready to accept code contributions yet, but will be shortly.  Check back on dev.splunk.com or this readme for more updates soon.
+We aren't ready to accept code contributions yet, but will be shortly.  Check back on dev.splunk.com or this README for more updates soon.
 
 ### Support
 
