@@ -20,7 +20,7 @@ are enabled by Splunk's unique capabilities.
 
 You can learn more about the Splunk developer platform at http://dev.splunk.com
 
-* UNDONE: Note on the preview status of the SDK
+The Python SDK is currently in a preview state.  Splunk SDKs in a preview state are provided "as-is".  Splunk will not provide support for SDKs in a preview state.  All support for Splunk SDKs in preview will be handled by the community.  
 
 ## License
 
@@ -182,24 +182,22 @@ For a gentle introduction to the Splunk product and some of its capabilities:
 
 ## Community
 
-* UNDONE: Mailing list
-* UNDONE: Issues
-* UNDONE: Answers
-* UNDONE: Blog
-* UNDONE: Twitter (@splunkdev?)
+* Email: Stay connected with other developers building on Splunk: splunkdev@googlegroups.com 
+* Issues: https://github.com/splunk/splunk-sdk-python/issues
+* Answers: Check out this tag on Splunk answers for:  http://splunk-base.splunk.com/tags/python/
+* Blog:  http://blogs.splunk.com/dev/
+* Twitter: @splunkdev
 
 ### How to contribute
 
-We need you to submit a [contributor agreement form] before we can accept your
-contributions. The agreement allows us to .. UNDONE
+We aren't ready to accept code contributions yet, but will be shortly.  Check back on dev.splunk.com or this readme for more updates soon.
 
 ### Support
 
-* UNDONE: no support
-* UNDONE: issues should be filed on GitHub Issues 
+* SDKs in Preview will not be Splunk supported.  Once the Python SDK moves to Beta we will provide more detail on support.  
+* Issues should be filed on GitHub Issues 
     (https://github.com/splunk/splunk-sdk-python/issues)
 
 
 ### Contact Us
-
 You can reach the Dev Platform team at `devinfo@splunk.com`
