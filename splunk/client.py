@@ -57,7 +57,7 @@ __all__ = [
 
 PATH_APPS = "apps/local/"
 PATH_CAPABILITIES = "authorization/capabilities/"
-PATH_CONF = "admin/conf-%s/"
+PATH_CONF = "configs/conf-%s/"
 PATH_CONFS = "properties/"
 PATH_INDEXES = "data/indexes/"
 PATH_INPUTS = "data/inputs/"
@@ -65,7 +65,7 @@ PATH_JOBS = "search/jobs/"
 PATH_LOGGER = "server/logger/"
 PATH_MESSAGES = "messages/"
 PATH_ROLES = "authentication/roles/"
-PATH_STANZA = "admin/conf-%s/%s" # (file, stanza)
+PATH_STANZA = "configs/conf-%s/%s" # (file, stanza)
 PATH_USERS = "authentication/users/"
 
 XNAMEF_ATOM = "{http://www.w3.org/2005/Atom}%s"
