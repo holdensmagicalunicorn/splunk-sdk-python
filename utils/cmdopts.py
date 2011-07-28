@@ -101,6 +101,9 @@ class Parser(OptionParser):
                 self.result['kwargs'][dest] = value
         return self
 
+    def format_epilog(self, formatter):
+        return self.epilog or ""
+
 def cmdline(argv, rules=None, config=None, **kwargs):
     """Simplified cmdopts interface that does not default any parsing rules
        and that does not allow compounding calls to the parser."""

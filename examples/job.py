@@ -21,13 +21,49 @@
 # jobs, eg: @0 would specify the frist job in the list, @1 the second, and so
 # on.
 
-from pprint import pprint # UNDONE
-
+from pprint import pprint
 import sys
 
 from splunk.client import connect
+from utils import error, parse, cmdline
 
-import utils
+HELP_EPILOG = """
+Commands:            
+    cancel <search>+
+    create <query> [options]
+    events <search>+
+    finalize <search>+
+    list [<search>]*
+    pause <search>+
+    preview <search>+
+    results <search>+
+    searchlog <search>+
+    summary <search>+
+    perf <search>+
+    timeline <search>+
+    touch <search>+
+    unpause <search>+
+
+A search can be specified either by using it 'search id' ('sid'), or by
+using the index in the listing of searches. For example, @5 would refer
+to the 5th search job in the list.
+
+Examples:
+    # Cancel a search
+    job.py cancel @0
+
+    # Create a search
+    job.py create 'search * | stats count' --search_mode=blocking
+
+    # List all searches
+    job.py list
+
+    # List properties of the specified searches
+    job.py list @3 scheduler__nobody__search_SW5kZXhpbmcgd29ya2xvYWQ_at_1311888600_b18031c8d8f4b4e9
+
+    # Get all results for the third search
+    job.py results @3
+"""
 
 FLAGS_CREATE = [
     "search", "earliest_time", "latest_time", "now", "time_format",
@@ -65,7 +101,7 @@ def cmdline(argv, flags):
     """A cmdopts wrapper that takes a list of flags and builds the
        corresponding cmdopts rules to match those flags."""
     rules = dict([(flag, {'flags': ["--%s" % flag]}) for flag in flags])
-    return utils.cmdline(argv, rules)
+    return cmdline(argv, rules)
 
 def output(stream):
     """Write the contents of the given stream to stdout."""
@@ -225,7 +261,7 @@ def main():
         options = argv[:index]
         command = argv[index:]
 
-    opts = utils.parse(options, {}, ".splunkrc", usage=usage)
+    opts = parse(options, {}, ".splunkrc", usage=usage, epilog=HELP_EPILOG)
     service = connect(**opts.kwargs)
     program = Program(service)
     program.run(command)

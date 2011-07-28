@@ -16,16 +16,6 @@
 
 """A command line utility for interacting with Splunk indexes."""
 
-# UNDONE: Improve command line help to show the following commands:
-#
-#     clean [<index>]+
-#     create <index> [options]
-#     disable [<index>]+
-#     enable [<index>]+
-#     list [<index>]*
-#     reload [<index>]+
-#     update <index> [options]
-#
 # UNDONE: Implement a delete command: clean, remove stanzas from indexes.conf,
 #  restart server, delete db files.
 
@@ -34,6 +24,36 @@ import sys
 from splunk.client import connect
 
 from utils import *
+
+HELP_EPILOG = """
+Commands:
+    clean [<index>]+
+    create <index> [options]
+    disable [<index>]+
+    enable [<index>]+
+    list [<index>]*
+    reload [<index>]+
+    update <index> [options]
+
+Examples:
+    # Create an index called 'MyIndex'
+    index.py create MyIndex
+
+    # Clean index 'MyIndex'
+    index.py clean MyIndex
+
+    # Disable indexes 'MyIndex' and 'main'
+    index.py disable MyIndex main
+
+    # Enable indexes 'MyIndex' and 'main'
+    index.py enable MyIndex main
+
+    # List all indexes
+    index.py list
+
+    # List properties of index 'MyIndex'
+    index.py list MyIndex
+"""
 
 class Program:
     def __init__(self, service):
@@ -163,7 +183,7 @@ def main():
         options = argv[:index]
         command = argv[index:]
 
-    opts = parse(options, {}, ".splunkrc", usage=usage)
+    opts = parse(options, {}, ".splunkrc", usage=usage, epilog=HELP_EPILOG)
     service = connect(**opts.kwargs)
     program = Program(service)
     program.run(command)

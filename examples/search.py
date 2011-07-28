@@ -68,7 +68,11 @@ def main(argv):
 
     service = client.connect(**kwargs_splunk)
 
-    # UNDONE: Call the parser here to syntax check the query
+    try:
+        service.parse(search, parse_only=True)
+    except splunk.binding.HTTPError as e:
+        cmdopts.error("query '%s' is invalid:\n\t%s" % (search, e.message), 2)
+        return
 
     job = service.jobs.create(search, **kwargs_create)
     while True:
