@@ -99,7 +99,7 @@ class XMLStream:
             raise StopIteration
             
 # A simplified XML 'reader' interface, that also abstracts the pulldom
-# implementation which I want to replace someday.
+# implementation which I would like to replace someday.
 # UNDONE: Settings: nowhite, ...
 # UNDONE: Namespaces .. lname, qname, xname, prefix
 # UNDONE: Unsupported item kinds, eg: PI, DOC, ...
@@ -287,8 +287,10 @@ class ResultsReader:
     # Reads a single search result record.
     def _read_result(self):
         result = {}
+        offset = self._reader.attrs['offset']
         while True:
             self._scan()
+
             if self._isend("result"): 
                 break
 
@@ -297,7 +299,8 @@ class ResultsReader:
             name = self._scantag()
 
             if name == "v":
-                result[key] = self._reader.expand()
+                #result[key] = self._reader.expand().toxml().encode("utf8")
+                result[key] = self._reader.expand().toxml()
                 self._scanend("field")
             elif name == "value":
                 result[key] = self._read_value()
@@ -305,6 +308,7 @@ class ResultsReader:
             else: self._error()
 
         self.kind = RESULT
+        result['$offset'] = offset
         self.value = result
         return RESULT
 
@@ -326,16 +330,9 @@ class ResultsReader:
             val = self._scanval()
 
             if val:
-                # If a value exists, then
-                # we append it, and we need
-                # to scan the end tag
                 value.append(val)
                 self._scanend("text")
             else:
-                # Since a value didn't exist,
-                # we append an empty item.
-                # Also, we already scanned the 
-                # end tag, because no value was there
                 value.append("")
                 
             self._scanend("value")
