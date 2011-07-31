@@ -24,6 +24,7 @@ import StringIO
 from splunk.client import connect
 from utils import parse
 import splunk.results 
+import datetime
 
 CLI_RULES = {
    'search': {
@@ -44,55 +45,46 @@ def tail(service, opts):
     if opts.kwargs['search'] is not None:
         squery = opts.kwargs['search']
 
-    # create a splunk real-time job
-    job = service.jobs.create("search index=%s %s" % (iname, squery), 
-                              earliest_time="rt", 
-                              latest_time="rt", 
-                              search_mode="realtime")
+    fd = open("xx", "w")
 
     # start at real-time offset 0.
     last_offset = 0
     try:
-
         # go until we hit a control-c to exit
         while True:
-            # get results from our last offset
-            results = job.events(offset=last_offset)
-            data = results.read()
-            if len(data) > 0:
-                try:
-                    # get the offset number buried in the XML
-                    dxml = xml.dom.minidom.parseString(data)
-                    offsets = dxml.getElementsByTagName("result")
-                    if len(offsets) > 0:
-                        last = offsets[-1]
-                        if last.hasAttributes():
-                            last_offset = int(last.getAttribute(
-                                             str(last.attributes.keys()[0])))
-                except xml.parsers.expat.ExpatError:
-                    print "WARNING: failed to parse XML"
+            # tap the export exndpoint
+            result = service.get("search/jobs/export",
+                              search="search %s index=%s" % (squery, iname),
+                              earliest_time="rt", 
+                              latest_time="rt", 
+                              search_mode="realtime")
 
-                # use the reader class to extract the event data
-                reader = splunk.results.ResultsReader(StringIO.StringIO(data))
-                while True:
-                    kind = reader.read()
-                    if kind == None:
-                        break
-                    if kind == splunk.results.RESULT:
-                        print reader.value['_raw'].firstChild.nodeValue
+            if result.status != 200:
+                continue
+            # use the reader class to extract the event data
+            print result
+            reader = splunk.results.ResultsReader(result.body)
+            while True:
+                kind = reader.read()
+                if kind == None:
+                    break
+                if kind == splunk.results.RESULT:
+                    print str(reader.value['_raw'].firstChild.nodeValue)
+                    fd.write(str(reader.value))
+                    fd.write(str(reader.value['_raw'].firstChild.nodeValue))
+                    fd.write("\n")
+                    fd.flush()
 
-                # make our last offset one more than we recieved
-                last_offset = last_offset + 1
-            time.sleep(1)
     except KeyboardInterrupt:
         print
         print "Keyboard interrupt  ... exiting"
     except:
-        print
+        print 
         print "got an unexpected exception ... exiting"
+        print
+        raise
 
-    print "canceling job: %s" % job.sid
-    job.cancel()
+    fd.close()
 
 def main():
     """Main program."""
