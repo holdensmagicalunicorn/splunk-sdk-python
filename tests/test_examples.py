@@ -12,7 +12,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import os, difflib
+import difflib
+import os
 import unittest
 
 def assertMultiLineEqual(test, first, second, msg=None):
@@ -36,8 +37,7 @@ class ExamplesTestCase(unittest.TestCase):
         # Ignore exceptions when trying to remove this file
         try:
             os.remove("__stdout__")
-        except:
-            pass
+        except: pass
 
     def test_binding1(self):
         result = os.system("python binding1.py > __stdout__")
@@ -67,6 +67,10 @@ class ExamplesTestCase(unittest.TestCase):
             self.assertEquals(result, 0)
         except:
             pass
+
+    def test_follow(self):
+        result = os.system("python follow.py --help > __stdout__")
+        self.assertEquals(result, 0)
 
     def test_index(self):
         commands = [
