@@ -295,12 +295,11 @@ class ResultsReader:
                 break
 
             self._checktag("field")
-            key = self._reader.attrs["k"]
+            key = self._reader.attrs["k"].encode("utf8")
             name = self._scantag()
 
             if name == "v":
-                #result[key] = self._reader.expand().toxml().encode("utf8")
-                result[key] = self._reader.expand().toxml()
+                result[key] = self._reader.expand().toxml("utf8")
                 self._scanend("field")
             elif name == "value":
                 result[key] = self._read_value()
@@ -330,7 +329,7 @@ class ResultsReader:
             val = self._scanval()
 
             if val:
-                value.append(val)
+                value.append(val.encode("utf8"))
                 self._scanend("text")
             else:
                 value.append("")
