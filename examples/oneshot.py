@@ -16,10 +16,14 @@
 
 """A command line utility for executing oneshot Splunk searches."""
 
-import sys, utils, socket, StringIO
+from pprint import pprint
+import sys
+import socket
+
 from splunk.client import connect
 import splunk.results as results
-from pprint import pprint
+
+import utils
 
 def pretty(response):
     reader = results.ResultsReader(response)
@@ -32,16 +36,16 @@ def pretty(response):
 
 def main():
     usage = "usage: oneshot.py <search>"
+    opts = utils.parse(sys.argv[1:], {}, ".splunkrc", usage=usage)
+    opts.kwargs["namespace"] = "*:*" # Override namespace
 
-    argv = sys.argv[1:]
+    if len(opts.args) != 1:
+        utils.error("Search expression required", 2)
+    search = opts.args[0]
 
-    opts = utils.parse(argv, {}, ".splunkrc", usage=usage)
-    opts.kwargs["namespace"] = "*:*"
     service = connect(**opts.kwargs)
-
     socket.setdefaulttimeout(None)
-
-    response = service.jobs.create(opts.args, exec_mode="oneshot")
+    response = service.jobs.create(search, exec_mode="oneshot")
 
     pretty(response)
 
