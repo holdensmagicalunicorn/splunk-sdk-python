@@ -1,5 +1,3 @@
-## The ABC's of invoking Splunk's REST API
-
 This example shows three different approaches to making calls against the
 Splunk REST API.
 
