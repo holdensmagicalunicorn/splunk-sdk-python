@@ -236,7 +236,6 @@ class Collection(Endpoint):
     def create(self, name, **kwargs):
         if self.ctor is None: raise NotSupportedError
         self.ctor(self.service, name, **kwargs)
-        # UNDONE: check response
         return self[name]
 
     def delete(self, name):
@@ -586,16 +585,16 @@ class Jobs(Collection):
 
         if kwargs.get("exec_mode", None) == "oneshot":
             return response.body
-        else:
-            sid = load(response).response.sid
-            return Job(self.service, sid)
+
+        sid = load(response).response.sid
+        return Job(self.service, sid)
 
     def list(self):
         response = self.get()
-        entry = load(response).feed.entry
-        if not isinstance(entry, list): 
-            entry = [entry] # UNDONE
-        return [item.content.sid for item in entry]
+        entry = load(response, MATCH_ENTRY_CONTENT)
+        if entry is None: return []
+        if not isinstance(entry, list): entry = [entry] # UNDONE
+        return [item.sid for item in entry]
 
 class Message(Entity):
     def __init__(self, service, name):
