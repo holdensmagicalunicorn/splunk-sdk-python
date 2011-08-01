@@ -14,7 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""Tail a realtime search and prints results to stdout."""
+"""Follows a realtime search and prints results to stdout."""
 
 from pprint import pprint
 import sys
@@ -25,6 +25,23 @@ import splunk.data as data
 import splunk.results as results
 
 import utils
+
+def follow(job, count, items):
+    offset = 0 # High-water mark
+    while True:
+        total = count()
+        if total <= offset:
+            time.sleep(1) # Wait for something to show up
+            continue
+        stream = items(offset+1)
+        reader = results.ResultsReader(stream)
+        while True:
+            kind = reader.read()
+            if kind == None: break
+            if kind == results.RESULT:
+                event = reader.value
+                pprint(event)
+        offset = total
 
 def main():
     usage = "usage: follow.py <search>"
@@ -42,29 +59,29 @@ def main():
         latest_time="rt", 
         search_mode="realtime")
 
-    offset = 0 # Tracks the next offset we are looking for
+    # Wait for the job to transition out of QUEUED and PARSING so that
+    # we can if its a transforming search, or not.
+    while True:
+        entity = job.read()
+        state = entity['dispatchState']
+        if state not in ['QUEUED', 'PARSING']:
+            break
+        time.sleep(2) # Wait
+        
+    if entity['reportSearch'] is not None: # Is it a transforming search?
+        count = lambda: int(job['numPreviews'])
+        items = lambda _: job.preview()
+    else:
+        count = lambda: int(job['eventCount'])
+        items = lambda offset: job.events(offset=offset)
+    
     try:
-        while True:
-            count = int(job['eventCount'])
-            if count <= offset:
-                time.sleep(1)
-                continue
-            stream = job.events(offset=offset)
-            reader = results.ResultsReader(stream)
-            while True:
-                kind = reader.read()
-                if kind == None: break
-                if kind == results.RESULT:
-                    event = reader.value
-                    current = int(event['$offset'])
-                    assert current == offset # We expect them in order
-                    offset = offset + 1
-                    pprint(event)
+        follow(job, count, items)
     except KeyboardInterrupt:
         print "\nInterrupted."
     finally:
         job.cancel()
-
+    
 if __name__ == "__main__":
     main()
 
