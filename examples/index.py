@@ -16,9 +16,6 @@
 
 """A command line utility for interacting with Splunk indexes."""
 
-# UNDONE: Implement a delete command: clean, remove stanzas from indexes.conf,
-#  restart server, delete db files.
-
 import sys
 
 from splunk.client import connect
