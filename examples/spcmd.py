@@ -21,11 +21,6 @@
 # set the default output_mode for a session by simply setting a local variable
 # 'output_mode' to a legal output_mode value.
 
-# UNDONE: Banner!
-# UNDONE: Attempt to re-login on a 401 (Unauthorized) in case session expired
-# UNDONE: Implement command completion 
-# UNDONE: Ambient args for other methods
-
 """An interactive command shell for Splunk.""" 
 
 from code import compile_command, InteractiveInterpreter
@@ -65,7 +60,8 @@ class Session(InteractiveInterpreter):
 
     # Run the interactive interpreter
     def run(self):
-        print "%s connected to %s:%s" % (
+        print "\nWelcome to Splunk SDK's python interactive shell\n"
+        print "%s connected to %s:%s - service object instantiated" % (
             self.service.username, 
             self.service.host, 
             self.service.port)
