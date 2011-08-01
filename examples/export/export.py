@@ -34,7 +34,7 @@ from utils import parse
 RESTART_FILE = "./.export_restart_log"
 OUTPUT_FILE = "./export.out"
 REQUEST_LIMIT = 100000
-OUTPUT_MODE = "csv"
+OUTPUT_MODE = "xml"
 OUTPUT_MODES = ["csv", "xml", "json"]
 RETRY_LIMIT = 500
 
