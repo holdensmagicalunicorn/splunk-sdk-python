@@ -17,14 +17,11 @@
 """An example to tail an index, with optional specific search."""
 
 import sys
-import time
 import xml.dom.minidom
-import StringIO
 
 from splunk.client import connect
 from utils import parse
 import splunk.results 
-import datetime
 
 CLI_RULES = {
    'search': {
@@ -45,10 +42,6 @@ def tail(service, opts):
     if opts.kwargs['search'] is not None:
         squery = opts.kwargs['search']
 
-    fd = open("xx", "w")
-
-    # start at real-time offset 0.
-    last_offset = 0
     try:
         # go until we hit a control-c to exit
         while True:
@@ -62,18 +55,20 @@ def tail(service, opts):
             if result.status != 200:
                 continue
             # use the reader class to extract the event data
-            print result
             reader = splunk.results.ResultsReader(result.body)
             while True:
                 kind = reader.read()
                 if kind == None:
                     break
                 if kind == splunk.results.RESULT:
-                    print str(reader.value['_raw'].firstChild.nodeValue)
-                    fd.write(str(reader.value))
-                    fd.write(str(reader.value['_raw'].firstChild.nodeValue))
-                    fd.write("\n")
-                    fd.flush()
+                    # the data result is going to be an XML fragment, so use 
+                    # an xml parser to extract just the text portion of the 
+                    # "_raw" field which is the raw data of the event. "v"
+                    # is the value portion of the k/v pairing of the splunk
+                    # output
+                    domobj = xml.dom.minidom.parseString(reader.value['_raw']).\
+                             getElementsByTagName("v")[0]
+                    print domobj.firstChild.nodeValue
 
     except KeyboardInterrupt:
         print
@@ -83,8 +78,6 @@ def tail(service, opts):
         print "got an unexpected exception ... exiting"
         print
         raise
-
-    fd.close()
 
 def main():
     """Main program."""
