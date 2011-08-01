@@ -188,7 +188,8 @@ class ServiceTestCase(unittest.TestCase):
         wait_event_count(index, '2', 30)
         self.assertEqual(index['totalEventCount'], '2')
 
-        # wkcfix -- note: test must run on machine where splunkd runs
+        # test must run on machine where splunkd runs,
+        # otherwise an failure is expected
         testpath = path.dirname(path.abspath(__file__))
         index.upload(path.join(testpath, "testfile.txt"))
         wait_event_count(index, '3', 30)

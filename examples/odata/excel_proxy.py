@@ -668,11 +668,6 @@ def application(environ, start_response):
         query = urllib.unquote(query)
         endpoint = urllib.quote(endpoint)
 
-        ##
-        ## wkcfix -- break out ? <something> = and use <something> 
-        ## as keyword, not "search"?
-        ##
-
         if endpoint == "/services/search/jobs":
             data = post_query(context, endpoint, query=query)
             # fixup query results 
