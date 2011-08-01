@@ -40,6 +40,7 @@ def _spliturl(url):
 
 def main(argv):
     global urllib2
+    usage = "async.py <sync | async>"
 
     # Parse the command line args.
     opts = parse(argv, {}, ".splunkrc")
