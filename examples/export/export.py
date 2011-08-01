@@ -36,6 +36,7 @@ OUTPUT_FILE = "./export.out"
 REQUEST_LIMIT = 100000
 OUTPUT_MODE = "csv"
 OUTPUT_MODES = ["csv", "xml", "json"]
+RETRY_LIMIT = 500
 
 CLIRULES = {
    'index': {
@@ -372,6 +373,7 @@ def export(options, context, bucket_list):
                 print "SKIPPING BUCKET:-------- %s" % str(bucket)
         else:
             retry = True
+            retry_count = 0
             while retry:
                 if options.kwargs['progress']:
                     print "PROCESSING BUCKET:------ %s" % str(bucket)
@@ -396,12 +398,17 @@ def export(options, context, bucket_list):
                                  #count=int(bucket[0])+1)
 
                 if result.status != 200:
-                    # TODO: retry on failure, sleep and retry
-                    # at sme point, maybe give up... and the user can
-                    # attempt a restart export.
+                    retry_count = retry_count + 1
                     if options.kwargs['progress']:
                         print "HTTP status: %d, sleep and retry..." % \
                               result.status
+
+                    if retry_count > RETRY_LIMIT:
+                        print "RETRY_LIMIT reached, halting export. you can"
+                        print " resume the export at a later date using the"
+                        print " --restart flag"
+                        return False
+
                     time.sleep(10)
                 else:
                     retry = False
@@ -413,7 +420,6 @@ def export(options, context, bucket_list):
             # guarantee both committed.
 
             # atomic write start
-            # TODO: post process results before writing?
 
             data = result.body.read()
             data = data.splitlines()
