@@ -46,6 +46,8 @@ def tail(service, opts):
         # go until we hit a control-c to exit
         while True:
             # tap the export exndpoint
+            # Nota Bene: because this example uses the export endpoint,
+            # only non-transformed searches are supported
             result = service.get("search/jobs/export",
                               search="search %s index=%s" % (squery, iname),
                               earliest_time="rt", 
