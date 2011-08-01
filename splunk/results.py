@@ -287,7 +287,7 @@ class ResultsReader:
     # Reads a single search result record.
     def _read_result(self):
         result = {}
-        offset = self._reader.attrs['offset']
+        offset = self._reader.attrs['offset'].encode("utf8")
         while True:
             self._scan()
 
