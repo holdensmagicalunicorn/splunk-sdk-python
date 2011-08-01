@@ -40,6 +40,7 @@ def _spliturl(url):
 
 def main(argv):
     global urllib2
+    usage = "async.py <sync | async>"
 
     # Parse the command line args.
     opts = parse(argv, {}, ".splunkrc")
@@ -80,12 +81,17 @@ def main(argv):
 
     def do_search(query):
         # Create a search job for the query.
-        job = service.jobs.create(query, exec_mode="blocking")
 
         # In the async case, eventlet will "relinquish" the coroutine
         # worker, and let others go through. In the sync case, we will
         # block the entire thread waiting for the request to complete.
-        return job.results()
+        job = service.jobs.create(query, exec_mode="blocking")
+
+        # We fetch the results, and cancel the job
+        results = job.results()
+        job.cancel()
+
+        return results
 
     # We specify many queries to get show the advantages
     # of paralleism.
@@ -166,19 +172,9 @@ class Urllib2Http(splunk.binding.HttpBase):
         # Note the HTTP method we're using, defaulting
         # to `GET`.
         method = message.get("method", "GET")
-
-        handlers = []
-
-        # Check if we're going to be using a proxy.
-        if (self.proxy):
-            # If we are going to be using a proxy, then we setup
-            # an `urllib2.ProxyHandler` with the passed in 
-            # proxy arguments.
-            proxy = "%s:%s" % self.proxy
-            proxy_handler = urllib2.ProxyHandler({"http": proxy, "https": proxy})
-            handlers.append(proxy_handler)
         
-        opener = urllib2.build_opener(*handlers)
+        # Note that we do not support proxies in this example
+        opener = urllib2.build_opener()
 
         # Unfortunately, we need to use the hack of 
         # "overriding" `request.get_method` to specify

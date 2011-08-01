@@ -40,7 +40,7 @@ def get_retriever(name):
 
 @route('/static/:file#.+#')
 def help(file):
-    raise static_file(file, root='/Users/itay/Work/splunk-sdk-python/examples/analytics')
+    raise static_file(file, root='.')
 
 @route('/applications')
 def applications():

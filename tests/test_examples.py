@@ -55,15 +55,15 @@ class ExamplesTestCase(unittest.TestCase):
         ]
         for command in commands: self.assertEquals(os.system(command), 0)
 
-    def test_eventlet_sample(self):
-        result = os.system("python eventlet_sample.py sync > __stdout__")
+    def test_async(self):
+        result = os.system("python async/async.py sync > __stdout__")
         self.assertEquals(result, 0)
 
         try:
             # Only try running the async version of the test if eventlet
             # is present on the system
             import eventlet
-            result = os.system("python eventlet_sample.py async > __stdout__")
+            result = os.system("python async/async.py async > __stdout__")
             self.assertEquals(result, 0)
         except:
             pass
