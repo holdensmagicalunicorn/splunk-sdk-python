@@ -24,20 +24,35 @@ from splunk.client import connect
 from utils import parse
 
 SPLUNK_HOST = "localhost"
-SPLUNK_PORT = 9001
+SPLUNK_PORT = 9002
 
 INGEST_TYPE = ["stream", "submit", "tcp"]
 
 CLI_RULES = {
-   'type': {
-        'flags': ["--type"],
+   'ingest': {
+        'flags': ["--ingest"],
         'default': 'stream',
         'help': "sets the type of ingest to one of %s" % INGEST_TYPE
-    }
+    },
+   'inputhost': {
+        'flags': ["--inputhost"],
+        'default': "127.0.0.1",
+        'help': "input host when using tcp ingest, default is localhost"
+    },
+   'type': {
+        'flags': ["--inputport"],
+        'default': SPLUNK_PORT,
+        'help': "input host port when using tcp ingest, default is %d" % \
+                SPLUNK_PORT
+    },
 }
 
-def feed_index(service, indexname, itype):
+def feed_index(service, opts):
     """Feed the named index in a specific manner."""
+
+    indexname = opts.args[0]
+    itype = opts.kwargs['ingest']
+
 
     # get index handle
     try:
@@ -50,12 +65,14 @@ def feed_index(service, indexname, itype):
         stream = index.attach()
     else:
         # create a tcp input if one doesn't exist
-        tcpname = "tcp:%s" % str(SPLUNK_PORT)
-        if tcpname not in service.inputs.list():
-            service.inputs.create("tcp", SPLUNK_PORT, index=indexname)
+        input_host = opts.kwargs.get("inputhost", SPLUNK_HOST)
+        input_port = int(opts.kwargs.get("inputport", SPLUNK_PORT))
+        input_name = "tcp:%s" % (input_port)
+        if input_name not in service.inputs.list():
+            service.inputs.create("tcp", input_port, index=indexname)
         # connect to socket
         ingest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        ingest.connect((SPLUNK_HOST, SPLUNK_PORT))
+        ingest.connect((input_host, input_port))
 
     count = 0
     lastevent = ""
@@ -91,11 +108,11 @@ def main():
     opts = parse(argv, CLI_RULES, ".splunkrc", usage=usage)
     service = connect(**opts.kwargs)
 
-    if opts.kwargs['type'] not in INGEST_TYPE:
-        print "type must be in set %s" % INGEST_TYPE
+    if opts.kwargs['ingest'] not in INGEST_TYPE:
+        print "ingest type must be in set %s" % INGEST_TYPE
         sys.exit(1)
 
-    feed_index(service, opts.args[0], opts.kwargs['type'])
+    feed_index(service, opts)
 
 
 if __name__ == "__main__":
