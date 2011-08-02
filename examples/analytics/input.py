@@ -50,7 +50,7 @@ class AnalyticsTracker:
             # We disallow dictionaries - it doesn't quite make sense.
             assert(not isinstance(v, dict))
 
-            # UNDONE: need to allow lists?
+            # We do not allow lists
             assert(not isinstance(v, list))
 
             # This is a hack to escape quotes
