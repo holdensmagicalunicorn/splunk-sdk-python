@@ -225,7 +225,6 @@ class XMLReader:
 
         assert False # Unexpected
 
-# UNDONE: Currently dropping the offset
 MESSAGE = "MESSAGE"
 RESULT = "RESULT"
 RESULTS = "RESULTS"
