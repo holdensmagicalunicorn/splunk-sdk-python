@@ -12,11 +12,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# UNDONE: Test splunk namespace against baseline
-# UNDONE: Test splunk.data loader
-
-from pprint import pprint # UNDONE
-
 from os import path
 import sys
 import unittest
@@ -115,7 +110,6 @@ class PluggableHttpTestCase(unittest.TestCase):
             self.context.request(self.dummy_url, {}), 
             expected_response)
 
-# UNDONE: Finish testing package namespaces
 class PackageTestCase(unittest.TestCase):
     def test_names(self):
         import splunk
@@ -354,13 +348,11 @@ class UsersTestCase(BindingTestCase):
             self.assertEquals(response.status, 200)
 
             # Test user does not have privs to create another user
-            # UNDONE: Why is this a 404?
             self.assertHttp(404,
                             usercx.post, PATH_USERS, 
                             name="flimzo", password="dunno",roles="user")
 
             # User cannot delete themselvse ..
-            # UNDONE: Why is this a 404?
             self.assertHttp(404, usercx.delete, userpath)
     
         finally:
