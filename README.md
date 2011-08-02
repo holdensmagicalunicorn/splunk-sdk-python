@@ -174,7 +174,7 @@ developer portal:
 
 Splunk REST API reference documentation: 
 
-* UNDONE
+* http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI
 
 For a gentle introduction to the Splunk product and some of its capabilities:
 
@@ -182,7 +182,7 @@ For a gentle introduction to the Splunk product and some of its capabilities:
 
 ## Community
 
-* Email: Stay connected with other developers building on Splunk: splunkdev@googlegroups.com 
+* Email: Stay connected with other developers building on Splunk: https://groups.google.com/forum/#!forum/splunkdev 
 * Issues: https://github.com/splunk/splunk-sdk-python/issues
 * Answers: Check out this tag on Splunk answers for:  http://splunk-base.splunk.com/tags/python/
 * Blog:  http://blogs.splunk.com/dev/
