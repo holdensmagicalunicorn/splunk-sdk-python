@@ -362,11 +362,6 @@ class ServiceTestCase(unittest.TestCase):
         self.assertEqual(results.RESULT, kind)
         self.assertEqual(int(result["count"]), 1)
 
-        # UNDONE: Need to submit test data and test searches for actual 
-        # results Check various formats, timeline, searchlog, etc. Check 
-        # events and results for both streaming and non-streaming searches. 
-        # UNDONE: Need to at least create a realtime search.
-
     def test_loggers(self):
         service = self.service
 
