@@ -12,9 +12,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# UNDONE: Add tests that use the path argument
-# UNDONE: Add tests that use the XNAME versions of dict & list
-
 from os import path
 import sys
 import unittest
@@ -71,11 +68,9 @@ class TestCase(unittest.TestCase):
 
         result = data.load("<e a1='v1'>v2<b>bv2</b></e>")
         self.assertEqual(result, {'e': {'a1': 'v1', 'b': 'bv2'}})
-        # UNDONE: BUG: Dropping v2, incorrect mixed content
 
         result = data.load("<e a1='v1'><a1>v2</a1></e>")
         self.assertEqual(result, {'e': {'a1': 'v1'}})
-        # UNDONE: BUG: Should be an array
 
         result = data.load("<e1 a1='v1'><e2 a1='v1'>v2</e2></e1>")
         self.assertEqual(result,
