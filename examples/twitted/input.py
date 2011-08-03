@@ -195,7 +195,7 @@ def output(record):
 
         if isinstance(v, str):
             format = '%s="%s" '
-            v = v.replace('"', "'") # UNDONE: better ideas?
+            v = v.replace('"', "'")
         else:
             format = "%s=%r "
         result = format % (k, v)
