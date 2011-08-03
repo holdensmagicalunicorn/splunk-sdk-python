@@ -1,4 +1,4 @@
-# The Splunk Software Development Kit for Python
+# The Splunk Software Development Kit for Python (Preview Release)
 
 *Welcome to the Splunk SDK for Python!*
 
@@ -20,12 +20,20 @@ are enabled by Splunk's unique capabilities.
 
 You can learn more about the Splunk developer platform at http://dev.splunk.com
 
-The Python SDK is currently in a preview state.  Splunk SDKs in a preview state are provided "as-is".  Splunk will not provide support for SDKs in a preview state.  All support for Splunk SDKs in preview will be handled by the community.  
-
 ## License
 
 The Splunk Software Development Kit for Python is licensed under the Apache
 License 2.0. Details can be found in the file LICENSE.
+
+## This SDK is a Preview Release
+
+1.  This Preview release a pre-beta release.  There will also be a beta release prior to a general release.  It is incomplete and may have bugs.
+
+2.  The Apache license only applies to the SDK and no other Software provided by Splunk.
+
+3.  Splunk in using the Apache license is not providing any warranties, indemnification or accepting any liabilities  with the Preview SDK.
+
+4.  Splunk is not accepting any Contributions to the Preview release of the SDK.  All Contributions during the Preview SDK will be returned without review.
 
 ## Getting Started
 
@@ -88,17 +96,16 @@ of the credentails used in your development environment.
 
 ## Overview
 
-The Splunk developer platform consists of two primary components: `splunkd`, 
-the engine and `splunkweb` the app framework that sits on top of the engine
-and is used to build the Splunk application.
+The Splunk developer platform consists of three primary components: `splunkd`, 
+the engine, `splunkweb`, the app framework that sits on top of the engine,
+and the Splunk SDKs that interface with the REST API.
 
 This SDK enables developers to target `splunkd` by making calls against the
 engine's REST API and by accessing the various `splunkd` extension points such
 as custom search commands, lookup functions, scripted inputs and custom REST
 handlers.
 
-You can find additional information about building applications using the
-'splunkweb' framework on the Splunk developer portal at http://dev.splunk.com.
+You can find additional information about building applications on Splunk at our developer portal at http://dev.splunk.com.
 
 ### Hello Splunk
 
@@ -178,7 +185,7 @@ Splunk REST API reference documentation:
 
 For a gentle introduction to the Splunk product and some of its capabilities:
 
-* http://www.innovato.com/splunk/
+* http://dev.splunk.com
 
 ## Community
 
@@ -194,10 +201,9 @@ We aren't ready to accept code contributions yet, but will be shortly.  Check ba
 
 ### Support
 
-* SDKs in Preview will not be Splunk supported.  Once the Python SDK moves to Beta we will provide more detail on support.  
-* Issues should be filed on GitHub Issues 
-    (https://github.com/splunk/splunk-sdk-python/issues)
+* SDKs in Preview will not be Splunk supported.  Once the Python SDK moves to an Open Beta we will provide more detail on support.  
 
+* Issues should be filed here:  https://github.com/splunk/splunk-sdk-python/issues
 
 ### Contact Us
 You can reach the Dev Platform team at `devinfo@splunk.com`
