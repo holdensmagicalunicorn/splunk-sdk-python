@@ -183,7 +183,6 @@ class Service(Context):
 
     @property
     def users(self):
-        # UNDONE users.create : (name, password, roles) => user
         return Collection(self, PATH_USERS, "users",
             item=lambda service, name: 
                 Entity(service, PATH_USERS + name, name),
@@ -258,7 +257,7 @@ class Collection(Endpoint):
         entry = load(response).feed.get('entry', None)
         if entry is None: return []
         if not isinstance(entry, list): 
-            entry = [entry] # UNDONE
+            entry = [entry]
         return [item.title for item in entry]
 
 def _filter_content(content, *args):
