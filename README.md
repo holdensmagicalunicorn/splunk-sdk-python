@@ -1,7 +1,5 @@
 # The Splunk Software Development Kit for Python (Preview Release)
 
-*Welcome to the Splunk SDK for Python!*
-
 This SDK contains library code and examples designed to enable developers to
 build applications using Splunk.
 
