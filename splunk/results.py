@@ -108,7 +108,7 @@ END = "END"         # kind, name
 VAL = "VAL"         # kind, value
 class XMLReader:
     def __init__(self, stream):
-        self._items = pulldom.parse(XMLStream(stream))
+        self._items = pulldom.parse(XMLStream(stream), bufsize = 256)
         self._item = None   # The current item
         self._next = None   # 1 item pushback buffer
         self.kind = None
