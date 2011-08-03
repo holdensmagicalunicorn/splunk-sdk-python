@@ -67,12 +67,8 @@ def main(argv):
         urllib2 = __import__("urllib2", globals(), locals(), [], -1)
 
 
-    # Create and store the `urllib2` HTTP implementation.
-    http = Urllib2Http()
-    opts.kwargs["http"] = http
-
-    # Create the service and log in.
-    service = splunk.client.Service(**opts.kwargs)
+    # Create the service instance using our custom HTTP request handler.
+    service = splunk.client.Service(handler=request, **opts.kwargs)
     service.login()
 
     # Record the current time at the start of the
@@ -147,57 +143,51 @@ def main(argv):
 
 ##### Custom `urllib2`-based HTTP handler
 
-class Urllib2Http(splunk.binding.HttpBase):
-    def request(self, url, message, **kwargs):
-        # Add ssl/timeout/proxy information.
-        kwargs = self._add_info(**kwargs)
-        timeout = kwargs['timeout'] if kwargs.has_key('timeout') else None
+def request(url, message, **kwargs):
+    # Split the URL into constituent components.
+    scheme, host, port, path = _spliturl(url)
+    body = message.get("body", "")
 
-        # Split the URL into constituent components.
-        scheme, host, port, path = _spliturl(url)
-        body = message.get("body", "")
+    # Setup the default headers.
+    head = { 
+        "Content-Length": str(len(body)),
+        "Host": host,
+        "User-Agent": "http.py/1.0",
+        "Accept": "*/*",
+    }
 
-        # Setup the default headers.
-        head = { 
-            "Content-Length": str(len(body)),
-            "Host": host,
-            "User-Agent": "http.py/1.0",
-            "Accept": "*/*",
-        }
+    # Add in the passed in headers.
+    for key, value in message["headers"]: 
+        head[key] = value
 
-        # Add in the passed in headers.
-        for key, value in message["headers"]: 
-            head[key] = value
+    # Note the HTTP method we're using, defaulting
+    # to `GET`.
+    method = message.get("method", "GET")
+    
+    # Note that we do not support proxies in this example
+    opener = urllib2.build_opener()
 
-        # Note the HTTP method we're using, defaulting
-        # to `GET`.
-        method = message.get("method", "GET")
-        
-        # Note that we do not support proxies in this example
-        opener = urllib2.build_opener()
+    # Unfortunately, we need to use the hack of 
+    # "overriding" `request.get_method` to specify
+    # a method other than `GET` or `POST`.
+    request = urllib2.Request(url, body, head)
+    request.get_method = lambda: method
 
-        # Unfortunately, we need to use the hack of 
-        # "overriding" `request.get_method` to specify
-        # a method other than `GET` or `POST`.
-        request = urllib2.Request(url, body, head)
-        request.get_method = lambda: method
+    # Make the request and get the response
+    response = None
+    try:
+        response = opener.open(request)
+    except Exception as e:
+        response = e
 
-        # Make the request and get the resposne
-        response = None
-        try:
-            response = opener.open(request)
-        except Exception as e:
-            response = e
-
-        # Normalize the response to something the SDK expects, and 
-        # return it.
-        response = splunk.binding.HttpBase.build_response(
-            response.code, 
-            response.msg,
-            dict(response.headers),
-            response)
-
-        return response
+    # Normalize the response to something the SDK expects, and 
+    # return it.
+    return {
+        'status': response.code, 
+        'reason': response.msg,
+        'headers': response.info().dict,
+        'body': splunk.binding.ResponseReader(response)
+    }
 
 if __name__ == "__main__":
     main(sys.argv[1:])

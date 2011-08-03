@@ -59,16 +59,6 @@ RULES_SPLUNK = {
         'flags': ["--namespace"], 
         'default': None,
     },
-    'proxyhost': {
-        'flags': ["--proxyhost"],
-        'default': None,
-        'help': "Proxy host name (default None)" 
-    },
-    'proxyport': { 
-        'flags': ["--proxyport"],
-        'default': None,
-        'help': "Port number (default None)" 
-    },
 }
 
 FLAGS_SPLUNK = RULES_SPLUNK.keys()

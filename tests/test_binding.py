@@ -12,16 +12,19 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+# UNDONE: Test splunk namespace against baseline
+
 from os import path
+from StringIO import StringIO
 import sys
 import unittest
+import urllib2
 import uuid
 from xml.etree import ElementTree
 from xml.etree.ElementTree import XML
-from _ssl import SSLError
 
-import splunk
-from splunk.binding import *
+import splunk.binding as binding
+from splunk.binding import HTTPError
 import splunk.data as data
 
 from utils import parse
@@ -40,9 +43,11 @@ XNAMEF_REST = "{%s}%%s" % NAMESPACE_REST
 XNAMEF_OPENSEARCH = "{%s}%%s" % NAMESPACE_OPENSEARCH
 
 # XML Extended Names
-XNAME_FEED = XNAMEF_ATOM % "feed"
-XNAME_TITLE = XNAMEF_ATOM % "title"
+XNAME_AUTHOR = XNAMEF_ATOM % "author"
 XNAME_ENTRY = XNAMEF_ATOM % "entry"
+XNAME_FEED = XNAMEF_ATOM % "feed"
+XNAME_ID = XNAMEF_ATOM % "id"
+XNAME_TITLE = XNAMEF_ATOM % "title"
 
 opts = None # Command line options
 
@@ -56,60 +61,25 @@ def uname():
     """Creates a unique name."""
     return str(uuid.uuid1())
 
-class DummyHttp(splunk.binding.HttpBase):
+# An urllib2 based HTTP request handler, used to test the binding layers
+# support for pluggable request handlers.
+def urllib2_handler(url, message, **kwargs):
+    method = message['method'].lower()
+    data = message.get('body', "") if method == 'post' else None
+    headers = dict(message.get('headers', []))
+    context = urllib2.Request(url, data, headers)
+    try:
+        response = urllib2.urlopen(context)
+    except urllib2.HTTPError, response:
+        pass # Propagate HTTP errors via the returned response message
+    return {
+        'status': response.code,
+        'reason': response.msg,
+        'headers': response.info().dict,
+        'body': StringIO(response.read())
+    }
 
-    def request(self, url, message, **kwargs):
-        return "%s:%s:%s" % (
-            message["method"] if message.has_key('method') else "GET",
-            url,
-            message["body"] if message.has_key('body') else None)
-
-class PluggableHttpTestCase(unittest.TestCase):
-    def setUp(self):
-        http = DummyHttp()
-        self.context = splunk.binding.Context(http = http)
-        self.dummy_url = "/DUMMY_URL"
-
-    def test_get(self):
-        expected_response = "%s:%s:%s" % (
-            "GET", 
-            self.context.url(self.dummy_url), 
-            None)
-
-        self.assertEqual(
-            self.context.get(self.dummy_url), 
-            expected_response)
-
-    def test_post(self):
-        expected_response = "%s:%s:%s" % (
-            "POST", 
-            self.context.url(self.dummy_url), 
-            "foo=1")
-            
-        self.assertEqual(
-            self.context.post(self.dummy_url, foo = 1), 
-            expected_response)
-
-    def test_delete(self):
-        expected_response = "%s:%s:%s" % (
-            "DELETE", 
-            self.context.url(self.dummy_url), 
-            None)
-            
-        self.assertEqual(
-            self.context.delete(self.dummy_url), 
-            expected_response)
-
-    def test_request(self):
-        expected_response = "%s:%s:%s" % (
-            "GET", 
-            self.context.url(self.dummy_url), 
-            "")
-            
-        self.assertEqual(
-            self.context.request(self.dummy_url, {}), 
-            expected_response)
-
+# UNDONE: Finish testing package namespaces
 class PackageTestCase(unittest.TestCase):
     def test_names(self):
         import splunk
@@ -118,112 +88,46 @@ class PackageTestCase(unittest.TestCase):
         import splunk.binding
         # ...
 
-class CaCertNegativeTest(unittest.TestCase):
-    def setUp(self):
-        global opts
-        opts.kwargs['ca_file'] = 'cacert.bad.pem'
-        try:
-            self.context = connect(**opts.kwargs)
-            response = self.context.get("/services")
-        except SSLError:
-            # expect an SSL exception
-            return
-        # should not get here
-        self.assertTrue(False)
-
-    def tearDown(self):
-        pass
-
-    def test(self):
-        pass
-
-class CaCertNegativeTestTimeout(unittest.TestCase):
-    def setUp(self):
-        global opts
-        opts.kwargs['ca_file'] = 'cacert.bad.pem'
-        opts.kwargs['timeout'] = '200'
-        try:
-            self.context = connect(**opts.kwargs)
-            response = self.context.get("/services")
-        except SSLError:
-            # expect an SSL exception
-            return
-        # should not get here
-        self.assertTrue(False)
-
-    def tearDown(self):
-        pass
-
-    def test(self):
-        pass
-
-class CaCertPositiveTest(unittest.TestCase):
-    def setUp(self):
-        global opts
-        opts.kwargs['ca_file'] = 'cacert.pem'
-        self.context = connect(**opts.kwargs)
-        response = self.context.get("/services")
-        self.assertEqual(response.status, 200)
-
-    def tearDown(self):
-        pass
-
-    def test(self):
-        pass
-
-class CaCertPositiveTestTimeout(unittest.TestCase):
-    def setUp(self):
-        global opts
-        opts.kwargs['ca_file'] = 'cacert.pem'
-        opts.kwargs['timeout'] = '200'
-        self.context = connect(**opts.kwargs)
-        response = self.context.get("/services")
-        self.assertEqual(response.status, 200)
-
-    def tearDown(self):
-        pass
-
-    def test(self):
-        pass
-
-# Verify that the protocol looks like what we expect
-ATOM = "http://www.w3.org/2005/Atom"
-AUTHOR = "{%s}author" % ATOM
-ENTRY = "{%s}entry" % ATOM
-FEED = "{%s}feed" % ATOM
-ID = "{%s}id" % ATOM
-TITLE = "{%s}title" % ATOM
+def isatom(body):
+    """Answers if the given response body looks like ATOM."""
+    root = XML(body)
+    return \
+        root.tag == XNAME_FEED and \
+        root.find(XNAME_AUTHOR) is not None and \
+        root.find(XNAME_ID) is not None and \
+        root.find(XNAME_TITLE) is not None
 
 class ProtocolTestCase(unittest.TestCase):
-    def setUp(self):
-        global opts
-        self.context = connect(**opts.kwargs)
-
-    def tearDown(self):
-        pass
-
     def test(self):
-        paths = ["/services"]
-        for path in paths:
-            body = self.context.get(path).body.read()
-            root = XML(body)
-            self.assertTrue(root.tag == FEED)
-            self.assertTrue(root.find(AUTHOR) is not None)
-            self.assertTrue(root.find(ID) is not None)
-            self.assertTrue(root.find(TITLE) is not None)
-            self.assertTrue(root.findall(ENTRY) is not None)
+        global opts
 
+        paths = [
+            "/services", 
+            "authentication/users", 
+            "search/jobs"
+        ]
+
+        handlers = [
+            binding.handler(),  # default handler
+            urllib2_handler,
+        ]
+
+        for handler in handlers:
+            context = binding.connect(handler=handler, **opts.kwargs)
+            for path in paths:
+                body = context.get(path).body.read()
+                self.assertTrue(isatom(body))
     
 class BindingTestCase(unittest.TestCase): # Base class
     def setUp(self):
         global opts
-        self.context = connect(**opts.kwargs)
+        self.context = binding.connect(**opts.kwargs)
 
     def tearDown(self):
         pass
 
     def connect(self, username, password, namespace = None):
-        return connect(
+        return binding.connect(
             scheme=self.context.scheme,
             host=self.context.host,
             port=self.context.port,
@@ -250,25 +154,21 @@ class BindingTestCase(unittest.TestCase): # Base class
                 self.assertTrue(e.status == allowed_error_codes, error_msg)
         except Exception as e:
             self.fail("HTTPError not raised, caught %s instead", str(type(e)))
-
         return None
 
     def create(self, path, **kwargs):
         status = kwargs.get('status', 201)
         response = self.assertHttp(status, self.context.post, path, **kwargs)
-
         return response
 
     def delete(self, path, **kwargs):
         status = kwargs.get('status', 200) 
         response = self.assertHttp(status, self.context.delete, path, **kwargs)
-
         return response
 
     def update(self, path, **kwargs):
         status = kwargs.get('status', 200)
         response = self.assertHttp(status, self.context.post, path, **kwargs)
-
         return response
 
     def test(self):
@@ -286,6 +186,7 @@ class BindingTestCase(unittest.TestCase): # Base class
         response = self.context.get("/services")
         self.assertEqual(response.status, 200)
 
+# Use the binding layer to test some more extensive interactions with Splunk.
 class UsersTestCase(BindingTestCase):
     def eqroles(self, username, roles):
         """Answer if the given user is in exactly the given roles."""
@@ -328,16 +229,17 @@ class UsersTestCase(BindingTestCase):
         userpath = "%s/%s" % (PATH_USERS, username)
 
         # Can't create a user without a role
-        self.create(
-            PATH_USERS, name=username, password=password,
-            status=400)
+        self.create(PATH_USERS, name=username, password=password, status=400)
 
         # Create a test user
         self.create_user(username, password, "user")
         try:
             # Cannot create a duplicate
             self.create(
-                PATH_USERS, name=username, password=password, roles="user", 
+                PATH_USERS, 
+                name=username, 
+                password=password, 
+                roles="user", 
                 status=400) 
 
             # Connect as test user
@@ -348,11 +250,15 @@ class UsersTestCase(BindingTestCase):
             self.assertEquals(response.status, 200)
 
             # Test user does not have privs to create another user
-            self.assertHttp(404,
-                            usercx.post, PATH_USERS, 
-                            name="flimzo", password="dunno",roles="user")
+            self.assertHttp(
+                404, 
+                usercx.post, 
+                PATH_USERS, 
+                name="flimzo", 
+                password="dunno",
+                roles="user")
 
-            # User cannot delete themselvse ..
+            # User cannot delete themselves ..
             self.assertHttp(404, usercx.delete, userpath)
     
         finally:
@@ -433,14 +339,12 @@ class UsersTestCase(BindingTestCase):
             self.delete(userpath)
             self.assertTrue(username not in self.users())
         
-def main(argv):
+def main():
     global opts
-    opts = parse(argv, {}, ".splunkrc")
-    # override argv with just the filename, if we don't, unittest tries
-    # to parse any splunk SDK CLI argument
-    unittest.main(argv=["test_binding.py"])
-
+    opts = parse(sys.argv[1:], {}, ".splunkrc")
+    # Don't pass the Splunk cmdline args to unittest
+    unittest.main(argv=sys.argv[:1])
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()
 

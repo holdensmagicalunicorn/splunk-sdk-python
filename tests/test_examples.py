@@ -14,6 +14,8 @@
 
 import difflib
 import os
+import subprocess
+import time
 import unittest
 
 def assertMultiLineEqual(test, first, second, msg=None):
@@ -22,7 +24,6 @@ def assertMultiLineEqual(test, first, second, msg=None):
         'First argument is not a string')
     test.assertTrue(isinstance(second, basestring), 
         'Second argument is not a string')
-
     if first != second:
         test.fail("Multiline strings are not equal: %s" % msg)
 
@@ -71,6 +72,38 @@ class ExamplesTestCase(unittest.TestCase):
     def test_follow(self):
         result = os.system("python follow.py --help > __stdout__")
         self.assertEquals(result, 0)
+
+    def test_handlers(self):
+        commands = [
+            "python handlers/handler_urllib2.py > __stdout__",
+            "python handlers/handler_debug.py > __stdout__",
+            "python handlers/handler_certs.py > __stdout__",
+            "python handlers/handler_certs.py --ca_file=handlers/cacert.pem > __stdout__",
+            "python handlers/handler_proxy.py --help > __stdout__",
+        ]
+        for command in commands: self.assertEquals(os.system(command), 0)
+
+        # Run the cert handler example with a bad cert file, should error.
+        result = os.system("python handlers/handler_certs.py --ca_file=handlers/cacert.bad.pem > __stdout__ 2>&1")
+        self.assertEquals(result, 256)
+
+        # The proxy handler example requires that there be a proxy available
+        # to relay requests, so we spin up a local proxy using the proxy
+        # script included with the sample.
+
+        # Assumes that tiny-proxy.py is in the same directory as the sample
+        command = "python handlers/tiny-proxy.py -p 8080"
+        process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        try:
+            time.sleep(2) # Wait for proxy to finish initializing
+            result = os.system("python handlers/handler_proxy.py --proxy=localhost:8080 > __stdout__ 2>&1")
+            self.assertEquals(result, 0)
+        finally:
+            process.kill()
+
+        # Run it again without the proxy and it should fail.
+        result = os.system("python handlers/handler_proxy.py --proxy=localhost:8080 > __stdout__ 2>&1")
+        self.assertEquals(result, 256)
 
     def test_index(self):
         commands = [
