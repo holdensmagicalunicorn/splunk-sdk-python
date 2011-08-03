@@ -24,6 +24,9 @@ def assertMultiLineEqual(test, first, second, msg=None):
         'First argument is not a string')
     test.assertTrue(isinstance(second, basestring), 
         'Second argument is not a string')
+    # unixize windows eol
+    first = first.replace("\r", "")
+    second = second.replace("\r", "")
     if first != second:
         test.fail("Multiline strings are not equal: %s" % msg)
 
@@ -74,36 +77,50 @@ class ExamplesTestCase(unittest.TestCase):
         self.assertEquals(result, 0)
 
     def test_handlers(self):
+        dfile = os.path.join("handlers","cacert.pem")
         commands = [
             "python handlers/handler_urllib2.py > __stdout__",
             "python handlers/handler_debug.py > __stdout__",
             "python handlers/handler_certs.py > __stdout__",
-            "python handlers/handler_certs.py --ca_file=handlers/cacert.pem > __stdout__",
+            "python handlers/handler_certs.py --ca_file=%s > __stdout__" % dfile,
             "python handlers/handler_proxy.py --help > __stdout__",
         ]
         for command in commands: self.assertEquals(os.system(command), 0)
 
         # Run the cert handler example with a bad cert file, should error.
-        result = os.system("python handlers/handler_certs.py --ca_file=handlers/cacert.bad.pem > __stdout__ 2>&1")
-        self.assertEquals(result, 256)
+        executable = os.path.join("handlers", "handler_certs.py")
+        dfile = os.path.join("handlers","cacert.bad.pem")
+        result = os.system("python %s --ca_file=%s __stdout__ 2>&1" % (executable, dfile))
+        # linux and windows returns different shell failure codes
+        if os.name == "nt":
+            self.assertEquals(result, 1)
+        else:
+            self.assertEquals(result, 256)
 
         # The proxy handler example requires that there be a proxy available
         # to relay requests, so we spin up a local proxy using the proxy
         # script included with the sample.
 
         # Assumes that tiny-proxy.py is in the same directory as the sample
-        command = "python handlers/tiny-proxy.py -p 8080"
+        executable = os.path.join("handlers", "tiny-proxy.py")
+        command = "python %s -p 8080" % executable
         process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+        executable = os.path.join("handlers", "handler_proxy.py")
         try:
             time.sleep(2) # Wait for proxy to finish initializing
-            result = os.system("python handlers/handler_proxy.py --proxy=localhost:8080 > __stdout__ 2>&1")
+            result = os.system("python %s --proxy=localhost:8080 > __stdout__ 2>&1" % executable)
             self.assertEquals(result, 0)
         finally:
             process.kill()
 
         # Run it again without the proxy and it should fail.
-        result = os.system("python handlers/handler_proxy.py --proxy=localhost:8080 > __stdout__ 2>&1")
-        self.assertEquals(result, 256)
+        result = os.system("python %s --proxy=localhost:8080 > __stdout__ 2>&1" % executable)
+        # linux and windows returns different shell failure codes
+        if os.name == "nt":
+            self.assertEquals(result, 1)
+        else:
+            self.assertEquals(result, 256)
 
     def test_index(self):
         commands = [
@@ -145,7 +162,7 @@ class ExamplesTestCase(unittest.TestCase):
         for command in commands: self.assertEquals(os.system(command), 0)
 
     def test_oneshot(self):
-        result = os.system("python oneshot.py 'search * | head 10' > __stdout__")
+        result = os.system('python oneshot.py "search * | head 10" > __stdout__')
         self.assertEquals(result, 0)
         
     def test_search(self):
@@ -188,20 +205,15 @@ class ExamplesTestCase(unittest.TestCase):
     # a known good input file into the custom search python file, and then
     # compare the resulting output file to a known good one.
     def test_custom_search(self):
+
         def test_custom_search_command(command_path, known_input_path, known_output_path):
             import tempfile
-            CUSTOM_SEARCH_OUTPUT = "../tests/temp_custom_search.out";
 
-            # Create and open the temp output file fo writing
-            temp_output_file = open(CUSTOM_SEARCH_OUTPUT, 'w')
+            CUSTOM_SEARCH_OUTPUT = os.path.join(cwd, "..", "tests", "temp_custom_search.out");
 
             # Execute the command
-            command = "python %s < %s > %s" % (command_path, known_input_path, temp_output_file.name)
+            command = "python %s < %s > %s" % (command_path, known_input_path, CUSTOM_SEARCH_OUTPUT)
             os.system(command)
-
-            # Flush the temp output file and close it
-            temp_output_file.flush()
-            temp_output_file.close()
 
             # Open the temp output file for reading
             temp_output_file = open(CUSTOM_SEARCH_OUTPUT, 'r')
@@ -210,7 +222,6 @@ class ExamplesTestCase(unittest.TestCase):
             known_output_file = open(known_output_path, 'r')
             known_output_contents = known_output_file.read()
             temp_output_contents = temp_output_file.read()
-
             # Ensure they are the same
             msg = "%s != %s" % (temp_output_file.name, known_output_file.name)
             assertMultiLineEqual(self, known_output_contents, temp_output_contents, msg)
@@ -219,21 +230,26 @@ class ExamplesTestCase(unittest.TestCase):
             temp_output_file.close()
             os.remove(CUSTOM_SEARCH_OUTPUT)
 
+        if os.name == "nt":
+            cwd = os.getcwd()
+        else:
+            cwd = os.getenv('PWD')
         custom_searches = [
             { 
-                "path": "custom_search/bin/usercount.py",
-                "known_input_path": "../tests/custom_search/usercount.in",
-                "known_output_path": "../tests/custom_search/usercount.out"
-            },
-            { 
-                "path": "twitted/twitted/bin/hashtags.py",
-                "known_input_path": "../tests/custom_search/hashtags.in",
-                "known_output_path": "../tests/custom_search/hashtags.out"
+                "path": os.path.join(cwd, "..", "examples", "custom_search", "bin", "usercount.py"),
+                "known_input_path": os.path.join(cwd, "..", "tests", "custom_search", "usercount.in"),
+                "known_output_path": os.path.join(cwd, "..", "tests", "custom_search", "usercount.out")
             },
             { 
                 "path": "twitted/twitted/bin/tophashtags.py",
-                "known_input_path": "../tests/custom_search/tophashtags.in",
-                "known_output_path": "../tests/custom_search/tophashtags.out"
+                "path": os.path.join(cwd, "..", "examples", "twitted", "twitted", "bin", "hashtags.py"),
+                "known_input_path": os.path.join(cwd, "..", "tests", "custom_search", "hashtags.in"),
+                "known_output_path": os.path.join(cwd, "..", "tests", "custom_search", "hashtags.out")
+            },
+            { 
+                "path": os.path.join(cwd, "..", "examples", "twitted", "twitted", "bin", "tophashtags.py"),
+                "known_input_path": os.path.join(cwd, "..", "tests", "custom_search", "tophashtags.in"),
+                "known_output_path": os.path.join(cwd, "..", "tests", "custom_search", "tophashtags.out")
             }
         ]
 
