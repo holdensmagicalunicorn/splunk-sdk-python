@@ -191,11 +191,11 @@ For a gentle introduction to the Splunk product and some of its capabilities:
 * Issues: https://github.com/splunk/splunk-sdk-python/issues
 * Answers: Check out this tag on Splunk answers for:  http://splunk-base.splunk.com/tags/python/
 * Blog:  http://blogs.splunk.com/dev/
-* Twitter: @splunkdev
+* Twitter: (@splunkdev)[http://twitter.com/#!/splunkdev]
 
 ### How to contribute
 
-We aren't ready to accept code contributions yet, but will be shortly.  Check back on dev.splunk.com or this README for more updates soon.
+We aren't ready to accept code contributions yet, but will be shortly.  Check back on (dev.splunk.com)[http://dev.splunk.com] or this README for more updates soon.
 
 ### Support
 
@@ -204,4 +204,4 @@ We aren't ready to accept code contributions yet, but will be shortly.  Check ba
 * Issues should be filed here:  https://github.com/splunk/splunk-sdk-python/issues
 
 ### Contact Us
-You can reach the Dev Platform team at `devinfo@splunk.com`
+You can reach the Dev Platform team at devinfo@splunk.com
