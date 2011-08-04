@@ -12,9 +12,11 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from pprint import pprint
+
 import difflib
 import os
-import subprocess
+from subprocess import PIPE, Popen
 import time
 import unittest
 
@@ -24,181 +26,185 @@ def assertMultiLineEqual(test, first, second, msg=None):
         'First argument is not a string')
     test.assertTrue(isinstance(second, basestring), 
         'Second argument is not a string')
-    # unixize windows eol
+    # Unix-ize Windows EOL
     first = first.replace("\r", "")
     second = second.replace("\r", "")
     if first != second:
         test.fail("Multiline strings are not equal: %s" % msg)
 
+# Run the given python script and return its exit code. 
+def run(script, stdin=None, stdout=PIPE, stderr=None):
+    process = start(script, stdin, stdout, stderr)
+    process.communicate()
+    return process.wait()
+
+# Start the given python script and return the corresponding process object.
+# The script can be specified as either a string or arg vector. In either case
+# it will be prefixed to invoke python explicitly.
+def start(script, stdin=None, stdout=PIPE, stderr=None):
+    if isinstance(script, str):
+        script = script.split()
+    script = ["python"] + script
+    # Note: the following assumes that we only get commands with forward
+    # slashes used as path separators. This is broken if we ever see forward
+    # slashes anywhere else (which we currently dont).
+    script = [item.replace('/', os.sep) for item in script] # fixup path sep
+    return Popen(script, stdin=stdin, stdout=stdout, stderr=stderr)
+
 # Rudimentary sanity check for each of the examples
 class ExamplesTestCase(unittest.TestCase):
     def setUp(self):
         # Ignore result, it might already exist
-        os.system("python index.py create sdk-tests > __stdout__")
-        os.system("python index.py create sdk-tests-two > __stdout__")
+        run("index.py create sdk-tests")
+        run("index.py create sdk-tests-two")
 
     def tearDown(self):
-        # Ignore exceptions when trying to remove this file
-        try:
-            os.remove("__stdout__")
-        except: pass
+        pass
 
     def test_binding1(self):
-        result = os.system("python binding1.py > __stdout__")
+        result = run("binding1.py")
         self.assertEquals(result, 0)
 
     def test_conf(self):
         commands = [
-            "python conf.py --help > __stdout__",
-            "python conf.py > __stdout__",
-            "python conf.py viewstates > __stdout__",
-            'python conf.py --namespace="admin:search" viewstates > __stdout__',
-            "python conf.py create server SDK-STANZA",
-            "python conf.py create server SDK-STANZA testkey=testvalue",
-            "python conf.py delete server SDK-STANZA"
+            "conf.py --help",
+            "conf.py",
+            "conf.py viewstates",
+            'conf.py --namespace="admin:search" viewstates',
+            "conf.py create server SDK-STANZA",
+            "conf.py create server SDK-STANZA testkey=testvalue",
+            "conf.py delete server SDK-STANZA"
         ]
-        for command in commands: self.assertEquals(os.system(command), 0)
+        for command in commands: self.assertEquals(run(command), 0)
 
     def test_async(self):
-        result = os.system("python async/async.py sync > __stdout__")
+        result = run("async/async.py sync")
         self.assertEquals(result, 0)
 
         try:
             # Only try running the async version of the test if eventlet
             # is present on the system
             import eventlet
-            result = os.system("python async/async.py async > __stdout__")
+            result = run("async/async.py async")
             self.assertEquals(result, 0)
         except:
             pass
 
     def test_follow(self):
-        result = os.system("python follow.py --help > __stdout__")
+        result = run("follow.py --help")
         self.assertEquals(result, 0)
 
     def test_handlers(self):
-        dfile = os.path.join("handlers","cacert.pem")
         commands = [
-            "python handlers/handler_urllib2.py > __stdout__",
-            "python handlers/handler_debug.py > __stdout__",
-            "python handlers/handler_certs.py > __stdout__",
-            "python handlers/handler_certs.py --ca_file=%s > __stdout__" % dfile,
-            "python handlers/handler_proxy.py --help > __stdout__",
+            "handlers/handler_urllib2.py",
+            "handlers/handler_debug.py",
+            "handlers/handler_certs.py",
+            "handlers/handler_certs.py --ca_file=handlers/cacert.pem",
+            "handlers/handler_proxy.py --help",
         ]
-        for command in commands: self.assertEquals(os.system(command), 0)
+        for command in commands: self.assertEquals(run(command), 0)
 
         # Run the cert handler example with a bad cert file, should error.
-        executable = os.path.join("handlers", "handler_certs.py")
-        dfile = os.path.join("handlers","cacert.bad.pem")
-        result = os.system("python %s --ca_file=%s __stdout__ 2>&1" % (executable, dfile))
-        # linux and windows returns different shell failure codes
-        if os.name == "nt":
-            self.assertEquals(result, 1)
-        else:
-            self.assertEquals(result, 256)
+        result = run("handlers/handlers_certs.py --ca_file=handlers/cacert.bad.pem", stderr=PIPE)
+        self.assertNotEquals(result, 0)
 
         # The proxy handler example requires that there be a proxy available
         # to relay requests, so we spin up a local proxy using the proxy
         # script included with the sample.
 
         # Assumes that tiny-proxy.py is in the same directory as the sample
-        executable = os.path.join("handlers", "tiny-proxy.py")
-        command = "python %s -p 8080" % executable
-        process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-        executable = os.path.join("handlers", "handler_proxy.py")
+        process = start("handlers/tiny-proxy.py -p 8080", stderr=PIPE)
         try:
             time.sleep(2) # Wait for proxy to finish initializing
-            result = os.system("python %s --proxy=localhost:8080 > __stdout__ 2>&1" % executable)
+            result = run("handlers/handler_proxy.py --proxy=localhost:8080")
             self.assertEquals(result, 0)
         finally:
             process.kill()
 
         # Run it again without the proxy and it should fail.
-        result = os.system("python %s --proxy=localhost:8080 > __stdout__ 2>&1" % executable)
-        # linux and windows returns different shell failure codes
-        if os.name == "nt":
-            self.assertEquals(result, 1)
-        else:
-            self.assertEquals(result, 256)
+        result = run("handlers/handler_proxy.py --proxy=localhost:80801", stderr=PIPE)
+        self.assertNotEquals(result, 0)
 
     def test_index(self):
         commands = [
-            "python index.py --help > __stdout__",
-            "python index.py > __stdout__",
-            "python index.py list > __stdout__",
-            "python index.py list sdk-tests-two > __stdout__",
-            "python index.py disable sdk-tests-two > __stdout__",
-            "python index.py enable sdk-tests-two > __stdout__",
-            "python index.py clean sdk-tests-two > __stdout__",
+            "index.py --help",
+            "index.py",
+            "index.py list",
+            "index.py list sdk-tests-two",
+            "index.py disable sdk-tests-two",
+            "index.py enable sdk-tests-two",
+            "index.py clean sdk-tests-two",
         ]
-        for command in commands: self.assertEquals(os.system(command), 0)
+        for command in commands: self.assertEquals(run(command), 0)
 
     def test_info(self):
-        result = os.system("python info.py > __stdout__")
+        result = run("info.py")
         self.assertEquals(result, 0)
 
     def test_inputs(self):
         commands = [
-            "python inputs.py --help > __stdout__",
-            "python inputs.py > __stdout__",
+            "inputs.py --help",
+            "inputs.py",
         ]
-        for command in commands: self.assertEquals(os.system(command), 0)
+        for command in commands: self.assertEquals(run(command), 0)
         
     def test_job(self):
         commands = [
-            "python job.py --help > __stdout__",
-            "python job.py > __stdout__",
-            "python job.py list > __stdout__",
-            "python job.py list @0 > __stdout__",
+            "job.py --help",
+            "job.py",
+            "job.py list",
+            "job.py list @0",
         ]
-        for command in commands: self.assertEquals(os.system(command), 0)
+        for command in commands: self.assertEquals(run(command), 0)
         
     def test_loggers(self):
         commands = [
-            "python loggers.py --help > __stdout__",
-            "python loggers.py > __stdout__",
+            "loggers.py --help",
+            "loggers.py",
         ]
-        for command in commands: self.assertEquals(os.system(command), 0)
+        for command in commands: self.assertEquals(run(command), 0)
 
     def test_oneshot(self):
-        result = os.system('python oneshot.py "search * | head 10" > __stdout__')
+        result = run(["oneshot.py", "search * | head 10"])
         self.assertEquals(result, 0)
         
     def test_search(self):
         commands = [
-            "python search.py --help > __stdout__",
-            'python search.py "search * | head 10" > __stdout__',
-            'python search.py "search * | head 10 | stats count" --output_mode="csv" > __stdout__'
+            "search.py --help",
+            ["search.py", "search * | head 10"],
+            ["search.py", "search * | head 10 | stats count", '--output_mode=csv']
         ]
-        for command in commands: self.assertEquals(os.system(command), 0)
+        for command in commands: self.assertEquals(run(command), 0)
 
     def test_spcmd(self):
-        result = os.system("python spcmd.py --help > __stdout__")
+        result = run("spcmd.py --help")
         self.assertEquals(result, 0)
 
     def test_spurl(self):
-        result = os.system("python spurl.py > __stdout__")
+        result = run("spurl.py")
         self.assertEquals(result, 0)
 
-        result = os.system("python spurl.py --help > __stdout__")
+        result = run("spurl.py --help")
         self.assertEquals(result, 0)
 
-        result = os.system("python spurl.py /services > __stdout__")
+        result = run("spurl.py /services")
+        self.assertEquals(result, 0)
+
+        result = run("spurl.py apps/local")
         self.assertEquals(result, 0)
 
     def test_submit(self):
-        result = os.system("python submit.py --help > __stdout__")
+        result = run("submit.py --help")
         self.assertEquals(result, 0)
 
     def test_upload(self):
-        # note: test must run on machine where splunkd runs,
+        # Note: test must run on machine where splunkd runs,
         # or a failure is expected
         commands = [
-            "python upload.py --help > __stdout__",
-            "python upload.py --index=sdk-tests ./upload.py > __stdout__"
+            "upload.py --help",
+            "upload.py --index=sdk-tests ./upload.py"
         ]
-        for command in commands: self.assertEquals(os.system(command), 0)
+        for command in commands: self.assertEquals(run(command), 0)
 
     # The following tests are for the custom_search examples. The way
     # the tests work mirrors how Splunk would invoke them: they pipe in
@@ -206,58 +212,58 @@ class ExamplesTestCase(unittest.TestCase):
     # compare the resulting output file to a known good one.
     def test_custom_search(self):
 
-        def test_custom_search_command(command_path, known_input_path, known_output_path):
-            import tempfile
+        def test_custom_search_command(script, input_path, baseline_path):
+            output_base, _ = os.path.splitext(input_path)
+            output_path = output_base + ".out"
+            output_file = open(output_path, 'w')
 
-            CUSTOM_SEARCH_OUTPUT = os.path.join(cwd, "..", "tests", "temp_custom_search.out");
+            input_file = open(input_path, 'r')
 
             # Execute the command
-            command = "python %s < %s > %s" % (command_path, known_input_path, CUSTOM_SEARCH_OUTPUT)
-            os.system(command)
+            result = run(script, stdin=input_file, stdout=output_file)
+            self.assertEquals(result, 0)
 
-            # Open the temp output file for reading
-            temp_output_file = open(CUSTOM_SEARCH_OUTPUT, 'r')
+            input_file.close()
+            output_file.close()
 
-            # Read in the contents of the known output and temp output
-            known_output_file = open(known_output_path, 'r')
-            known_output_contents = known_output_file.read()
-            temp_output_contents = temp_output_file.read()
-            # Ensure they are the same
-            msg = "%s != %s" % (temp_output_file.name, known_output_file.name)
-            assertMultiLineEqual(self, known_output_contents, temp_output_contents, msg)
+            # Make sure the test output matches the baseline
+            baseline_file = open(baseline_path, 'r')
+            baseline = baseline_file.read()
 
-            # Close the temp output file, and delete it
-            temp_output_file.close()
-            os.remove(CUSTOM_SEARCH_OUTPUT)
+            output_file = open(output_path, 'r')
+            output = output_file.read()
 
-        if os.name == "nt":
-            cwd = os.getcwd()
-        else:
-            cwd = os.getenv('PWD')
-        custom_searches = [
-            { 
-                "path": os.path.join(cwd, "..", "examples", "custom_search", "bin", "usercount.py"),
-                "known_input_path": os.path.join(cwd, "..", "tests", "custom_search", "usercount.in"),
-                "known_output_path": os.path.join(cwd, "..", "tests", "custom_search", "usercount.out")
+            message = "%s != %s" % (output_file.name, baseline_file.name)
+            assertMultiLineEqual(self, baseline, output, message)
+
+            # Cleanup
+            baseline_file.close()
+            output_file.close()
+            os.remove(output_path)
+
+        custom_searches = [ 
+            {
+                "script": "custom_search/bin/usercount.py",
+                "input": "../tests/custom_search/usercount.in",
+                "baseline": "../tests/custom_search/usercount.baseline"
             },
             { 
-                "path": "twitted/twitted/bin/tophashtags.py",
-                "path": os.path.join(cwd, "..", "examples", "twitted", "twitted", "bin", "hashtags.py"),
-                "known_input_path": os.path.join(cwd, "..", "tests", "custom_search", "hashtags.in"),
-                "known_output_path": os.path.join(cwd, "..", "tests", "custom_search", "hashtags.out")
+                "script": "twitted/twitted/bin/hashtags.py",
+                "input": "../tests/custom_search/hashtags.in",
+                "baseline": "../tests/custom_search/hashtags.baseline"
             },
             { 
-                "path": os.path.join(cwd, "..", "examples", "twitted", "twitted", "bin", "tophashtags.py"),
-                "known_input_path": os.path.join(cwd, "..", "tests", "custom_search", "tophashtags.in"),
-                "known_output_path": os.path.join(cwd, "..", "tests", "custom_search", "tophashtags.out")
+                "script": "twitted/twitted/bin/tophashtags.py",
+                "input": "../tests/custom_search/tophashtags.in",
+                "baseline": "../tests/custom_search/tophashtags.baseline"
             }
         ]
 
         for custom_search in custom_searches:
-            path = custom_search["path"]
-            input = custom_search["known_input_path"]
-            output = custom_search["known_output_path"]
-            test_custom_search_command(path, input, output)
+            test_custom_search_command(
+                custom_search['script'],
+                custom_search['input'],
+                custom_search['baseline'])
  
 def main():
     os.chdir("../examples")
