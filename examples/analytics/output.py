@@ -37,12 +37,13 @@ class TimeRange:
     MONTH="1mon"    
 
 class AnalyticsRetriever:
-    def __init__(self, application_name, splunk_info):
+    def __init__(self, application_name, splunk_info, index = ANALYTICS_INDEX_NAME):
         self.application_name = application_name
         self.splunk = splunk.client.connect(**splunk_info)
+        self.index = index
 
     def applications(self):
-        query = "search index=%s | stats count by application" % (ANALYTICS_INDEX_NAME)
+        query = "search index=%s | stats count by application" % (self.index)
         job = self.splunk.jobs.create(query, exec_mode="blocking")
 
         applications = []
@@ -57,7 +58,7 @@ class AnalyticsRetriever:
         return applications
 
     def events(self):
-        query = "search index=%s application=%s | stats count by event" % (ANALYTICS_INDEX_NAME, self.application_name)
+        query = "search index=%s application=%s | stats count by event" % (self.index, self.application_name)
         job = self.splunk.jobs.create(query, exec_mode="blocking")
 
         events = []
@@ -73,7 +74,7 @@ class AnalyticsRetriever:
 
     def properties(self, event_name):
         query = 'search index=%s application=%s event="%s" | stats dc(%s*) as *' % (
-            ANALYTICS_INDEX_NAME, self.application_name, event_name, PROPERTY_PREFIX
+            self.index, self.application_name, event_name, PROPERTY_PREFIX
         )
         job = self.splunk.jobs.create(query, exec_mode="blocking")
 
@@ -95,7 +96,7 @@ class AnalyticsRetriever:
 
     def property_values(self, event_name, property):
         query = 'search index=%s application=%s event="%s" | stats count by %s | rename %s as %s' % (
-            ANALYTICS_INDEX_NAME, self.application_name, event_name, 
+            self.index, self.application_name, event_name, 
             PROPERTY_PREFIX + property,
             PROPERTY_PREFIX + property, property
         )
@@ -115,7 +116,7 @@ class AnalyticsRetriever:
 
     def events_over_time(self, event_name = "", time_range = TimeRange.MONTH, property = ""):
         query = 'search index=%s application=%s event="%s" | timechart span=%s count by %s | fields - _span*' % (
-            ANALYTICS_INDEX_NAME, self.application_name, (event_name or "*"), 
+            self.index, self.application_name, (event_name or "*"), 
             time_range,
             (PROPERTY_PREFIX + property) if property else "event",
         )

@@ -31,14 +31,15 @@ EVENT_TERMINATOR = "\\r\\n-----end-event-----\\r\\n"
 PROPERTY_PREFIX = "analytics_prop__"
 
 class AnalyticsTracker:
-    def __init__(self, application_name, splunk_info):
+    def __init__(self, application_name, splunk_info, index = ANALYTICS_INDEX_NAME):
         self.application_name = application_name
         self.splunk = splunk.client.connect(**splunk_info)
+        self.index = index
 
-        if ANALYTICS_INDEX_NAME not in self.splunk.indexes.list():
-            self.splunk.indexes.create(ANALYTICS_INDEX_NAME)
+        if self.index not in self.splunk.indexes.list():
+            self.splunk.indexes.create(self.index)
 
-        assert(ANALYTICS_INDEX_NAME in self.splunk.indexes.list())
+        assert(self.index in self.splunk.indexes.list())
 
         if ANALYTICS_SOURCETYPE not in self.splunk.confs["props"].list():
             self.splunk.confs["props"].create(ANALYTICS_SOURCETYPE)
@@ -80,7 +81,7 @@ class AnalyticsTracker:
 
         event += AnalyticsTracker.encode(props)
 
-        self.splunk.indexes[ANALYTICS_INDEX_NAME].submit(event, sourcetype=ANALYTICS_SOURCETYPE)
+        self.splunk.indexes[self.index].submit(event, sourcetype=ANALYTICS_SOURCETYPE)
 
 def main():
     usage = ""

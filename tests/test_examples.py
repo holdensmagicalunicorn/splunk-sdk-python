@@ -278,29 +278,23 @@ class ExamplesTestCase(unittest.TestCase):
         sys.path.append(os.getcwd())
         import analytics
 
+        # Create a tracker
+        tracker = analytics.input.AnalyticsTracker("sdk-test", opts.kwargs, index = "sdk-test")
+
         service = splunk.client.connect(**opts.kwargs)
-        index = service.indexes[analytics.input.ANALYTICS_INDEX_NAME]
 
-        # Before we start, rather than cleaning the index, we'll instead
-        # just delete events with the right application
-        query = "search index=%s %s=sdk-test | delete" % (
-            analytics.input.ANALYTICS_INDEX_NAME,
-            analytics.input.APPLICATION_KEY
-        )
-        service.jobs.create(query, exec_mode="blocking")
-
-        current_event_count = int(index['totalEventCount'])
+        # Before we start, we'll clean the index
+        index = service.indexes["sdk-test"]
+        index.clean()
         
-        # Create a tracker and track an event
-        tracker = analytics.input.AnalyticsTracker("sdk-test", opts.kwargs)
         tracker.track("test_event", distinct_id="abc123", foo="bar", abc="123")
         tracker.track("test_event", distinct_id="123abc", abc="12345")
 
         # Wait until the events get indexed
-        wait_event_count(index, current_event_count + 2, 10)
+        wait_event_count(index, 2, 10)
 
         # Now, we create a retriever to retrieve the events
-        retriever = analytics.output.AnalyticsRetriever("sdk-test", opts.kwargs)    
+        retriever = analytics.output.AnalyticsRetriever("sdk-test", opts.kwargs, index = "sdk-test")    
         
         # Assert applications
         applications = retriever.applications()
@@ -346,13 +340,8 @@ class ExamplesTestCase(unittest.TestCase):
         self.assertEquals(len(over_time["test_event"]), 1)
         self.assertEquals(over_time["test_event"][0]["count"], 2)
 
-        # Now that we're done, rather than cleaning the index, we'll instead
-        # just delete events with the right application
-        query = "search index=%s %s=sdk-test | delete" % (
-            analytics.input.ANALYTICS_INDEX_NAME,
-            analytics.input.APPLICATION_KEY
-        )
-        service.jobs.create(query, exec_mode="blocking")
+        # Now that we're done, we'll clean the index 
+        index.clean()
  
 # When an event is submitted to an index it takes a while before the event
 # is registered by the index's totalEventCount.
