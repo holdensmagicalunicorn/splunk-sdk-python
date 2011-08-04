@@ -27,7 +27,7 @@ import splunk
 import splunk.results as results
 from utils import parse, error
 
-leftronic_access_key = "we7NBmDvYGIMChnu9cQb"
+leftronic_access_key = ""
 
 def send_data(access_key, stream_name, point):
     data = {
