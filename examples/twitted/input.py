@@ -25,14 +25,13 @@ import sys
 
 import splunk
 
-from utils import parse
-from utils import error
+from utils import error, parse
 
 TWITTER_STREAM_HOST = "stream.twitter.com"
 TWITTER_STREAM_PATH = "/1/statuses/sample.json"
 
-SPLUNK_HOST = "localhost"
-SPLUNK_PORT = 9001
+DEFAULT_SPLUNK_HOST = "localhost"
+DEFAULT_SPLUNK_PORT = 9001
 
 ingest = None       # The splunk ingest socket
 verbose = 1
@@ -146,7 +145,7 @@ def flatten(value, prefix=None):
 
 # Sometimes twitter just stops sending us data on the HTTP connection.
 # In these cases, we'll try up to MAX_TRIES to read 2048 bytes, and if 
-# fail,w e'll 
+# that fails we bail out.
 MAX_TRIES = 100
 
 def listen(username, password):
@@ -154,7 +153,7 @@ def listen(username, password):
         twitter = Twitter(username, password)
         stream = twitter.connect()
     except Exception as e:
-        error("There wasn an error logging in to Twitter:\n%s" % str(e), 2)
+        error("There was an error logging in to Twitter:\n%s" % str(e), 2)
 
     buffer = ""
     tries = 0
@@ -174,8 +173,7 @@ def listen(username, password):
 you don't have any other open instances of the 'twitted' sample app.""", 2)
 
 def output(record):
-    if verbose == 1: print_record(record)
-    if verbose == 2: pprint(record)
+    print_record(record)
 
     for k in sorted(record.keys()):
         if k.endswith("_str"): 
@@ -208,7 +206,16 @@ def output(record):
     except:
         error("There was an error with the TCP connection to Splunk.", 2)
 
+# Print some infor to stdout, depending on verbosity level.
 def print_record(record):
+    if verbose == 0: 
+        return
+
+    if verbose > 1:
+        pprint(record) # Very chatty
+        return
+
+    # Otherwise print a nice summary of the record
     if record.has_key('delete_status_id'):
         print "delete %d %d" % (
             record['delete_status_id'],
@@ -233,29 +240,29 @@ def main():
     # Force the namespace
     kwargs['namespace'] = "%s:twitted" % kwargs['username']
 
-    print "Initializing Splunk .."
+    if verbose > 0: print "Initializing Splunk .."
     service = splunk.client.connect(**kwargs)
 
+    # Create the index if it doesn't exist
     if "twitter" not in service.indexes.list():
-        print "Creating index 'twitter' .."
+        if verbose > 0: print "Creating index 'twitter' .."
         service.indexes.create("twitter")
 
-    input_host = kwargs.get("inputhost", SPLUNK_HOST)
-    input_port = int(kwargs.get("inputport", SPLUNK_PORT))
+    # Create the TCP input if it doesn't exist
+    input_host = kwargs.get("inputhost", DEFAULT_SPLUNK_HOST)
+    input_port = int(kwargs.get("inputport", DEFAULT_SPLUNK_PORT))
     input_name = "tcp:%s" % (input_port)
     if input_name not in service.inputs.list():
-        service.inputs.create("tcp", 
-                            input_port,
-                            index="twitter", 
-                            sourcetype="twitter")
+        if verbose > 0: print "Creating input '%s'" % input_name
+        service.inputs.create(
+            "tcp", input_port, index="twitter", sourcetype="twitter")
     
-    # UNDONE: Ensure rules are created
-
     global ingest
     ingest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ingest.connect((input_host, input_port))
 
-    print "Listening (and sending data to %s:%s).." % (input_host, input_port)
+    if verbose > 0: 
+        print "Listening (and sending data to %s:%s).." % (input_host, input_port)
     try: 
         listen(kwargs['tusername'], kwargs['tpassword'])
     except KeyboardInterrupt:

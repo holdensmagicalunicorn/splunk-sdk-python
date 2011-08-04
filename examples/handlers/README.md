@@ -1,11 +1,13 @@
-The Splunk SDK library supports _pluggable_ HTTP request handlers that enable
+### Pluggable HTTP Request Handlers
+
+The Splunk SDK library supports pluggable HTTP request handlers that enable
 the library to be used with alternate HTTP request implementations.
 
-This can be used to supply implementations with support for features not 
-included in the default request handler (which is based on httplib), such as
-support for HTTP proxies and server certificate validation. It can also be used
-to provide implementations with additional logging or diagnostic output for
-debugging.
+This feature can be used to supply implementations with support for features
+not included in the default request handler (which is based on httplib), such 
+as support for HTTP proxies and server certificate validation. It can also be 
+used to provide implementations with additional logging or diagnostic output 
+for debugging.
 
 This directory contains a collection of examples that demonstrate various 
 alternative HTTP request handlers.
