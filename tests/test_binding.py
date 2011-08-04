@@ -12,8 +12,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# UNDONE: Test splunk namespace against baseline
-
 from os import path
 from StringIO import StringIO
 import sys
@@ -79,14 +77,43 @@ def urllib2_handler(url, message, **kwargs):
         'body': StringIO(response.read())
     }
 
-# UNDONE: Finish testing package namespaces
 class PackageTestCase(unittest.TestCase):
     def test_names(self):
         import splunk
-        names = dir(splunk)
+        names = str(dir(splunk))
+        fd = open("package.methods/splunk", "r")
+        checknames = fd.read().replace("\n","")
+        fd.close()
+        self.assertTrue(names == checknames)
 
         import splunk.binding
-        # ...
+        names = str(dir(splunk.binding))
+        fd = open("package.methods/splunk.binding", "r")
+        checknames = fd.read().replace("\n","")
+        fd.close()
+        self.assertTrue(names == checknames)
+
+        import splunk.client
+        names = str(dir(splunk.client))
+        fd = open("package.methods/splunk.client", "r")
+        checknames = fd.read().replace("\n","")
+        fd.close()
+        self.assertTrue(names == checknames)
+
+        import splunk.data
+        names = str(dir(splunk.data))
+        fd = open("package.methods/splunk.data", "r")
+        checknames = fd.read().replace("\n","")
+        fd.close()
+        self.assertTrue(names == checknames)
+
+        import splunk.results
+        names = str(dir(splunk.results))
+        fd = open("package.methods/splunk.results", "r")
+        checknames = fd.read().replace("\n","")
+        fd.close()
+        self.assertTrue(names == checknames)
+
 
 def isatom(body):
     """Answers if the given response body looks like ATOM."""
