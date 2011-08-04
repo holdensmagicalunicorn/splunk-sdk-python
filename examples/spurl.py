@@ -16,8 +16,6 @@
 
 """A simple command line interface for the Splunk REST APIs."""
 
-# UNDONE: Support for POST
-
 import sys
 from xml.etree import ElementTree
 
