@@ -399,6 +399,25 @@ var request = function(path, method, data, success) {
 
 /********** END *************/
 
+// We currently disallow some specific APIs because
+// they are a bit weird about how they handle parameters,
+// and they don't quite adhere to the standard of the rest
+// of the endpoints 
+var DISALLOWED_APIS = [
+    "configs/conf-{file}",
+    "configs/conf-{file}/{name}",
+    "properties/{file_name}/{stanza_name}",
+    "receivers/stream",
+]
+
+var isDisallowedApi = function(apiPath) {
+    for(var i = 0; i < DISALLOWED_APIS.length; i++) {
+        if (DISALLOWED_APIS[i] === apiPath) {
+            return true;
+        }
+    }
+}
+
 $(document).ready(function() {
     // Hookup the dropdown selection changed event
     $("#api-dropdown-box").change(apiChanged);
@@ -406,6 +425,10 @@ $(document).ready(function() {
     // Populate the API dropdown
     for(var apiPath in apis) {
         if (apis.hasOwnProperty(apiPath)) {
+            if (isDisallowedApi(apiPath)) {
+                continue;
+            }
+
             api = apis[apiPath]
             for(var method in api["methods"]) {
                 if (api["methods"].hasOwnProperty(method)) {

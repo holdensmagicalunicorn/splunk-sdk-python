@@ -1,19 +1,18 @@
-apis = 
-{
+apis = {
   "alerts/fired_alerts": {
     "methods": {
       "GET": {
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -27,7 +26,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -41,7 +40,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -55,7 +54,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -64,10 +63,10 @@ apis =
             "summary": "Insufficient permissions to view fired alerts."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns a summary view of the list of all alerts that have been fired on the server.", 
@@ -87,7 +86,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -99,10 +98,10 @@ apis =
             "summary": "Fired alert does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Deletes the record of this triggered alert.", 
@@ -122,7 +121,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -134,10 +133,10 @@ apis =
             "summary": "Fired alert does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns a list of all unexpired triggered or fired instances of this alert.", 
@@ -152,77 +151,6 @@ apis =
   }, 
   "apps/appinstall": {
     "methods": {
-      "GET": {
-        "config": "", 
-        "params": {
-          "count": {
-            "datatype": "Int", 
-            "default": "30", 
-            "required": "false", 
-            "summary": "Maximum number of items to return.", 
-            "validation": ""
-          }, 
-          "offset": {
-            "datatype": "Unsigned Int", 
-            "default": "0", 
-            "required": "false", 
-            "summary": "Index for first item to return.", 
-            "validation": ""
-          }, 
-          "search": {
-            "datatype": "String", 
-            "default": "", 
-            "required": "false", 
-            "summary": "Boolean predicate to filter results.", 
-            "validation": ""
-          }, 
-          "sort_dir": {
-            "datatype": "String", 
-            "default": "name", 
-            "required": "false", 
-            "summary": "Direction to sort by (asc/desc).", 
-            "validation": ""
-          }, 
-          "sort_key": {
-            "datatype": "String", 
-            "default": "name", 
-            "required": "false", 
-            "summary": "Field to sort by.", 
-            "validation": ""
-          }, 
-          "sort_mode": {
-            "datatype": "String", 
-            "default": "name", 
-            "required": "false", 
-            "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
-            "validation": ""
-          }
-        }, 
-        "request": "", 
-        "response": "", 
-        "returns": {
-          "200": {
-            "summary": "Listed successfully."
-          }, 
-          "400": {
-            "summary": "Request error.  See returned XML for explanation."
-          }, 
-          "401": {
-            "summary": "Authentication failure: must pass valid credentials with request."
-          }, 
-          "403": {
-            "summary": "Insufficient permissions to view UNDONE_ret_code."
-          }, 
-          "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
-          }, 
-          "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
-          }
-        }, 
-        "summary": "Not implemented", 
-        "urlParams": {}
-      }, 
       "POST": {
         "config": "", 
         "params": {
@@ -248,7 +176,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -260,10 +188,10 @@ apis =
             "summary": "Insufficient permissions to install app."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -275,59 +203,20 @@ apis =
     }, 
     "summary": "Provides for installation of apps from a URL or local file."
   }, 
-  "apps/appinstall/{name}": {
-    "methods": {
-      "GET": {
-        "config": "", 
-        "request": "", 
-        "response": "", 
-        "returns": {
-          "200": {
-            "summary": "Listed successfully."
-          }, 
-          "400": {
-            "summary": "Request error.  See returned XML for explanation."
-          }, 
-          "401": {
-            "summary": "Authentication failure: must pass valid credentials with request."
-          }, 
-          "403": {
-            "summary": "Insufficient permissions to view UNDONE_ret_code."
-          }, 
-          "404": {
-            "summary": "app does not exist."
-          }, 
-          "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
-          }, 
-          "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
-          }
-        }, 
-        "summary": "Not implemented.", 
-        "urlParams": {
-          "name": {
-            "required": "true", 
-            "summary": "name"
-          }
-        }
-      }
-    }
-  }, 
   "apps/apptemplates": {
     "methods": {
       "GET": {
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -341,7 +230,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -355,7 +244,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -369,7 +258,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -378,10 +267,10 @@ apis =
             "summary": "Insufficient permissions to view app templates."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists app templates that are used to create apps from the Mangager interface in Splunk Web.\n\nAn app templates is valid as the \"template\" argument to POST to /services/apps/local. The app templates can be found by enumerating $SPLUNK_HOME/share/splunk/app_templates. Adding a new template takes effect without restarting splunkd or SplunkWeb.", 
@@ -401,7 +290,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -413,10 +302,10 @@ apis =
             "summary": "app template does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Retrieves information about a specific app template.\n\nThis call is rarely used, as all the information is provided by the apps/templates endpoint, which does not require an explicit name.", 
@@ -435,24 +324,24 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
             "validation": ""
           }, 
           "refresh": {
-            "datatype": "UNDONE", 
+            "datatype": "Boolean", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "Scan for new apps and reload any objects those new apps contain.", 
             "validation": ""
           }, 
           "search": {
@@ -463,7 +352,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -477,7 +366,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -491,7 +380,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -500,10 +389,10 @@ apis =
             "summary": "Insufficient permissions to view local apps."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns information on all locally-installed apps.\n\nSplunkbase can correlate locally-installed apps with the same app on Splunkbase to notify users about app updates.", 
@@ -569,7 +458,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -581,10 +470,10 @@ apis =
             "summary": "Insufficient permissions to create local app."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -607,7 +496,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -619,10 +508,10 @@ apis =
             "summary": "Local app does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Removes the locally installed app with the name specified by {name}.\n\nAfter deleting an app, there might also be some manual cleanup. See \"Uninstall an app\" in the \"Meet Splunk Web and Splunk apps\" section of the Splunk Admin manual.", 
@@ -637,10 +526,10 @@ apis =
         "config": "", 
         "params": {
           "refresh": {
-            "datatype": "UNDONE", 
+            "datatype": "Boolean", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "Reloads the objects contained in the locally installed app with the name specified by {name}.", 
             "validation": ""
           }
         }, 
@@ -651,7 +540,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -663,10 +552,10 @@ apis =
             "summary": "Local app does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns information about the locally installed app with the name specified by {name}.", 
@@ -688,10 +577,10 @@ apis =
             "validation": ""
           }, 
           "check_for_updates": {
-            "datatype": "UNDONE", 
+            "datatype": "Boolean", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "If set to true, Splunk checks Splunkbase for updates to this app.", 
             "validation": "validate(is_bool($check_for_updates$), \"Value of argument 'check_for_updates' must be a boolean\")"
           }, 
           "description": {
@@ -737,7 +626,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -752,10 +641,10 @@ apis =
             "summary": "Local app does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -782,7 +671,7 @@ apis =
             "summary": "Set up information returned successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -794,10 +683,10 @@ apis =
             "summary": "App does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns any set up information for the app specified by {name}..", 
@@ -821,7 +710,7 @@ apis =
             "summary": "Update information for the app was returned successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -833,10 +722,10 @@ apis =
             "summary": "App does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns any update information available for the app specified by {name}.", 
@@ -858,14 +747,14 @@ apis =
             "default": "", 
             "required": "True", 
             "summary": "The password for the user specified with <code>username</code>.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "username": {
             "datatype": "String", 
             "default": "", 
             "required": "True", 
             "summary": "The Splunk account username.", 
-            "validation": "UNDONE"
+            "validation": ""
           }
         }, 
         "request": "", 
@@ -875,7 +764,7 @@ apis =
             "summary": "Authenticated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -885,7 +774,7 @@ apis =
         "urlParams": {}
       }
     }, 
-    "summary": "Provides user authentication. \n\n<bold>Note:</bold> This endpoint is under 'auth' and not 'authentication' for backwards compatibility."
+    "summary": "Provides user authentication. \n\n<b>Note:</b> This endpoint is under 'auth' and not 'authentication' for backwards compatibility."
   }, 
   "authentication/auth-tokens": {
     "methods": {
@@ -893,14 +782,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -914,7 +803,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -928,7 +817,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -942,7 +831,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -951,13 +840,13 @@ apis =
             "summary": "Insufficient permissions to view auth-tokens."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "Does nothing.  Is a placeholder for potential future information.", 
         "urlParams": {}
       }, 
       "POST": {
@@ -1020,7 +909,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -1032,10 +921,10 @@ apis =
             "summary": "Insufficient permissions to create auth-tokens."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -1047,59 +936,20 @@ apis =
     }, 
     "summary": "Allows for creation of authentication tokens"
   }, 
-  "authentication/auth-tokens/{name}": {
-    "methods": {
-      "GET": {
-        "config": "", 
-        "request": "", 
-        "response": "", 
-        "returns": {
-          "200": {
-            "summary": "Listed successfully."
-          }, 
-          "400": {
-            "summary": "Request error.  See returned XML for explanation."
-          }, 
-          "401": {
-            "summary": "Authentication failure: must pass valid credentials with request."
-          }, 
-          "403": {
-            "summary": "Insufficient permissions to view auth-token."
-          }, 
-          "404": {
-            "summary": "auth-token does not exist."
-          }, 
-          "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
-          }, 
-          "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
-          }
-        }, 
-        "summary": "UNDONE", 
-        "urlParams": {
-          "name": {
-            "required": "true", 
-            "summary": "name"
-          }
-        }
-      }
-    }
-  }, 
   "authentication/current-context": {
     "methods": {
       "GET": {
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -1113,7 +963,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -1127,7 +977,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -1141,7 +991,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -1150,10 +1000,10 @@ apis =
             "summary": "Insufficient permissions to view current-context."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists one item named \"context\" which contains the name of the current user", 
@@ -1173,7 +1023,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -1185,10 +1035,10 @@ apis =
             "summary": "current-context does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Displays an item (always named \"context\") that contains the name of the current user.", 
@@ -1207,14 +1057,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -1228,7 +1078,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -1242,7 +1092,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -1256,7 +1106,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -1265,10 +1115,10 @@ apis =
             "summary": "Insufficient permissions to view httpauth-tokens."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List all currently active session tokens", 
@@ -1288,7 +1138,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -1300,10 +1150,10 @@ apis =
             "summary": "httpauth-token does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "End the session associated with this token", 
@@ -1323,7 +1173,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -1335,10 +1185,10 @@ apis =
             "summary": "httpauth-token does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Get information about a specific session token", 
@@ -1357,14 +1207,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -1378,7 +1228,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -1392,7 +1242,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -1406,7 +1256,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -1415,10 +1265,10 @@ apis =
             "summary": "Insufficient permissions to view users."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns a list of all the users registered on the server.", 
@@ -1473,7 +1323,7 @@ apis =
             "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "Comma-separated list of roles to assign to the user.", 
+            "summary": "A role to assign to this user. To assign multiple roles, send them in separate 'roles' arguments.", 
             "validation": ""
           }, 
           "tz": {
@@ -1491,7 +1341,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -1503,10 +1353,10 @@ apis =
             "summary": "Insufficient permissions to create user."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -1529,7 +1379,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -1541,10 +1391,10 @@ apis =
             "summary": "User does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Removes the user from the system.", 
@@ -1564,7 +1414,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -1576,10 +1426,10 @@ apis =
             "summary": "User does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns information about the user.", 
@@ -1643,7 +1493,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -1658,10 +1508,10 @@ apis =
             "summary": "User does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -1683,14 +1533,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -1704,7 +1554,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -1718,7 +1568,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -1732,7 +1582,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -1741,10 +1591,10 @@ apis =
             "summary": "Insufficient permissions to view capabilities."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List all system capabiilities", 
@@ -1764,7 +1614,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -1776,10 +1626,10 @@ apis =
             "summary": "Capability does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List a particular system capability name. This does not list any further information besides the name.", 
@@ -1798,14 +1648,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -1819,7 +1669,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -1833,7 +1683,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -1847,7 +1697,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -1856,10 +1706,10 @@ apis =
             "summary": "Insufficient permissions to view roles."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists all roles and the permissions for each role.", 
@@ -1953,7 +1803,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -1965,10 +1815,10 @@ apis =
             "summary": "Insufficient permissions to create role."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -1991,7 +1841,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -2003,10 +1853,10 @@ apis =
             "summary": "Role does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Deletes the role specified by {name}.", 
@@ -2026,7 +1876,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -2038,10 +1888,10 @@ apis =
             "summary": "Role does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists the permissions for the role specified by {name}.", 
@@ -2133,7 +1983,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -2148,10 +1998,10 @@ apis =
             "summary": "Role does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -2172,14 +2022,14 @@ apis =
       "GET": {
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -2227,7 +2077,7 @@ apis =
             "summary": "Insufficient permissions to view configuration file."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists all stanzas contained in the named configuration file.", 
@@ -2268,7 +2118,7 @@ apis =
             "summary": "Insufficient permissions to create configuration stanza."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Allows for creating the stanza specified by \"name\" in the configuration file specified by {file}.", 
@@ -2298,7 +2148,7 @@ apis =
             "summary": "Insufficient permissions to delete configuration stanza."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Deletes the named stanza in the named configuration file.", 
@@ -2327,7 +2177,7 @@ apis =
             "summary": "Insufficient permissions to view configuration stanza."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Display only the named stanza from the named configuration file.", 
@@ -2365,7 +2215,7 @@ apis =
             "summary": "Insufficient permissions to edit configuration stanza."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Allows for editing the named stanza from the named configuration file.", 
@@ -2382,365 +2232,20 @@ apis =
       }
     }
   }, 
-  "configs/deploymentclient": {
-    "methods": {
-      "GET": {
-        "config": "deploymentclient", 
-        "params": {
-          "count": {
-            "datatype": "Int", 
-            "default": "30", 
-            "required": "false", 
-            "summary": "Maximum number of items to return.", 
-            "validation": ""
-          }, 
-          "offset": {
-            "datatype": "Unsigned Int", 
-            "default": "0", 
-            "required": "false", 
-            "summary": "Index for first item to return.", 
-            "validation": ""
-          }, 
-          "search": {
-            "datatype": "String", 
-            "default": "", 
-            "required": "false", 
-            "summary": "Boolean predicate to filter results.", 
-            "validation": ""
-          }, 
-          "sort_dir": {
-            "datatype": "String", 
-            "default": "name", 
-            "required": "false", 
-            "summary": "Direction to sort by (asc/desc).", 
-            "validation": ""
-          }, 
-          "sort_key": {
-            "datatype": "String", 
-            "default": "name", 
-            "required": "false", 
-            "summary": "Field to sort by.", 
-            "validation": ""
-          }, 
-          "sort_mode": {
-            "datatype": "String", 
-            "default": "name", 
-            "required": "false", 
-            "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
-            "validation": ""
-          }
-        }, 
-        "request": "", 
-        "response": "", 
-        "returns": {
-          "200": {
-            "summary": "Listed successfully."
-          }, 
-          "400": {
-            "summary": "Request error.  See returned XML for explanation."
-          }, 
-          "401": {
-            "summary": "Authentication failure: must pass valid credentials with request."
-          }, 
-          "403": {
-            "summary": "Insufficient permissions to view deployment client configuration."
-          }, 
-          "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
-          }, 
-          "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
-          }
-        }, 
-        "summary": "Returns the configuration stanzas for the deployment client.", 
-        "urlParams": {}
-      }
-    }, 
-    "summary": "Provides access to the raw deployment client configuration."
-  }, 
-  "configs/deploymentclient/{name}": {
-    "methods": {
-      "GET": {
-        "config": "deploymentclient", 
-        "request": "", 
-        "response": "", 
-        "returns": {
-          "200": {
-            "summary": "Listed successfully."
-          }, 
-          "400": {
-            "summary": "Request error.  See returned XML for explanation."
-          }, 
-          "401": {
-            "summary": "Authentication failure: must pass valid credentials with request."
-          }, 
-          "403": {
-            "summary": "Insufficient permissions to view deployment client configuration."
-          }, 
-          "404": {
-            "summary": "Stanza does not exist in deployment client configuration."
-          }, 
-          "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
-          }, 
-          "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
-          }
-        }, 
-        "summary": "Returns the named stanza from the deployment client configuration.", 
-        "urlParams": {
-          "name": {
-            "required": "true", 
-            "summary": "name"
-          }
-        }
-      }
-    }
-  }, 
-  "configs/inputs": {
-    "methods": {
-      "GET": {
-        "config": "inputs", 
-        "params": {
-          "count": {
-            "datatype": "Int", 
-            "default": "30", 
-            "required": "false", 
-            "summary": "Maximum number of items to return.", 
-            "validation": ""
-          }, 
-          "offset": {
-            "datatype": "Unsigned Int", 
-            "default": "0", 
-            "required": "false", 
-            "summary": "Index for first item to return.", 
-            "validation": ""
-          }, 
-          "search": {
-            "datatype": "String", 
-            "default": "", 
-            "required": "false", 
-            "summary": "Boolean predicate to filter results.", 
-            "validation": ""
-          }, 
-          "sort_dir": {
-            "datatype": "String", 
-            "default": "name", 
-            "required": "false", 
-            "summary": "Direction to sort by (asc/desc).", 
-            "validation": ""
-          }, 
-          "sort_key": {
-            "datatype": "String", 
-            "default": "name", 
-            "required": "false", 
-            "summary": "Field to sort by.", 
-            "validation": ""
-          }, 
-          "sort_mode": {
-            "datatype": "String", 
-            "default": "name", 
-            "required": "false", 
-            "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
-            "validation": ""
-          }
-        }, 
-        "request": "", 
-        "response": "", 
-        "returns": {
-          "200": {
-            "summary": "Listed successfully."
-          }, 
-          "400": {
-            "summary": "Request error.  See returned XML for explanation."
-          }, 
-          "401": {
-            "summary": "Authentication failure: must pass valid credentials with request."
-          }, 
-          "403": {
-            "summary": "Insufficient permissions to view inputs."
-          }, 
-          "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
-          }, 
-          "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
-          }
-        }, 
-        "summary": "Lists all elements of inputs.conf.", 
-        "urlParams": {}
-      }
-    }, 
-    "summary": "Provides access to the configuration of data inputs."
-  }, 
-  "configs/inputs/{name}": {
-    "methods": {
-      "GET": {
-        "config": "inputs", 
-        "request": "", 
-        "response": "", 
-        "returns": {
-          "200": {
-            "summary": "Listed successfully."
-          }, 
-          "400": {
-            "summary": "Request error.  See returned XML for explanation."
-          }, 
-          "401": {
-            "summary": "Authentication failure: must pass valid credentials with request."
-          }, 
-          "403": {
-            "summary": "Insufficient permissions to view inputs."
-          }, 
-          "404": {
-            "summary": "Input does not exist."
-          }, 
-          "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
-          }, 
-          "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
-          }
-        }, 
-        "summary": "Provides information about a specific input stanza in inputs.conf.", 
-        "urlParams": {
-          "name": {
-            "required": "true", 
-            "summary": "name"
-          }
-        }
-      }
-    }
-  }, 
-  "configs/wmi": {
-    "methods": {
-      "GET": {
-        "config": "wmi", 
-        "params": {
-          "count": {
-            "datatype": "Int", 
-            "default": "30", 
-            "required": "false", 
-            "summary": "Maximum number of items to return.", 
-            "validation": ""
-          }, 
-          "offset": {
-            "datatype": "Unsigned Int", 
-            "default": "0", 
-            "required": "false", 
-            "summary": "Index for first item to return.", 
-            "validation": ""
-          }, 
-          "search": {
-            "datatype": "String", 
-            "default": "", 
-            "required": "false", 
-            "summary": "Boolean predicate to filter results.", 
-            "validation": ""
-          }, 
-          "sort_dir": {
-            "datatype": "String", 
-            "default": "name", 
-            "required": "false", 
-            "summary": "Direction to sort by (asc/desc).", 
-            "validation": ""
-          }, 
-          "sort_key": {
-            "datatype": "String", 
-            "default": "name", 
-            "required": "false", 
-            "summary": "Field to sort by.", 
-            "validation": ""
-          }, 
-          "sort_mode": {
-            "datatype": "String", 
-            "default": "name", 
-            "required": "false", 
-            "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
-            "validation": ""
-          }
-        }, 
-        "request": "", 
-        "response": "", 
-        "returns": {
-          "200": {
-            "summary": "Listed successfully."
-          }, 
-          "400": {
-            "summary": "Request error.  See returned XML for explanation."
-          }, 
-          "401": {
-            "summary": "Authentication failure: must pass valid credentials with request."
-          }, 
-          "403": {
-            "summary": "Insufficient permissions to view WMI."
-          }, 
-          "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
-          }, 
-          "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
-          }
-        }, 
-        "summary": "Returns the list of wmi collections, if any.", 
-        "urlParams": {}
-      }
-    }, 
-    "summary": "Provides access to the configuration of Windows Management Instrumentation (WMI) for Splunk."
-  }, 
-  "configs/wmi/{name}": {
-    "methods": {
-      "GET": {
-        "config": "wmi", 
-        "request": "", 
-        "response": "", 
-        "returns": {
-          "200": {
-            "summary": "Listed successfully."
-          }, 
-          "400": {
-            "summary": "Request error.  See returned XML for explanation."
-          }, 
-          "401": {
-            "summary": "Authentication failure: must pass valid credentials with request."
-          }, 
-          "403": {
-            "summary": "Insufficient permissions to view WMI."
-          }, 
-          "404": {
-            "summary": "WMI does not exist."
-          }, 
-          "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
-          }, 
-          "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
-          }
-        }, 
-        "summary": "Returns the configuration information for this WMI collection.", 
-        "urlParams": {
-          "name": {
-            "required": "true", 
-            "summary": "name"
-          }
-        }
-      }
-    }
-  }, 
   "data/commands": {
     "methods": {
       "GET": {
         "config": "commands", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -2754,7 +2259,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -2768,7 +2273,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -2782,7 +2287,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -2791,10 +2296,10 @@ apis =
             "summary": "Insufficient permissions to view commands."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List all python search commands.", 
@@ -2814,7 +2319,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -2826,10 +2331,10 @@ apis =
             "summary": "Command does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Provide information about a specific python search command.", 
@@ -2848,14 +2353,14 @@ apis =
         "config": "indexes", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -2869,7 +2374,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -2883,7 +2388,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -2913,10 +2418,10 @@ apis =
             "summary": "Insufficient permissions to view indexes."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists the recognized indexes on the server.", 
@@ -2936,28 +2441,28 @@ apis =
             "datatype": "Number", 
             "default": "0", 
             "required": "false", 
-            "summary": "Controls how many events make up a block for block signatures.\n\nIf this is set to 0, block signing is disabled for this index.\n\nDefaults to 0.\n\nA recommended value is 100.", 
+            "summary": "Controls how many events make up a block for block signatures.\n\nIf this is set to 0, block signing is disabled for this index.\n\nA recommended value is 100.", 
             "validation": "validate(isint(blockSignSize) AND blockSignSize >= 0,\"blockSignSize must be a non-negative integer\")"
           }, 
           "coldPath": {
             "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "An absolute path that contains the colddbs for the index. The path must be writable. Cold databases are opened as needed when searching. May be defined in terms of a volume definition (see volume section below).\n\nRequired. Splunk will not start if an index lacks a valid coldPath.", 
+            "summary": "An absolute path that contains the colddbs for the index. The path must be readable and writable. Cold databases are opened as needed when searching. May be defined in terms of a volume definition (see volume section below).\n\nRequired. Splunk will not start if an index lacks a valid coldPath.", 
             "validation": ""
           }, 
           "coldToFrozenDir": {
             "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "Destination path for the frozen archive. Use as an alternative to a coldToFrozen script. Splunk automatically puts frozen buckets in this directory.\n\nBucket freezing policy is as follows:\n* New style buckets (4.2 and on): removes all files but the rawdata\n:To thaw: run <pre>splunk rebuild <bucket dir></pre> on the bucket, then move to the thawed directory\n* Old style buckets (Pre-4.2): gzip all the .data and .tsidx files\n:To thaw: gunzip the zipped files and move the bucket into the thawed directory\n\n If both coldToFrozenDir and coldToFrozenScript are specified, coldToFrozenDir takes precedence", 
+            "summary": "Destination path for the frozen archive. Use as an alternative to a coldToFrozenScript. Splunk automatically puts frozen buckets in this directory.\n\nBucket freezing policy is as follows:\n* New style buckets (4.2 and on): removes all files but the rawdata\n:To thaw, run <pre>splunk rebuild <bucket dir></pre> on the bucket, then move to the thawed directory\n* Old style buckets (Pre-4.2): gzip all the .data and .tsidx files\n:To thaw, gunzip the zipped files and move the bucket into the thawed directory\n\nIf both coldToFrozenDir and coldToFrozenScript are specified, coldToFrozenDir takes precedence", 
             "validation": ""
           }, 
           "coldToFrozenScript": {
             "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "Path to the archiving script.\n\nIf your script requires a program to run it (for example, python), specify the program followed by the path. The script must be in $SPLUNK_HOME/bin or one of its subdirectories.\n\nSplunk ships with an example archiving script in $SPLUNK_HOME/bin called coldToFrozenExample.py. Splunk DOES NOT recommend using this example script directly. It uses a default path, and if modified in place any changes will be overwritten on upgrade.\n\nSplunk recommends copying the example script to a new file in bin and modifying it for your system.  Most importantly, change the default archive path to an existing directory that fits your needs.\n\nIf your new script in bin/ is named myColdToFrozen.py, set this key to the following:\n\n  coldToFrozenScript = \"$SPLUNK_HOME/bin/python\" \"$SPLUNK_HOME/bin/myColdToFrozen.py\"\n\nBy default, the example script has two possible behaviors when archiving:\n* For buckets created from version 4.2 and on, it removes all files except for rawdata. To thaw: cd to the frozen bucket and type <code>splunk rebuild .</code>, then copy the bucket to thawed for that index\n* For older-style buckets, we simply gzip all the .tsidx files. To thaw: cd to the frozen bucket and unzip the tsidx files, then copy the bucket to thawed for that index", 
+            "summary": "Path to the archiving script.\n\nIf your script requires a program to run it (for example, python), specify the program followed by the path. The script must be in $SPLUNK_HOME/bin or one of its subdirectories.\n\nSplunk ships with an example archiving script in $SPLUNK_HOME/bin called coldToFrozenExample.py. Splunk DOES NOT recommend using this example script directly. It uses a default path, and if modified in place any changes will be overwritten on upgrade.\n\nSplunk recommends copying the example script to a new file in bin and modifying it for your system.  Most importantly, change the default archive path to an existing directory that fits your needs.\n\nIf your new script in bin/ is named myColdToFrozen.py, set this key to the following:\n\n  coldToFrozenScript = \"$SPLUNK_HOME/bin/python\" \"$SPLUNK_HOME/bin/myColdToFrozen.py\"\n\nBy default, the example script has two possible behaviors when archiving:\n* For buckets created from version 4.2 and on, it removes all files except for rawdata. To thaw: cd to the frozen bucket and type <code>splunk rebuild .</code>, then copy the bucket to thawed for that index.  We recommend using the coldToFrozenDir parameter unless you need to perform a more advanced operation upon freezing buckets.\n* For older-style buckets, we simply gzip all the .tsidx files. To thaw: cd to the frozen bucket and unzip the tsidx files, then copy the bucket to thawed for that index", 
             "validation": ""
           }, 
           "compressRawdata": {
@@ -2971,28 +2476,28 @@ apis =
             "datatype": "Number", 
             "default": "188697600", 
             "required": "false", 
-            "summary": "Number of seconds after which indexed data rolls to frozen.  Defaults to 188697600 (6 years).\n\nIf you do not specify a coldToFrozenScript, data is deleted when rolled to frozen.\n\nIMPORTANT: Every event in the DB must be older than frozenTimePeriodInSecs before it will roll. Then, the DB will be frozen the next time splunkd checks (based on rotatePeriodInSecs attribute).", 
+            "summary": "Number of seconds after which indexed data rolls to frozen.  Defaults to 188697600 (6 years).\n\nFreezing data means it is removed from the index.  If you need to archive your data, refer to coldToFrozenDir and coldToFrozenScript parameter documentation.", 
             "validation": "validate(isint(frozenTimePeriodInSecs) AND frozenTimePeriodInSecs >= 0,\"frozenTimePeriodInSecs must be a non-negative integer\")"
           }, 
           "homePath": {
             "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "An absolute path that contains the hotdb and warmdb for the index.\n\nsplunkd keeps a file handle open for warmdbs at all times. May be defined in terms of a volume definition (see volume section below).\n\nRequired. Splunk will not start if an index lacks a valid homePath.\n\nCAUTION: Path MUST be writable.", 
+            "summary": "An absolute path that contains the hot and warm buckets for the index.\n\nRequired. Splunk will not start if an index lacks a valid homePath.\n\nCAUTION: Path MUST be readable and writable.", 
             "validation": ""
           }, 
           "maxConcurrentOptimizes": {
             "datatype": "Number", 
             "default": "3", 
             "required": "false", 
-            "summary": "The number of concurrent optimize processes that can run against the hot DB.\n\nThis number should be increased if: \n* There are always many small tsidx files in the hot DB.\n* After rolling, there are many tsidx files in warm or cold DB.", 
+            "summary": "The number of concurrent optimize processes that can run against a hot bucket.\n\nThis number should be increased if instructed by Splunk Support.  Typically the default value should suffice.\n", 
             "validation": "validate(isint(maxConcurrentOptimizes) AND maxConcurrentOptimizes >= 0,\"maxConcurrentOptimizes must be a non-negative integer\")"
           }, 
           "maxDataSize": {
             "datatype": "Number", 
             "default": "auto", 
             "required": "false", 
-            "summary": "The maximum size in MB for a hot DB to reach before a roll to warm is triggered. Specifying \"auto\" or \"auto_high_volume\" causes Splunk to autotune this parameter (recommended).Use \"auto_high_volume\" for high volume indexes (such as the main index); otherwise, use \"auto\".  A \"high volume index\" would typically be considered one that gets over 10GB of data per day.\n* \"auto\" sets the size to 750MB.\n* \"auto_high_volume\" sets the size to 10GB on 64-bit, and 1GB on 32-bit systems.\n\nAlthough the maximum value you can set this is 1048576 MB, which corresponds to 1 TB, a reasonable number ranges anywhere from 100 - 50000. Any number outside this range should be approved by Splunk support before proceeding.\n\nIf you specify an invalid number or string, maxDataSize will be auto tuned.\n\nNOTE: The precise size of your warm buckets may vary from maxDataSize, due to post-processing and timing issues with the rolling policy.", 
+            "summary": "The maximum size in MB for a hot DB to reach before a roll to warm is triggered. Specifying \"auto\" or \"auto_high_volume\" causes Splunk to autotune this parameter (recommended).Use \"auto_high_volume\" for high volume indexes (such as the main index); otherwise, use \"auto\".  A \"high volume index\" would typically be considered one that gets over 10GB of data per day.\n* \"auto\" sets the size to 750MB.\n* \"auto_high_volume\" sets the size to 10GB on 64-bit, and 1GB on 32-bit systems.\n\nAlthough the maximum value you can set this is 1048576 MB, which corresponds to 1 TB, a reasonable number ranges anywhere from 100 - 50000. Any number outside this range should be approved by Splunk Support before proceeding.\n\nIf you specify an invalid number or string, maxDataSize will be auto tuned.\n\nNOTE: The precise size of your warm buckets may vary from maxDataSize, due to post-processing and timing issues with the rolling policy.", 
             "validation": "validate(maxDataSize == \"auto\" OR maxDataSize == \"auto_high_volume\" OR isint(maxDataSize) AND maxDataSize >= 0,\"maxDataSize must be one of auto, auto_high_volume or non-negative integer\")"
           }, 
           "maxHotBuckets": {
@@ -3020,21 +2525,21 @@ apis =
             "datatype": "Number", 
             "default": "5", 
             "required": "false", 
-            "summary": "The amount of memory to allocate for indexing. This amount of memory will be allocated PER INDEX THREAD, or, if indexThreads is set to 0, once per index. Defaults to 5. The default is recommended for all environments.\n\nIMPORTANT:  Calculate this number carefully. splunkd crashes if you set this number higher than the amount of memory available.", 
+            "summary": "The amount of memory, expressed in MB, to allocate for buffering a single tsidx file into memory before flushing to disk.  Defaults to 5. The default is recommended for all environments.\n\nIMPORTANT:  Calculate this number carefully. Setting this number incorrectly may have adverse effects on your systems memory and/or splunkd stability/performance.", 
             "validation": "validate(isint(maxMemMB) AND maxMemMB >= 0,\"maxMemMB must be a non-negative integer\")"
           }, 
           "maxMetaEntries": {
             "datatype": "Number", 
             "default": "1000000", 
             "required": "false", 
-            "summary": "Sets the maximum number of unique lines in .data files in a bucket, which may help to reduce memory consumption. If set to 0, this setting is ignored (it is treated as infinite).\n\nIf exceeded, a hot bucket is rolled to prevent further increase. If your buckets are rolling due to Strings.data hitting this limit, the culprit may be the <code>punct</code> field in your data.  If you don't use punct, it may be best to simply disable this (see props.conf.spec).\n\nThere is a delta between when maximum is exceeded and bucket is rolled. This means a bucket may end up with epsilon more lines than specified, but this is not a major concern unless excess is significant.", 
+            "summary": "Sets the maximum number of unique lines in .data files in a bucket, which may help to reduce memory consumption. If set to 0, this setting is ignored (it is treated as infinite).\n\nIf exceeded, a hot bucket is rolled to prevent further increase. If your buckets are rolling due to Strings.data hitting this limit, the culprit may be the <code>punct</code> field in your data.  If you don't use punct, it may be best to simply disable this (see props.conf.spec in $SPLUNK_HOME/etc/system/README).\n\nThere is a small time delta between when maximum is exceeded and bucket is rolled. This means a bucket may end up with epsilon more lines than specified, but this is not a major concern unless excess is significant.", 
             "validation": ""
           }, 
           "maxRunningProcessGroups": {
             "datatype": "Number", 
             "default": "20", 
             "required": "false", 
-            "summary": "The indexer fires off helper processes like splunk-optimize, recover-metadata, and others. This parameter controls how many processes the indexer fires off at any given time.\n\n<bold>CAUTION:</bold> This is an advanced parameter, do NOT set this unless instructed by Splunk Support.", 
+            "summary": "The indexer fires off helper processes like splunk-optimize, recover-metadata, and others. This parameter controls how many processes the indexer fires off at any given time.\n\n<b>CAUTION:</b> This is an advanced parameter, do NOT set this unless instructed by Splunk Support.", 
             "validation": ""
           }, 
           "maxTotalDataSizeMB": {
@@ -3048,14 +2553,14 @@ apis =
             "datatype": "Number", 
             "default": "300", 
             "required": "false", 
-            "summary": "The maximum number of warmdb directories. All warm databasess are in the <homePath> for the index. Warm databases are kept in open state.", 
+            "summary": "The maximum number of warm buckets. If this number is exceeded, the warm bucket/s with the lowest value for their latest times will be moved to cold.", 
             "validation": "validate(isint(maxWarmDBCount) AND maxWarmDBCount >= 0,\"maxWarmDBCount must be a non-negative integer\")"
           }, 
           "minRawFileSyncSecs": {
             "datatype": "Number", 
             "default": "disable", 
             "required": "false", 
-            "summary": "Specify an integer (or \"disable\") for this parameter.\n\nThis parameter sets how frequently splunkd forces a filesystem sync while compressing journal slices.\n\nDuring this interval, uncompressed slices are left on disk even after they are compressed. Then splunkd forces a filesystem sync of the compressed journal and removes the accumulated uncompressed files.\n\nIf 0 is specified, splunkd forces a filesystem sync after every slice completes compressing. Specifying \"disable\" disables syncing entirely: uncompressed slices are removed as soon as compression is complete.\n\n<bold>NOTE:</bold> Some filesystems are very inefficient at performing sync operations, so only enable this if you are sure it is needed", 
+            "summary": "Specify an integer (or \"disable\") for this parameter.\n\nThis parameter sets how frequently splunkd forces a filesystem sync while compressing journal slices.\n\nDuring this interval, uncompressed slices are left on disk even after they are compressed. Then splunkd forces a filesystem sync of the compressed journal and removes the accumulated uncompressed files.\n\nIf 0 is specified, splunkd forces a filesystem sync after every slice completes compressing. Specifying \"disable\" disables syncing entirely: uncompressed slices are removed as soon as compression is complete.\n\n<b>NOTE:</b> Some filesystems are very inefficient at performing sync operations, so only enable this if you are sure it is needed", 
             "validation": ""
           }, 
           "name": {
@@ -3097,7 +2602,7 @@ apis =
             "datatype": "Number", 
             "default": "60", 
             "required": "false", 
-            "summary": "How frequently (in seconds) to check if a new hotdb needs to be created. Also, how frequently to check if there are any cold DBs that should be frozen.", 
+            "summary": "How frequently (in seconds) to check if a new hot bucket needs to be created. Also, how frequently to check if there are any warm/cold buckets that should be rolled/frozen.", 
             "validation": "validate(isint(rotatePeriodInSecs) AND rotatePeriodInSecs >= 0,\"rotatePeriodInSecs must be a non-negative integer\")"
           }, 
           "serviceMetaPeriod": {
@@ -3118,7 +2623,7 @@ apis =
             "datatype": "Boolean", 
             "default": "true", 
             "required": "false", 
-            "summary": "When <code>true</code>, a sync operation is called before file descriptor is closed on metadata file updates. This functionality improves integrity of metadata files, especially in regards to operating system crashes/machine failures.\n\nNOTE: Do not change this parameter without the input of a Splunk support professional.", 
+            "summary": "When <code>true</code>, a sync operation is called before file descriptor is closed on metadata file updates. This functionality improves integrity of metadata files, especially in regards to operating system crashes/machine failures.\n\n<b>Note</b>: Do not change this parameter without the input of a Splunk Support.", 
             "validation": ""
           }, 
           "thawedPath": {
@@ -3132,7 +2637,7 @@ apis =
             "datatype": "Number", 
             "default": "15", 
             "required": "false", 
-            "summary": "Defines how frequently Splunk checks for index throttling condition, in seconds. Defaults to 15 (seconds).\n\nNOTE: Do not change this parameter without the input of a Splunk Support professional.", 
+            "summary": "Defines how frequently Splunk checks for index throttling condition, in seconds. Defaults to 15 (seconds).\n\n<b>Note</b>: Do not change this parameter without the input of a Splunk Support.", 
             "validation": ""
           }
         }, 
@@ -3143,7 +2648,7 @@ apis =
             "summary": "Index created successfully; followed by header:\n\n<code>Location: /services/data/indexes/{name}</code>"
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -3158,7 +2663,7 @@ apis =
             "summary": "The index name already exists."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -3190,7 +2695,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -3202,10 +2707,10 @@ apis =
             "summary": "Index does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Retrieves information about the named index.", 
@@ -3424,7 +2929,7 @@ apis =
             "summary": "The specified index was not found."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
             "summary": "Unspecified error"
@@ -3443,20 +2948,20 @@ apis =
       }
     }
   }, 
-  "data/inputs/monitor": {
+  "data/inputs/ad": {
     "methods": {
       "GET": {
-        "config": "inputs", 
+        "config": "admon", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -3470,7 +2975,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -3484,7 +2989,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -3498,7 +3003,312 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
+          }, 
+          "401": {
+            "summary": "Authentication failure: must pass valid credentials with request."
+          }, 
+          "403": {
+            "summary": "Insufficient permissions to view AD monitoring configuration."
+          }, 
+          "409": {
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
+          }, 
+          "500": {
+            "summary": "Internal server error.  See response body for details."
+          }
+        }, 
+        "summary": "Gets current AD monitoring configuration.", 
+        "urlParams": {}
+      }, 
+      "POST": {
+        "config": "admon", 
+        "params": {
+          "disabled": {
+            "datatype": "Number", 
+            "default": "1", 
+            "required": "false", 
+            "summary": "Indicates whether the monitoring is disabled.", 
+            "validation": ""
+          }, 
+          "index": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "false", 
+            "summary": "The index in which to store the gathered data.", 
+            "validation": ""
+          }, 
+          "monitorSubtree": {
+            "datatype": "Number", 
+            "default": "1", 
+            "required": "true", 
+            "summary": "Whether or not to monitor the subtree(s) of a given directory tree path.  1 means yes, 0 means no.", 
+            "validation": ""
+          }, 
+          "name": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "true", 
+            "summary": "A unique name that represents a configuration or set of configurations for a specific domain controller (DC).", 
+            "validation": ""
+          }, 
+          "startingNode": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "false", 
+            "summary": "Where in the Active Directory directory tree to start monitoring.  If not specified, will attempt to start at the root of the directory tree.", 
+            "validation": ""
+          }, 
+          "targetDc": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "false", 
+            "summary": "Specifies a fully qualified domain name of a valid, network-accessible DC.  If not specified, Splunk will obtain the local computer's DC.", 
+            "validation": ""
+          }
+        }, 
+        "request": "", 
+        "response": "", 
+        "returns": {
+          "201": {
+            "summary": "Created successfully."
+          }, 
+          "400": {
+            "summary": "Request error.  See response body for details."
+          }, 
+          "401": {
+            "summary": "Authentication failure: must pass valid credentials with request."
+          }, 
+          "402": {
+            "summary": "The Splunk license in use has disabled this feature."
+          }, 
+          "403": {
+            "summary": "Insufficient permissions to create monitoring stanza."
+          }, 
+          "409": {
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
+          }, 
+          "500": {
+            "summary": "Internal server error.  See response body for details."
+          }, 
+          "503": {
+            "summary": "This feature has been disabled in Splunk configuration files."
+          }
+        }, 
+        "summary": "Creates new or modifies existing performance monitoring settings.", 
+        "urlParams": {}
+      }
+    }, 
+    "summary": "Provides access to Active Directory monitoring input."
+  }, 
+  "data/inputs/ad/{name}": {
+    "methods": {
+      "DELETE": {
+        "config": "admon", 
+        "request": "", 
+        "response": "", 
+        "returns": {
+          "200": {
+            "summary": "Deleted successfully."
+          }, 
+          "400": {
+            "summary": "Request error.  See response body for details."
+          }, 
+          "401": {
+            "summary": "Authentication failure: must pass valid credentials with request."
+          }, 
+          "403": {
+            "summary": "Insufficient permissions to delete AD monitoring stanza."
+          }, 
+          "404": {
+            "summary": "AD monitoring stanza does not exist."
+          }, 
+          "409": {
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
+          }, 
+          "500": {
+            "summary": "Internal server error.  See response body for details."
+          }
+        }, 
+        "summary": "Deletes a given AD monitoring stanza.", 
+        "urlParams": {
+          "name": {
+            "required": "true", 
+            "summary": "name"
+          }
+        }
+      }, 
+      "GET": {
+        "config": "admon", 
+        "request": "", 
+        "response": "", 
+        "returns": {
+          "200": {
+            "summary": "Listed successfully."
+          }, 
+          "400": {
+            "summary": "Request error.  See response body for details."
+          }, 
+          "401": {
+            "summary": "Authentication failure: must pass valid credentials with request."
+          }, 
+          "403": {
+            "summary": "Insufficient permissions to view AD monitoring configuration."
+          }, 
+          "404": {
+            "summary": "AD monitoring stanza does not exist."
+          }, 
+          "409": {
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
+          }, 
+          "500": {
+            "summary": "Internal server error.  See response body for details."
+          }
+        }, 
+        "summary": "Gets the current configuration for a given AD monitoring stanza.", 
+        "urlParams": {
+          "name": {
+            "required": "true", 
+            "summary": "name"
+          }
+        }
+      }, 
+      "POST": {
+        "config": "admon", 
+        "params": {
+          "disabled": {
+            "datatype": "INHERITED", 
+            "default": "1", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "index": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "monitorSubtree": {
+            "datatype": "INHERITED", 
+            "default": "1", 
+            "required": "true", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "startingNode": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "targetDc": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }
+        }, 
+        "request": "", 
+        "response": "", 
+        "returns": {
+          "200": {
+            "summary": "Updated successfully."
+          }, 
+          "400": {
+            "summary": "Request error.  See response body for details."
+          }, 
+          "401": {
+            "summary": "Authentication failure: must pass valid credentials with request."
+          }, 
+          "402": {
+            "summary": "The Splunk license in use has disabled this feature."
+          }, 
+          "403": {
+            "summary": "Insufficient permissions to edit AD monitoring stanza."
+          }, 
+          "404": {
+            "summary": "AD monitoring stanza does not exist."
+          }, 
+          "409": {
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
+          }, 
+          "500": {
+            "summary": "Internal server error.  See response body for details."
+          }, 
+          "503": {
+            "summary": "This feature has been disabled in Splunk configuration files."
+          }
+        }, 
+        "summary": "Modifies a given AD monitoring stanza.", 
+        "urlParams": {
+          "name": {
+            "required": "true", 
+            "summary": "name"
+          }
+        }
+      }
+    }
+  }, 
+  "data/inputs/monitor": {
+    "methods": {
+      "GET": {
+        "config": "inputs", 
+        "params": {
+          "count": {
+            "datatype": "Number", 
+            "default": "30", 
+            "required": "false", 
+            "summary": "Maximum number of items to return.", 
+            "validation": ""
+          }, 
+          "offset": {
+            "datatype": "Number", 
+            "default": "0", 
+            "required": "false", 
+            "summary": "Index for first item to return.", 
+            "validation": ""
+          }, 
+          "search": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "false", 
+            "summary": "Boolean predicate to filter results.", 
+            "validation": ""
+          }, 
+          "sort_dir": {
+            "datatype": "Enum", 
+            "default": "name", 
+            "required": "false", 
+            "summary": "Direction to sort by (asc/desc).", 
+            "validation": ""
+          }, 
+          "sort_key": {
+            "datatype": "String", 
+            "default": "name", 
+            "required": "false", 
+            "summary": "Field to sort by.", 
+            "validation": ""
+          }, 
+          "sort_mode": {
+            "datatype": "Enum", 
+            "default": "name", 
+            "required": "false", 
+            "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
+            "validation": ""
+          }
+        }, 
+        "request": "", 
+        "response": "", 
+        "returns": {
+          "200": {
+            "summary": "Listed successfully."
+          }, 
+          "400": {
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -3507,10 +3317,10 @@ apis =
             "summary": "Insufficient permissions to view monitored input."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List enabled and disabled monitor inputs.", 
@@ -3639,7 +3449,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -3651,16 +3461,16 @@ apis =
             "summary": "Insufficient permissions to create monitored input."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
           }
         }, 
-        "summary": "Create a new file or directory monitor data input.", 
+        "summary": "Create a new file or directory monitor input.", 
         "urlParams": {}
       }
     }, 
@@ -3677,7 +3487,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -3689,10 +3499,10 @@ apis =
             "summary": "Monitored input does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Disable the named monitor data input and remove it from the configuration.", 
@@ -3712,7 +3522,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -3724,10 +3534,10 @@ apis =
             "summary": "Monitored input does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List the properties of a single monitor data input.", 
@@ -3854,7 +3664,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -3869,16 +3679,16 @@ apis =
             "summary": "Monitored input does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
           }
         }, 
-        "summary": "Edit properties of the named monitor input.", 
+        "summary": "Update properties of the named monitor input.", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -3894,14 +3704,14 @@ apis =
         "config": "inputs", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -3915,7 +3725,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -3929,7 +3739,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -3943,7 +3753,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -3955,10 +3765,10 @@ apis =
             "summary": "Monitor input does not exist or does not have any members."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists all files monitored under the named monitor input.", 
@@ -3977,14 +3787,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -3998,7 +3808,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -4012,7 +3822,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -4026,7 +3836,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -4035,10 +3845,10 @@ apis =
             "summary": "Insufficient permissions to view inputs."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Enumerates in-progress oneshot inputs. As soon as an input is complete, it is removed from this list.", 
@@ -4058,14 +3868,14 @@ apis =
             "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "A regex to be used to extract a \"host\" field from the path.", 
+            "summary": "A regex to be used to extract a \"host\" field from the path.\n\nIf the path matches this regular expression, the captured value is used to populate the host field for events from this data input. The regular expression must have one capture group.", 
             "validation": ""
           }, 
           "host_segment": {
             "datatype": "Number", 
             "default": "", 
             "required": "false", 
-            "summary": "The segment of the path to be used as the \"host\" field for this file.", 
+            "summary": "Use the specified slash-separate segment of the path as the host field value.", 
             "validation": ""
           }, 
           "index": {
@@ -4079,7 +3889,7 @@ apis =
             "datatype": "String", 
             "default": "", 
             "required": "true", 
-            "summary": "The path to the file to be indexed.", 
+            "summary": "The path to the file to be indexed. The file must be locally accessible by the server.", 
             "validation": ""
           }, 
           "rename-source": {
@@ -4104,7 +3914,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -4116,16 +3926,16 @@ apis =
             "summary": "Insufficient permissions to create input."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
           }
         }, 
-        "summary": "Queues a file for immediate indexing by the file input subsystem. This endpoint can handle any single file: plain, compressed or archive. The file is indexed in full, regardless of whether it has been indexed before.", 
+        "summary": "Queues a file for immediate indexing by the file input subsystem. The file must be locally accessible from the server.\n\nThis endpoint can handle any single file: plain, compressed or archive. The file is indexed in full, regardless of whether it has been indexed before.", 
         "urlParams": {}
       }
     }, 
@@ -4142,7 +3952,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -4154,13 +3964,346 @@ apis =
             "summary": "Input does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Finds information about a single in-flight one shot input. This is a subset of the information in the full enumeration.", 
+        "urlParams": {
+          "name": {
+            "required": "true", 
+            "summary": "name"
+          }
+        }
+      }
+    }
+  }, 
+  "data/inputs/registry": {
+    "methods": {
+      "GET": {
+        "config": "regmon-filters", 
+        "params": {
+          "count": {
+            "datatype": "Number", 
+            "default": "30", 
+            "required": "false", 
+            "summary": "Maximum number of items to return.", 
+            "validation": ""
+          }, 
+          "offset": {
+            "datatype": "Number", 
+            "default": "0", 
+            "required": "false", 
+            "summary": "Index for first item to return.", 
+            "validation": ""
+          }, 
+          "search": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "false", 
+            "summary": "Boolean predicate to filter results.", 
+            "validation": ""
+          }, 
+          "sort_dir": {
+            "datatype": "Enum", 
+            "default": "name", 
+            "required": "false", 
+            "summary": "Direction to sort by (asc/desc).", 
+            "validation": ""
+          }, 
+          "sort_key": {
+            "datatype": "String", 
+            "default": "name", 
+            "required": "false", 
+            "summary": "Field to sort by.", 
+            "validation": ""
+          }, 
+          "sort_mode": {
+            "datatype": "Enum", 
+            "default": "name", 
+            "required": "false", 
+            "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
+            "validation": ""
+          }
+        }, 
+        "request": "", 
+        "response": "", 
+        "returns": {
+          "200": {
+            "summary": "Listed successfully."
+          }, 
+          "400": {
+            "summary": "Request error.  See response body for details."
+          }, 
+          "401": {
+            "summary": "Authentication failure: must pass valid credentials with request."
+          }, 
+          "403": {
+            "summary": "Insufficient permissions to view registry monitoring configuration."
+          }, 
+          "409": {
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
+          }, 
+          "500": {
+            "summary": "Internal server error.  See response body for details."
+          }
+        }, 
+        "summary": "Gets current registry monitoring configuration.", 
+        "urlParams": {}
+      }, 
+      "POST": {
+        "config": "regmon-filters", 
+        "params": {
+          "baseline": {
+            "datatype": "Number", 
+            "default": "0", 
+            "required": "true", 
+            "summary": "Specifies whether or not to establish a baseline value for the registry keys.  1 means yes, 0 no.", 
+            "validation": ""
+          }, 
+          "disabled": {
+            "datatype": "Number", 
+            "default": "1", 
+            "required": "false", 
+            "summary": "Indicates whether the monitoring is disabled.", 
+            "validation": ""
+          }, 
+          "hive": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "true", 
+            "summary": "Specifies the registry hive under which to monitor for changes.", 
+            "validation": ""
+          }, 
+          "index": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "false", 
+            "summary": "The index in which to store the gathered data.", 
+            "validation": ""
+          }, 
+          "monitorSubnodes": {
+            "datatype": "Number", 
+            "default": "", 
+            "required": "false", 
+            "summary": "If set to '1', will monitor all sub-nodes under a given hive.", 
+            "validation": ""
+          }, 
+          "name": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "true", 
+            "summary": "Name of the configuration stanza.", 
+            "validation": ""
+          }, 
+          "proc": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "true", 
+            "summary": "Specifies a regex.  If specified, will only collected changes if a process name matches that regex.", 
+            "validation": ""
+          }, 
+          "type": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "true", 
+            "summary": "A regular expression that specifies the type(s) of Registry event(s) that you want to monitor.", 
+            "validation": ""
+          }
+        }, 
+        "request": "", 
+        "response": "", 
+        "returns": {
+          "201": {
+            "summary": "Created successfully."
+          }, 
+          "400": {
+            "summary": "Request error.  See response body for details."
+          }, 
+          "401": {
+            "summary": "Authentication failure: must pass valid credentials with request."
+          }, 
+          "402": {
+            "summary": "The Splunk license in use has disabled this feature."
+          }, 
+          "403": {
+            "summary": "Insufficient permissions to create registry monitoring stanza."
+          }, 
+          "409": {
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
+          }, 
+          "500": {
+            "summary": "Internal server error.  See response body for details."
+          }, 
+          "503": {
+            "summary": "This feature has been disabled in Splunk configuration files."
+          }
+        }, 
+        "summary": "Creates new or modifies existing registry monitoring settings.", 
+        "urlParams": {}
+      }
+    }, 
+    "summary": "Provides access to Windows registry monitoring input."
+  }, 
+  "data/inputs/registry/{name}": {
+    "methods": {
+      "DELETE": {
+        "config": "regmon-filters", 
+        "request": "", 
+        "response": "", 
+        "returns": {
+          "200": {
+            "summary": "Deleted successfully."
+          }, 
+          "400": {
+            "summary": "Request error.  See response body for details."
+          }, 
+          "401": {
+            "summary": "Authentication failure: must pass valid credentials with request."
+          }, 
+          "403": {
+            "summary": "Insufficient permissions to delete registry configuration stanza."
+          }, 
+          "404": {
+            "summary": "Registry monitoring configuration stanza does not exist."
+          }, 
+          "409": {
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
+          }, 
+          "500": {
+            "summary": "Internal server error.  See response body for details."
+          }
+        }, 
+        "summary": "Deletes registry monitoring configuration stanza.", 
+        "urlParams": {
+          "name": {
+            "required": "true", 
+            "summary": "name"
+          }
+        }
+      }, 
+      "GET": {
+        "config": "regmon-filters", 
+        "request": "", 
+        "response": "", 
+        "returns": {
+          "200": {
+            "summary": "Listed successfully."
+          }, 
+          "400": {
+            "summary": "Request error.  See response body for details."
+          }, 
+          "401": {
+            "summary": "Authentication failure: must pass valid credentials with request."
+          }, 
+          "403": {
+            "summary": "Insufficient permissions to view registry monitoring configuration stanza."
+          }, 
+          "404": {
+            "summary": "Registry monitoring stanza does not exist."
+          }, 
+          "409": {
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
+          }, 
+          "500": {
+            "summary": "Internal server error.  See response body for details."
+          }
+        }, 
+        "summary": "Gets current registry monitoring configuration stanza.", 
+        "urlParams": {
+          "name": {
+            "required": "true", 
+            "summary": "name"
+          }
+        }
+      }, 
+      "POST": {
+        "config": "regmon-filters", 
+        "params": {
+          "baseline": {
+            "datatype": "INHERITED", 
+            "default": "0", 
+            "required": "true", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "disabled": {
+            "datatype": "INHERITED", 
+            "default": "1", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "hive": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "true", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "index": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "monitorSubnodes": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "proc": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "true", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "type": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "true", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }
+        }, 
+        "request": "", 
+        "response": "", 
+        "returns": {
+          "200": {
+            "summary": "Updated successfully."
+          }, 
+          "400": {
+            "summary": "Request error.  See response body for details."
+          }, 
+          "401": {
+            "summary": "Authentication failure: must pass valid credentials with request."
+          }, 
+          "402": {
+            "summary": "The Splunk license in use has disabled this feature."
+          }, 
+          "403": {
+            "summary": "Insufficient permissions to edit registry monitoring stanza."
+          }, 
+          "404": {
+            "summary": "Registry monitoring stanza does not exist."
+          }, 
+          "409": {
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
+          }, 
+          "500": {
+            "summary": "Internal server error.  See response body for details."
+          }, 
+          "503": {
+            "summary": "This feature has been disabled in Splunk configuration files."
+          }
+        }, 
+        "summary": "Modifies given registry monitoring stanza.", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -4176,14 +4319,14 @@ apis =
         "config": "inputs", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -4197,7 +4340,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -4211,7 +4354,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -4225,7 +4368,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -4234,10 +4377,10 @@ apis =
             "summary": "Insufficient permissions to view script."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Gets the configuration settings for scripted inputs.", 
@@ -4285,7 +4428,7 @@ apis =
             "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "Specify a new name for the scripted input.", 
+            "summary": "Specify a new name for the source field for the script.", 
             "validation": ""
           }, 
           "source": {
@@ -4310,7 +4453,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -4322,10 +4465,10 @@ apis =
             "summary": "Insufficient permissions to create script."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -4339,43 +4482,50 @@ apis =
   }, 
   "data/inputs/script/restart": {
     "methods": {
-      "GET": {
+      "POST": {
         "config": "inputs", 
         "params": {
           "script": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "true", 
-            "summary": "UNDONE", 
+            "summary": "Path to the script to be restarted.  This path must match an already-configured existing scripted input.", 
             "validation": ""
           }
         }, 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
+        "request": "", 
+        "response": "", 
         "returns": {
           "200": {
             "summary": "Scripted input restarted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
+          }, 
+          "402": {
+            "summary": "The Splunk license in use has disabled this feature."
           }, 
           "403": {
             "summary": "Insufficient permissions to restart scripted input."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
+          }, 
+          "503": {
+            "summary": "This feature has been disabled in Splunk configuration files."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "Causes a restart on a given scripted input.", 
         "urlParams": {}
       }
-    }
+    }, 
+    "summary": "Allows for restarting scripted inputs."
   }, 
   "data/inputs/script/{name}": {
     "methods": {
@@ -4388,7 +4538,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -4400,10 +4550,10 @@ apis =
             "summary": "Script does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Removes the scripted input specified by {name}.", 
@@ -4423,7 +4573,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -4435,10 +4585,10 @@ apis =
             "summary": "Script does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns the configuration settings for the scripted input specified by {name}.", 
@@ -4509,7 +4659,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -4524,10 +4674,10 @@ apis =
             "summary": "Script does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -4549,14 +4699,14 @@ apis =
         "config": "inputs", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -4570,7 +4720,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -4584,7 +4734,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -4598,7 +4748,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -4607,10 +4757,10 @@ apis =
             "summary": "Insufficient permissions to view inputs."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns information about all cooked TCP inputs.", 
@@ -4630,14 +4780,14 @@ apis =
             "datatype": "Enum", 
             "default": "", 
             "required": "false", 
-            "summary": "Valid values: (ip &#124; dns &#124; none)\n\nSet the host for the remote server that is sending data.\n\n<code>ip</code> specifies the IP address of the remote server. <code>dns</code> sets the host to the DNS entry of the remote server. <code>none</code> leaves the host as specified in inputs.conf.\n\nDefault value is dns.", 
+            "summary": "Valid values: (ip &#124; dns &#124; none)\n\nSet the host for the remote server that is sending data.\n\n<code>ip</code> sets the host to the IP address of the remote server sending data. <code>dns</code> sets the host to the reverse DNS entry for the IP address of the remote server sending data. <code>none</code> leaves the host as specified in inputs.conf.\n\nDefault value is dns.", 
             "validation": ""
           }, 
           "disabled": {
             "datatype": "Boolean", 
             "default": "", 
             "required": "false", 
-            "summary": "Indicates whether the inputs are disabled.", 
+            "summary": "Indicates whether the input is disabled.", 
             "validation": ""
           }, 
           "host": {
@@ -4647,25 +4797,11 @@ apis =
             "summary": "The default value to fill in for events lacking a host value.", 
             "validation": ""
           }, 
-          "index": {
-            "datatype": "String", 
-            "default": "default", 
-            "required": "false", 
-            "summary": "The index in which to store all generated events.", 
-            "validation": ""
-          }, 
           "name": {
             "datatype": "Number", 
             "default": "", 
             "required": "true", 
-            "summary": "The input port which Splunk receives cooked data in.", 
-            "validation": ""
-          }, 
-          "queue": {
-            "datatype": "Enum", 
-            "default": "", 
-            "required": "false", 
-            "summary": "Valid values: (parsingQueue &#124; &#124; indexQueue)\n\nSpecifies where the input processor should deposit the events it reads. Defaults to parsingQueue.\n\nSet queue to \"parsingQueue\" to apply props.conf and other parsing rules to your data.  For more information about props.conf and rules for timestamping and linebreaking, refer to props.conf and the online documentation at http://www.splunk.com/base/Documentation.\n\nSet queue to \"indexQueue\" to send your data directly into the index.", 
+            "summary": "The port number of this input.", 
             "validation": ""
           }, 
           "restrictToHost": {
@@ -4673,20 +4809,6 @@ apis =
             "default": "", 
             "required": "false", 
             "summary": "Restrict incoming connections on this port to the host specified here.", 
-            "validation": ""
-          }, 
-          "source": {
-            "datatype": "String", 
-            "default": "", 
-            "required": "false", 
-            "summary": "Sets the source key/field for events from this input. Defaults to the input file path.\n\nSets the source key's initial value. The key is used during parsing/indexing, in particular to set the source field during indexing. It is also the source field used at search time. As a convenience, the chosen string is prepended with 'source::'.\n\n'''Note:''' Overriding the source key is generally not recommended.Typically, the input layer provides a more accurate string to aid in problem analysis and investigation, accurately recording the file from which the data was retreived. Consider use of source types, tagging, and search wildcards before overriding this value.", 
-            "validation": ""
-          }, 
-          "sourcetype": {
-            "datatype": "String", 
-            "default": "", 
-            "required": "false", 
-            "summary": "Set the source type for events from this input.\n\n\"sourcetype=\" is automatically prepended to <string>.\n\nDefaults to audittrail (if signedaudit=true) or fschange (if signedaudit=false).", 
             "validation": ""
           }
         }, 
@@ -4709,7 +4831,7 @@ apis =
             "summary": "Insufficient permissions to create input."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
             "summary": "There was an error; see body contents for messages"
@@ -4722,7 +4844,7 @@ apis =
         "urlParams": {}
       }
     }, 
-    "summary": "Container for managing tcp inputs from forwarders.\n\nForwarders can transmit three types of data: raw, unparsed, or parsed. Cooked data refers to parsed and unparsed formats."
+    "summary": "Provides access to tcp inputs from forwarders.\n\nForwarders can transmit three types of data: raw, unparsed, or parsed. Cooked data refers to parsed and unparsed formats."
   }, 
   "data/inputs/tcp/cooked/{name}": {
     "methods": {
@@ -4732,10 +4854,10 @@ apis =
         "response": "", 
         "returns": {
           "200": {
-            "summary": "''TODO: Add success codes''"
+            "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "''TODO: Add failure codes''"
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -4747,13 +4869,13 @@ apis =
             "summary": "Input does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "Removes the cooked inputs from host specified by <code>{name}</code>", 
+        "summary": "Removes the cooked TCP inputs for port or host:port specified by <code>{name}</code>", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -4782,13 +4904,13 @@ apis =
             "summary": "Input does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "Returns information about TCP inputs (parsed or unparsed data) from the host <code>{name}</code>", 
+        "summary": "Returns information for the cooked TCP input specified by <code>{name}</code>.\n\nIf port is restricted to a host, name should be URI-encoded host:port.", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -4827,35 +4949,7 @@ apis =
             "summary": "INHERITED", 
             "validation": ""
           }, 
-          "index": {
-            "datatype": "INHERITED", 
-            "default": "default", 
-            "required": "false", 
-            "summary": "INHERITED", 
-            "validation": ""
-          }, 
-          "queue": {
-            "datatype": "INHERITED", 
-            "default": "", 
-            "required": "false", 
-            "summary": "INHERITED", 
-            "validation": ""
-          }, 
           "restrictToHost": {
-            "datatype": "INHERITED", 
-            "default": "", 
-            "required": "false", 
-            "summary": "INHERITED", 
-            "validation": ""
-          }, 
-          "source": {
-            "datatype": "INHERITED", 
-            "default": "", 
-            "required": "false", 
-            "summary": "INHERITED", 
-            "validation": ""
-          }, 
-          "sourcetype": {
             "datatype": "INHERITED", 
             "default": "", 
             "required": "false", 
@@ -4870,7 +4964,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -4885,10 +4979,10 @@ apis =
             "summary": "Input does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -4915,7 +5009,7 @@ apis =
             "summary": "Listed connections successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -4927,10 +5021,10 @@ apis =
             "summary": "TCP input does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Retrieves list of active connections to the named port.", 
@@ -4949,14 +5043,14 @@ apis =
         "config": "inputs", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -4970,7 +5064,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -4984,7 +5078,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -4998,7 +5092,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -5007,10 +5101,10 @@ apis =
             "summary": "Insufficient permissions to view input."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns information about all raw TCP inputs.", 
@@ -5030,7 +5124,7 @@ apis =
             "datatype": "Enum", 
             "default": "", 
             "required": "false", 
-            "summary": "Valid values: (ip &#124; dns &#124; none)\n\nSpecify the remote server that is the connection host.\n\n  ip specifies the IP address of the remote server. \n  dns sets the host to the DNS entry of the remote server.\n  none leaves the host as specified.", 
+            "summary": "Valid values: (ip &#124; dns &#124; none)\n\nSpecify the remote server that is the connection host.\n\nip: specifies the IP address of the remote server. \n\ndns: sets the host to the DNS entry of the remote server.\n\nnone: leaves the host as specified.", 
             "validation": ""
           }, 
           "disabled": {
@@ -5109,7 +5203,7 @@ apis =
             "summary": "Insufficient permissions to create input."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
             "summary": "There was an error; see body contents for messages"
@@ -5132,10 +5226,10 @@ apis =
         "response": "", 
         "returns": {
           "200": {
-            "summary": "''TODO: Add success codes''"
+            "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "''TODO: Add failure codes''"
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -5147,13 +5241,13 @@ apis =
             "summary": "Input does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "Removes the raw inputs from host specified by <code>{name}</code>", 
+        "summary": "Removes the raw inputs for port or host:port specified by <code>{name}</code>", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -5182,13 +5276,13 @@ apis =
             "summary": "Input does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "Returns information about raw TCP inputs (parsed or unparsed data) from the host <code>{name}</code>", 
+        "summary": "Returns information about raw TCP input port <code>{name}</code>.\n\nIf port is restricted to a host, name should be URI-encoded host:port.", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -5270,7 +5364,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -5285,10 +5379,10 @@ apis =
             "summary": "Inpuat does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -5315,7 +5409,7 @@ apis =
             "summary": "Listed connections successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -5327,10 +5421,10 @@ apis =
             "summary": "TCP input does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "View all connections to the named data input.", 
@@ -5349,14 +5443,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -5370,7 +5464,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -5384,7 +5478,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -5398,7 +5492,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -5407,10 +5501,10 @@ apis =
             "summary": "Insufficient permissions to view inputs."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns SSL configuration. There is only one SSL configuration for all input ports.", 
@@ -5430,7 +5524,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -5442,10 +5536,10 @@ apis =
             "summary": "Input does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns the SSL configuration for the host {name}.", 
@@ -5502,7 +5596,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -5517,10 +5611,10 @@ apis =
             "summary": "Input does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -5542,14 +5636,14 @@ apis =
         "config": "inputs", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -5563,7 +5657,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -5577,7 +5671,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -5591,7 +5685,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -5600,10 +5694,10 @@ apis =
             "summary": "Insufficient permissions to view inputs."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List enabled and disabled UDP data inputs.", 
@@ -5616,7 +5710,7 @@ apis =
             "datatype": "Enum", 
             "default": "", 
             "required": "false", 
-            "summary": "Valid values: (ip &#124; dns &#124; none)\n\n  ip The <code>host</code> field for incoming events is set to the IP address of the remote server.  \n  dns The <code>host</code> field is set to the DNS entry of the remote server.  \n  none The <code>host</code> field remains unchanged.  \n\nDefaults to <code>ip</code>.", 
+            "summary": "Valid values: (ip &#124; dns &#124; none)\n\nip: The <code>host</code> field for incoming events is set to the IP address of the remote server.  \n\ndns: The <code>host</code> field is set to the DNS entry of the remote server.  \n\nnone: The <code>host</code> field remains unchanged.  \n\nDefaults to <code>ip</code>.", 
             "validation": ""
           }, 
           "host": {
@@ -5683,7 +5777,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -5695,10 +5789,10 @@ apis =
             "summary": "Insufficient permissions to create input."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -5721,7 +5815,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -5733,10 +5827,10 @@ apis =
             "summary": "Input does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Disable the named UDP data input and remove it from the configuration.", 
@@ -5756,7 +5850,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -5768,13 +5862,13 @@ apis =
             "summary": "Input does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "List the properties of a single UDP data input.", 
+        "summary": "List the properties of a single UDP data input port or host:port <code>{name}</code>.\nIf port is restricted to a host, name should be URI-encoded host:port.", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -5849,7 +5943,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -5864,10 +5958,10 @@ apis =
             "summary": "Input does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -5894,7 +5988,7 @@ apis =
             "summary": "Listed connections successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -5906,10 +6000,10 @@ apis =
             "summary": "UDP input does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists connections to the named UDP input.", 
@@ -5928,21 +6022,21 @@ apis =
         "config": "inputs", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "lookup_host": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "For internal use.  Used by the UI when editing the initial host from which we gather event log data.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -5956,7 +6050,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -5970,88 +6064,88 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
             "validation": ""
           }
         }, 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
+        "request": "", 
+        "response": "", 
         "returns": {
           "200": {
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
           }, 
           "403": {
-            "summary": "Insufficient permissions to view UNDONE_ret_code."
+            "summary": "Insufficient permissions to view event log collections."
           }, 
           "404": {
-            "summary": "UNDONE_ret_code does not exist."
+            "summary": "Event log collection does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "Retrieves a list of configured event log collections.", 
         "urlParams": {}
       }, 
       "POST": {
         "config": "inputs", 
         "params": {
           "hosts": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "A comma-separated list of addtional hosts to be used for monitoring.  The first host should be specified with \"lookup_host\", and the additional ones using this parameter.", 
             "validation": ""
           }, 
           "index": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "default", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "The index in which to store the gathered data.", 
             "validation": ""
           }, 
           "logs": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "A comma-separated list of event log names to gather data from.", 
             "validation": ""
           }, 
           "lookup_host": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "true", 
-            "summary": "UNDONE", 
+            "summary": "This is a host from which we will monitor log events.  To specify additional hosts to be monitored via WMI, use the \"hosts\" parameter.", 
             "validation": ""
           }, 
           "name": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "true", 
-            "summary": "UNDONE", 
+            "summary": "This is the name of the collection.  This name will appear in configuration file, as well as the source and the sourcetype of the indexed data.  If the value is \"localhost\", it will use native event log collection; otherwise, it will use WMI.", 
             "validation": ""
           }
         }, 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
+        "request": "", 
+        "response": "", 
         "returns": {
           "201": {
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -6060,54 +6154,54 @@ apis =
             "summary": "The Splunk license in use has disabled this feature."
           }, 
           "403": {
-            "summary": "Insufficient permissions to create UNDONE_ret_code."
+            "summary": "Insufficient permissions to create event log collections."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "Creates of modifies existing event log collection settings.  You can configure both native and WMI collection with this endpoint.", 
         "urlParams": {}
       }
     }, 
-    "summary": "UNDONE"
+    "summary": "Provides access to all configured event log collections."
   }, 
   "data/inputs/win-event-log-collections/{name}": {
     "methods": {
       "DELETE": {
         "config": "inputs", 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
+        "request": "", 
+        "response": "", 
         "returns": {
           "200": {
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
           }, 
           "403": {
-            "summary": "Insufficient permissions to delete UNDONE_ret_code."
+            "summary": "Insufficient permissions to delete event log collections."
           }, 
           "404": {
-            "summary": "UNDONE_ret_code does not exist."
+            "summary": "Event log collection does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "Deletes a given event log collection.", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -6119,39 +6213,39 @@ apis =
         "config": "inputs", 
         "params": {
           "lookup_host": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "For internal use.  Used by the UI when editing the initial host from which we gather event log data.", 
             "validation": ""
           }
         }, 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
+        "request": "", 
+        "response": "", 
         "returns": {
           "200": {
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
           }, 
           "403": {
-            "summary": "Insufficient permissions to view UNDONE_ret_code."
+            "summary": "Insufficient permissions to view event log collections."
           }, 
           "404": {
-            "summary": "UNDONE_ret_code does not exist."
+            "summary": "Event log collection does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "Gets the configuration settings for a given event log collection.", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -6191,14 +6285,14 @@ apis =
             "validation": ""
           }
         }, 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
+        "request": "", 
+        "response": "", 
         "returns": {
           "200": {
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -6207,22 +6301,341 @@ apis =
             "summary": "The Splunk license in use has disabled this feature."
           }, 
           "403": {
-            "summary": "Insufficient permissions to edit UNDONE_ret_code."
+            "summary": "Insufficient permissions to edit event log collections."
           }, 
           "404": {
-            "summary": "UNDONE_ret_code does not exist."
+            "summary": "Event log collection does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "Modifies existing event log collection.", 
+        "urlParams": {
+          "name": {
+            "required": "true", 
+            "summary": "name"
+          }
+        }
+      }
+    }
+  }, 
+  "data/inputs/win-perfmon": {
+    "methods": {
+      "GET": {
+        "config": "perfmon", 
+        "params": {
+          "count": {
+            "datatype": "Number", 
+            "default": "30", 
+            "required": "false", 
+            "summary": "Maximum number of items to return.", 
+            "validation": ""
+          }, 
+          "offset": {
+            "datatype": "Number", 
+            "default": "0", 
+            "required": "false", 
+            "summary": "Index for first item to return.", 
+            "validation": ""
+          }, 
+          "search": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "false", 
+            "summary": "Boolean predicate to filter results.", 
+            "validation": ""
+          }, 
+          "sort_dir": {
+            "datatype": "Enum", 
+            "default": "name", 
+            "required": "false", 
+            "summary": "Direction to sort by (asc/desc).", 
+            "validation": ""
+          }, 
+          "sort_key": {
+            "datatype": "String", 
+            "default": "name", 
+            "required": "false", 
+            "summary": "Field to sort by.", 
+            "validation": ""
+          }, 
+          "sort_mode": {
+            "datatype": "Enum", 
+            "default": "name", 
+            "required": "false", 
+            "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
+            "validation": ""
+          }
+        }, 
+        "request": "", 
+        "response": "", 
+        "returns": {
+          "200": {
+            "summary": "Listed successfully."
+          }, 
+          "400": {
+            "summary": "Request error.  See response body for details."
+          }, 
+          "401": {
+            "summary": "Authentication failure: must pass valid credentials with request."
+          }, 
+          "403": {
+            "summary": "Insufficient permissions to view performance monitoring configuration."
+          }, 
+          "409": {
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
+          }, 
+          "500": {
+            "summary": "Internal server error.  See response body for details."
+          }
+        }, 
+        "summary": "Gets current performance monitoring configuration.", 
+        "urlParams": {}
+      }, 
+      "POST": {
+        "config": "perfmon", 
+        "params": {
+          "counters": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "false", 
+            "summary": "A comma-separated list of all counters to monitor. A '*' is equivalent to all counters.", 
+            "validation": ""
+          }, 
+          "disabled": {
+            "datatype": "Number", 
+            "default": "", 
+            "required": "false", 
+            "summary": "Disables a given monitoring stanza.", 
+            "validation": ""
+          }, 
+          "index": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "false", 
+            "summary": "The index in which to store the gathered data.", 
+            "validation": ""
+          }, 
+          "instances": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "false", 
+            "summary": "Comma-separated list of counter instances.  A '*' is equivalent to all instances.", 
+            "validation": ""
+          }, 
+          "interval": {
+            "datatype": "Number", 
+            "default": "", 
+            "required": "true", 
+            "summary": "How frequently to poll the performance counters.", 
+            "validation": ""
+          }, 
+          "name": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "true", 
+            "summary": "This is the name of the collection.  This name will appear in configuration file, as well as the source and the sourcetype of the indexed data.", 
+            "validation": ""
+          }, 
+          "object": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "true", 
+            "summary": "A valid performance monitor object (for example, 'Process,' 'Server,' 'PhysicalDisk.')", 
+            "validation": ""
+          }
+        }, 
+        "request": "", 
+        "response": "", 
+        "returns": {
+          "201": {
+            "summary": "Created successfully."
+          }, 
+          "400": {
+            "summary": "Request error.  See response body for details."
+          }, 
+          "401": {
+            "summary": "Authentication failure: must pass valid credentials with request."
+          }, 
+          "402": {
+            "summary": "The Splunk license in use has disabled this feature."
+          }, 
+          "403": {
+            "summary": "Insufficient permissions to create monitoring stanza."
+          }, 
+          "409": {
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
+          }, 
+          "500": {
+            "summary": "Internal server error.  See response body for details."
+          }, 
+          "503": {
+            "summary": "This feature has been disabled in Splunk configuration files."
+          }
+        }, 
+        "summary": "Creates new or modifies existing performance monitoring collection settings.", 
+        "urlParams": {}
+      }
+    }, 
+    "summary": "Provides access to performance monitoring configuration.  This input allows you to poll Windows performance monitor counters."
+  }, 
+  "data/inputs/win-perfmon/{name}": {
+    "methods": {
+      "DELETE": {
+        "config": "perfmon", 
+        "request": "", 
+        "response": "", 
+        "returns": {
+          "200": {
+            "summary": "Deleted successfully."
+          }, 
+          "400": {
+            "summary": "Request error.  See response body for details."
+          }, 
+          "401": {
+            "summary": "Authentication failure: must pass valid credentials with request."
+          }, 
+          "403": {
+            "summary": "Insufficient permissions to delete monitoring stanza."
+          }, 
+          "404": {
+            "summary": "Monitoring stanza does not exist."
+          }, 
+          "409": {
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
+          }, 
+          "500": {
+            "summary": "Internal server error.  See response body for details."
+          }
+        }, 
+        "summary": "Deletes a given monitoring stanza.", 
+        "urlParams": {
+          "name": {
+            "required": "true", 
+            "summary": "name"
+          }
+        }
+      }, 
+      "GET": {
+        "config": "perfmon", 
+        "request": "", 
+        "response": "", 
+        "returns": {
+          "200": {
+            "summary": "Listed successfully."
+          }, 
+          "400": {
+            "summary": "Request error.  See response body for details."
+          }, 
+          "401": {
+            "summary": "Authentication failure: must pass valid credentials with request."
+          }, 
+          "403": {
+            "summary": "Insufficient permissions to view configuration settings."
+          }, 
+          "404": {
+            "summary": "Performance stanza does not exist."
+          }, 
+          "409": {
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
+          }, 
+          "500": {
+            "summary": "Internal server error.  See response body for details."
+          }
+        }, 
+        "summary": "Gets settings for a given perfmon stanza.", 
+        "urlParams": {
+          "name": {
+            "required": "true", 
+            "summary": "name"
+          }
+        }
+      }, 
+      "POST": {
+        "config": "perfmon", 
+        "params": {
+          "counters": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "disabled": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "index": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "instances": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "interval": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "object": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }
+        }, 
+        "request": "", 
+        "response": "", 
+        "returns": {
+          "200": {
+            "summary": "Updated successfully."
+          }, 
+          "400": {
+            "summary": "Request error.  See response body for details."
+          }, 
+          "401": {
+            "summary": "Authentication failure: must pass valid credentials with request."
+          }, 
+          "402": {
+            "summary": "The Splunk license in use has disabled this feature."
+          }, 
+          "403": {
+            "summary": "Insufficient permissions to edit monitoring stanza."
+          }, 
+          "404": {
+            "summary": "Monitoring stanza does not exist."
+          }, 
+          "409": {
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
+          }, 
+          "500": {
+            "summary": "Internal server error.  See response body for details."
+          }, 
+          "503": {
+            "summary": "This feature has been disabled in Splunk configuration files."
+          }
+        }, 
+        "summary": "Modifies existing monitoring stanza", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -6237,64 +6650,15 @@ apis =
       "GET": {
         "config": "wmi", 
         "params": {
-          "class": {
-            "datatype": "UNDONE", 
-            "default": "", 
-            "required": "false", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }, 
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
-          "disabled": {
-            "datatype": "UNDONE", 
-            "default": "", 
-            "required": "false", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }, 
-          "field": {
-            "datatype": "UNDONE", 
-            "default": "", 
-            "required": "false", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }, 
-          "index": {
-            "datatype": "UNDONE", 
-            "default": "", 
-            "required": "false", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }, 
-          "instance": {
-            "datatype": "UNDONE", 
-            "default": "", 
-            "required": "false", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }, 
-          "interval": {
-            "datatype": "UNDONE", 
-            "default": "", 
-            "required": "false", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }, 
-          "lookup_host": {
-            "datatype": "UNDONE", 
-            "default": "", 
-            "required": "false", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -6307,15 +6671,8 @@ apis =
             "summary": "Boolean predicate to filter results.", 
             "validation": ""
           }, 
-          "server": {
-            "datatype": "UNDONE", 
-            "default": "", 
-            "required": "false", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -6329,116 +6686,113 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
             "validation": ""
           }
         }, 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
+        "request": "", 
+        "response": "", 
         "returns": {
           "200": {
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
           }, 
           "403": {
-            "summary": "Insufficient permissions to view UNDONE_ret_code."
-          }, 
-          "404": {
-            "summary": "UNDONE_ret_code does not exist."
+            "summary": "Insufficient permissions to view collections."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "Provides access to all configure WMI collections.", 
         "urlParams": {}
       }, 
       "POST": {
         "config": "wmi", 
         "params": {
           "classes": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "true", 
-            "summary": "UNDONE", 
+            "summary": "A valid WMI class name.", 
             "validation": ""
           }, 
           "disabled": {
-            "datatype": "UNDONE", 
+            "datatype": "Number", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "Disables the given collection.", 
             "validation": ""
           }, 
           "fields": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "A comma-separated list of all properties that you want to gather from the given class.", 
             "validation": ""
           }, 
           "index": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "The index in which to store the gathered data.", 
             "validation": ""
           }, 
           "instances": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "A comma-separated list of all instances of a given class for which data is to be gathered.", 
             "validation": ""
           }, 
           "interval": {
-            "datatype": "UNDONE", 
+            "datatype": "Number", 
             "default": "", 
             "required": "true", 
-            "summary": "UNDONE", 
+            "summary": "The interval at which the WMI provider(s) will be queried.", 
             "validation": ""
           }, 
           "lookup_host": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "true", 
-            "summary": "UNDONE", 
+            "summary": "This is the server from which we will be gathering WMI data.  If you need to gather data from more than one machine, additional servers can be specified in the 'server' parameter.", 
             "validation": ""
           }, 
           "name": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "true", 
-            "summary": "UNDONE", 
+            "summary": "This is the name of the collection.  This name will appear in configuration file, as well as the source and the sourcetype of the indexed data.", 
             "validation": ""
           }, 
           "server": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "A comma-separated list of additional servers that you want to gather data from.  Use this if you need to gather from more than a single machine.  See also lookup_host parameter.", 
             "validation": ""
           }
         }, 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
+        "request": "", 
+        "response": "", 
         "returns": {
           "201": {
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -6447,54 +6801,54 @@ apis =
             "summary": "The Splunk license in use has disabled this feature."
           }, 
           "403": {
-            "summary": "Insufficient permissions to create UNDONE_ret_code."
+            "summary": "Insufficient permissions to create this collection."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "Creates of modifies existing WMI collection settings.", 
         "urlParams": {}
       }
     }, 
-    "summary": "UNDONE"
+    "summary": "Provides access to all configured WMI collections."
   }, 
   "data/inputs/win-wmi-collections/{name}": {
     "methods": {
       "DELETE": {
         "config": "wmi", 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
+        "request": "", 
+        "response": "", 
         "returns": {
           "200": {
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
           }, 
           "403": {
-            "summary": "Insufficient permissions to delete UNDONE_ret_code."
+            "summary": "Insufficient permissions to delete a given collection."
           }, 
           "404": {
-            "summary": "UNDONE_ret_code does not exist."
+            "summary": "Given collection does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "Deletes a given collection.", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -6504,90 +6858,32 @@ apis =
       }, 
       "GET": {
         "config": "wmi", 
-        "params": {
-          "class": {
-            "datatype": "UNDONE", 
-            "default": "", 
-            "required": "false", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }, 
-          "disabled": {
-            "datatype": "UNDONE", 
-            "default": "", 
-            "required": "false", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }, 
-          "field": {
-            "datatype": "UNDONE", 
-            "default": "", 
-            "required": "false", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }, 
-          "index": {
-            "datatype": "UNDONE", 
-            "default": "", 
-            "required": "false", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }, 
-          "instance": {
-            "datatype": "UNDONE", 
-            "default": "", 
-            "required": "false", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }, 
-          "interval": {
-            "datatype": "UNDONE", 
-            "default": "", 
-            "required": "false", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }, 
-          "lookup_host": {
-            "datatype": "UNDONE", 
-            "default": "", 
-            "required": "false", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }, 
-          "server": {
-            "datatype": "UNDONE", 
-            "default": "", 
-            "required": "false", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }
-        }, 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
+        "request": "", 
+        "response": "", 
         "returns": {
           "200": {
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
           }, 
           "403": {
-            "summary": "Insufficient permissions to view UNDONE_ret_code."
+            "summary": "Insufficient permissions to view WMI collections."
           }, 
           "404": {
-            "summary": "UNDONE_ret_code does not exist."
+            "summary": "Given collection does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "Gets information about a single collection.", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -6655,14 +6951,14 @@ apis =
             "validation": ""
           }
         }, 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
+        "request": "", 
+        "response": "", 
         "returns": {
           "200": {
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -6671,22 +6967,22 @@ apis =
             "summary": "The Splunk license in use has disabled this feature."
           }, 
           "403": {
-            "summary": "Insufficient permissions to edit UNDONE_ret_code."
+            "summary": "Insufficient permissions to edit collection."
           }, 
           "404": {
-            "summary": "UNDONE_ret_code does not exist."
+            "summary": "Collection does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "Modifies a given WMI collection.", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -6702,14 +6998,14 @@ apis =
         "config": "lookups", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -6723,7 +7019,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -6737,7 +7033,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -6751,7 +7047,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -6760,10 +7056,10 @@ apis =
             "summary": "Insufficient permissions to view lookup-table file."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List lookup table files.", 
@@ -6794,7 +7090,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -6806,16 +7102,16 @@ apis =
             "summary": "Insufficient permissions to create lookup-table file."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
           }
         }, 
-        "summary": "Move a lookup table file from the upload staging area into $SPLUNK_HOME.", 
+        "summary": "Create a lookup table file by moving a file from the upload staging area into $SPLUNK_HOME.", 
         "urlParams": {}
       }
     }, 
@@ -6832,7 +7128,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -6844,10 +7140,10 @@ apis =
             "summary": "Look-up table file does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Delete the named lookup table file.", 
@@ -6867,7 +7163,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -6879,10 +7175,10 @@ apis =
             "summary": "Look-up table file does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List a single lookup table file.", 
@@ -6911,7 +7207,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -6926,16 +7222,16 @@ apis =
             "summary": "Look-up table file does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
           }
         }, 
-        "summary": "Modify the named lookup table file.", 
+        "summary": "Modify a lookup table file by replacing it with a file from the upload staging area.", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -6951,14 +7247,14 @@ apis =
         "config": "outputs", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -6972,7 +7268,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -6986,7 +7282,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -7000,7 +7296,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -7009,10 +7305,10 @@ apis =
             "summary": "Insufficient permissions to view outputs."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns the current tcpout properties.", 
@@ -7039,7 +7335,7 @@ apis =
             "datatype": "Boolean", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "Disables default tcpout settings", 
             "validation": ""
           }, 
           "dropEventsOnQueueFull": {
@@ -7063,13 +7359,6 @@ apis =
             "summary": "Specifies whether to index all data locally, in addition to forwarding it. Defaults to false.\n\nThis is known as an \"index-and-forward\" configuration. This attribute is only available for heavy forwarders. It is available only at the top level [tcpout] stanza in outputs.conf. It cannot be overridden in a target group.", 
             "validation": ""
           }, 
-          "maxPersistentQueueSizeInMegs": {
-            "datatype": "Number", 
-            "default": "", 
-            "required": "false", 
-            "summary": "If persistent queueing is enabled, this is the maximum size limit of the queue on disk.", 
-            "validation": ""
-          }, 
           "maxQueueSize": {
             "datatype": "Number", 
             "default": "", 
@@ -7081,14 +7370,7 @@ apis =
             "datatype": "String", 
             "default": "", 
             "required": "true", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }, 
-          "persistentQueuePath": {
-            "datatype": "String", 
-            "default": "", 
-            "required": "false", 
-            "summary": "If persistent queuing is enabled, this is the path where it will be stored.", 
+            "summary": "Configuration to be edited.  The only valid value is \"tcpout\".", 
             "validation": ""
           }, 
           "sendCookedData": {
@@ -7096,13 +7378,6 @@ apis =
             "default": "", 
             "required": "false", 
             "summary": "If true, events are cooked (have been processed by Splunk). If false, events are raw and untouched prior to sending. Defaults to true.\n\nSet to false if you are sending to a third-party system.", 
-            "validation": ""
-          }, 
-          "usePersistentQueue": {
-            "datatype": "Boolean", 
-            "default": "", 
-            "required": "false", 
-            "summary": "If enabled, allows for temporarily queueing events on disk when a forwarder is slowed down.", 
             "validation": ""
           }
         }, 
@@ -7113,7 +7388,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -7125,10 +7400,10 @@ apis =
             "summary": "Insufficient permissions to create output."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -7151,25 +7426,25 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
           }, 
           "403": {
-            "summary": "Insufficient permissions to delete output."
+            "summary": "Insufficient permissions to disable forwarding settings."
           }, 
           "404": {
-            "summary": "Output does not exist."
+            "summary": "Forwarding settings do not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "Removes the tcpout properties for the host specified by {name}.", 
+        "summary": "Disable the default forwarding settings.", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -7186,25 +7461,25 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
           }, 
           "403": {
-            "summary": "Insufficient permissions to view output."
+            "summary": "Insufficient permissions to view forwaring settings."
           }, 
           "404": {
-            "summary": "Output does not exist."
+            "summary": "Forwarding settings do not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "Returns the tcpout properties for the host specified by {name}.", 
+        "summary": "Retrieve the named configuration.  The only valid name here is \"tcpout\".", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -7257,13 +7532,6 @@ apis =
             "summary": "INHERITED", 
             "validation": ""
           }, 
-          "maxPersistentQueueSizeInMegs": {
-            "datatype": "INHERITED", 
-            "default": "", 
-            "required": "false", 
-            "summary": "INHERITED", 
-            "validation": ""
-          }, 
           "maxQueueSize": {
             "datatype": "INHERITED", 
             "default": "", 
@@ -7271,21 +7539,7 @@ apis =
             "summary": "INHERITED", 
             "validation": ""
           }, 
-          "persistentQueuePath": {
-            "datatype": "INHERITED", 
-            "default": "", 
-            "required": "false", 
-            "summary": "INHERITED", 
-            "validation": ""
-          }, 
           "sendCookedData": {
-            "datatype": "INHERITED", 
-            "default": "", 
-            "required": "false", 
-            "summary": "INHERITED", 
-            "validation": ""
-          }, 
-          "usePersistentQueue": {
             "datatype": "INHERITED", 
             "default": "", 
             "required": "false", 
@@ -7300,7 +7554,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -7309,22 +7563,22 @@ apis =
             "summary": "The Splunk license in use has disabled this feature."
           }, 
           "403": {
-            "summary": "Insufficient permissions to edit output."
+            "summary": "Insufficient permissions to edit forwarding settings."
           }, 
           "404": {
-            "summary": "Output does not exist."
+            "summary": "Forwarding settings do not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "Configure global forwarding properties.", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -7340,14 +7594,14 @@ apis =
         "config": "outputs", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -7361,7 +7615,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -7375,7 +7629,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -7389,7 +7643,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -7398,10 +7652,10 @@ apis =
             "summary": "Insufficient permissions to view group."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns configuration information about target groups. ", 
@@ -7442,7 +7696,7 @@ apis =
             "datatype": "Number", 
             "default": "", 
             "required": "false", 
-            "summary": "If set to a positive number, wait the specified number of seconds before throwing out all new events until the output queue has space. Defaults to -1 (do not drop events).\n\nCAUTION: Do not set this value to a positive integer if you are monitoring files.\n\nSetting this to -1 or 0 causes the output queue to block when it gets full, whih causes further blocking up the processing chain. If any target group's queue is blocked, no more data reaches any other target group.\n\nUsing auto load-balancing is the best way to minimize this condition, because, in that case, multiple receivers must be down (or jammed up) before queue blocking can occur.", 
+            "summary": "If set to a positive number, wait the specified number of seconds before throwing out all new events until the output queue has space. Defaults to -1 (do not drop events).\n\nCAUTION: Do not set this value to a positive integer if you are monitoring files.\n\nSetting this to -1 or 0 causes the output queue to block when it gets full, which causes further blocking up the processing chain. If any target group's queue is blocked, no more data reaches any other target group.\n\nUsing auto load-balancing is the best way to minimize this condition, because, in that case, multiple receivers must be down (or jammed up) before queue blocking can occur.", 
             "validation": ""
           }, 
           "heartbeatFrequency": {
@@ -7452,25 +7706,18 @@ apis =
             "summary": "How often (in seconds) to send a heartbeat packet to the group.\n\nHeartbeats are only sent if sendCookedData=true. Defaults to 30 seconds.", 
             "validation": ""
           }, 
-          "maxPersistentQueueSizeInMegs": {
-            "datatype": "Number", 
-            "default": "", 
-            "required": "false", 
-            "summary": "If persistent queueing is enabled, this is the maximum size limit of the queue on disk.", 
-            "validation": ""
-          }, 
           "maxQueueSize": {
             "datatype": "Number", 
             "default": "500KB", 
             "required": "false", 
-            "summary": "Specify either an integer or integer[KB|MB|GB].\n\nSets the maximum size of the forwarder's output queue. It also sets the maximum size of the wait queue to 3x this value, if you have enabled indexer acknowledgment (useACK=true).\n\nAlthough the wait queue and the output queues are both configured by this attribute, they are separate queues. The setting determines the maximum size of the queue's in-memory (RAM) buffer.\n\nFor heavy forwarders sending parsed data, maxQueueSize is the maximum number of events. Since events are typically much shorter than data blocks, the memory consumed by the queue on a parsing forwarder will likely be much smaller than on a non-parsing forwarder, if you use this version of the setting.\n\nIf specified as a lone integer (for example, maxQueueSize=100), maxQueueSize indicates the maximum number of queued events (for parsed data) or blocks of data (for unparsed data). A block of data is approximately 64KB. For non-parsing forwarders, such as universal forwarders, that send unparsed data, maxQueueSize is the maximum number of data blocks.\n\nIf specified as an integer followed by KB, MB, or GB (for example, maxQueueSize=100MB), maxQueueSize indicates the maximum RAM allocated to the queue buffer. Defaults to 500KB (which means a maximum size of 500KB for the output queue and 1500KB for the wait queue, if any).", 
+            "summary": "Specify either an integer or integer[KB&#124;MB&#124;GB].\n\nSets the maximum size of the forwarder's output queue. It also sets the maximum size of the wait queue to 3x this value, if you have enabled indexer acknowledgment (useACK=true).\n\nAlthough the wait queue and the output queues are both configured by this attribute, they are separate queues. The setting determines the maximum size of the queue's in-memory (RAM) buffer.\n\nFor heavy forwarders sending parsed data, maxQueueSize is the maximum number of events. Since events are typically much shorter than data blocks, the memory consumed by the queue on a parsing forwarder will likely be much smaller than on a non-parsing forwarder, if you use this version of the setting.\n\nIf specified as a lone integer (for example, maxQueueSize=100), maxQueueSize indicates the maximum number of queued events (for parsed data) or blocks of data (for unparsed data). A block of data is approximately 64KB. For non-parsing forwarders, such as universal forwarders, that send unparsed data, maxQueueSize is the maximum number of data blocks.\n\nIf specified as an integer followed by KB, MB, or GB (for example, maxQueueSize=100MB), maxQueueSize indicates the maximum RAM allocated to the queue buffer. Defaults to 500KB (which means a maximum size of 500KB for the output queue and 1500KB for the wait queue, if any).", 
             "validation": ""
           }, 
           "method": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "", 
             "required": "false", 
-            "summary": "Specifies the type of output processor.\n\nThere are three types to choose from:\n\n  tcpout\n  syslog\n  httpout\n\n''Double check - this is a guess''", 
+            "summary": "Valid values: (tcpout &#124; syslog &#124; httpout)\n\nSpecifies the type of output processor.", 
             "validation": ""
           }, 
           "name": {
@@ -7478,13 +7725,6 @@ apis =
             "default": "", 
             "required": "true", 
             "summary": "The name of the group of receivers.", 
-            "validation": ""
-          }, 
-          "persistentQueuePath": {
-            "datatype": "String", 
-            "default": "", 
-            "required": "false", 
-            "summary": "If persistent queuing is enabled, this is the path where it will be stored.", 
             "validation": ""
           }, 
           "sendCookedData": {
@@ -7500,13 +7740,6 @@ apis =
             "required": "true", 
             "summary": "Comma-separated list of servers to include in the group.", 
             "validation": ""
-          }, 
-          "usePersistentQueue": {
-            "datatype": "Boolean", 
-            "default": "", 
-            "required": "false", 
-            "summary": "If enabled, allows for temporarily queueing events on disk when a forwarder is slowed down.", 
-            "validation": ""
           }
         }, 
         "request": "", 
@@ -7516,7 +7749,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -7528,10 +7761,10 @@ apis =
             "summary": "Insufficient permissions to create group."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -7554,7 +7787,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -7566,10 +7799,10 @@ apis =
             "summary": "Group does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Deletes the target group specified by {name}.", 
@@ -7589,7 +7822,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -7601,10 +7834,10 @@ apis =
             "summary": "Group does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns configuration information about the target group specified by {name}.", 
@@ -7660,13 +7893,6 @@ apis =
             "summary": "INHERITED", 
             "validation": ""
           }, 
-          "maxPersistentQueueSizeInMegs": {
-            "datatype": "INHERITED", 
-            "default": "", 
-            "required": "false", 
-            "summary": "INHERITED", 
-            "validation": ""
-          }, 
           "maxQueueSize": {
             "datatype": "INHERITED", 
             "default": "500KB", 
@@ -7675,13 +7901,6 @@ apis =
             "validation": ""
           }, 
           "method": {
-            "datatype": "INHERITED", 
-            "default": "", 
-            "required": "false", 
-            "summary": "INHERITED", 
-            "validation": ""
-          }, 
-          "persistentQueuePath": {
             "datatype": "INHERITED", 
             "default": "", 
             "required": "false", 
@@ -7701,13 +7920,6 @@ apis =
             "required": "true", 
             "summary": "INHERITED", 
             "validation": ""
-          }, 
-          "usePersistentQueue": {
-            "datatype": "INHERITED", 
-            "default": "", 
-            "required": "false", 
-            "summary": "INHERITED", 
-            "validation": ""
           }
         }, 
         "request": "", 
@@ -7717,7 +7929,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -7732,10 +7944,10 @@ apis =
             "summary": "Group does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -7751,59 +7963,20 @@ apis =
       }
     }
   }, 
-  "data/outputs/tcp/group/{name}/rollover": {
-    "methods": {
-      "GET": {
-        "config": "outputs", 
-        "request": "", 
-        "response": "", 
-        "returns": {
-          "200": {
-            "summary": "Receiver switch queued successfully."
-          }, 
-          "400": {
-            "summary": "Request error.  See returned XML for explanation."
-          }, 
-          "401": {
-            "summary": "Authentication failure: must pass valid credentials with request."
-          }, 
-          "403": {
-            "summary": "Insufficient permissions to switch receivers."
-          }, 
-          "404": {
-            "summary": "Output group does not exist."
-          }, 
-          "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
-          }, 
-          "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
-          }
-        }, 
-        "summary": "If this group is configured to automatically load balance between a number of servers, this action triggers the group to switch to a new receiver.", 
-        "urlParams": {
-          "name": {
-            "required": "true", 
-            "summary": "name"
-          }
-        }
-      }
-    }
-  }, 
   "data/outputs/tcp/server": {
     "methods": {
       "GET": {
         "config": "outputs", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -7817,7 +7990,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -7831,7 +8004,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -7845,7 +8018,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -7854,10 +8027,10 @@ apis =
             "summary": "Insufficient permissions to view forwarded servers."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists existing forwarded servers.", 
@@ -7902,10 +8075,10 @@ apis =
             "validation": ""
           }, 
           "method": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "", 
             "required": "false", 
-            "summary": "The data distribution method used when two or more servers exist in the same forwarder group.  Valid values are: clone, balance, autobalance.", 
+            "summary": "Valid values: (clone &#124; balance &#124; autobalance)\n\nThe data distribution method used when two or more servers exist in the same forwarder group.  ", 
             "validation": ""
           }, 
           "name": {
@@ -7930,10 +8103,10 @@ apis =
             "validation": ""
           }, 
           "sslCipher": {
-            "datatype": "UNDONE (appears to be unused)", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "SSL Cipher in the form ALL:!aNULL:!eNULL:!LOW:!EXP:RC4+RSA:+HIGH:+MEDIUM", 
             "validation": ""
           }, 
           "sslCommonNameToCheck": {
@@ -7972,7 +8145,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -7984,10 +8157,10 @@ apis =
             "summary": "Insufficient permissions to create a forwarded server."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -8010,7 +8183,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8022,10 +8195,10 @@ apis =
             "summary": "Forwarded server does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Deletes the configuration for the forwarded server specified by {name}.", 
@@ -8045,7 +8218,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8057,10 +8230,10 @@ apis =
             "summary": "Forwarded server does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists information aobut the forwarded server specified by {name}.", 
@@ -8173,7 +8346,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8188,10 +8361,10 @@ apis =
             "summary": "Forwarded server does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -8218,7 +8391,7 @@ apis =
             "summary": "Listed connections successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8230,13 +8403,13 @@ apis =
             "summary": "Output server does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "List current connections to forwarded server specified by {name} ", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -8252,14 +8425,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -8273,7 +8446,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -8287,7 +8460,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -8301,7 +8474,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8310,23 +8483,58 @@ apis =
             "summary": "Insufficient permissions to view configuration of forwarded servers."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "Provides access to syslog data forwarding configurations.", 
         "urlParams": {}
       }, 
       "POST": {
         "config": "", 
         "params": {
+          "disabled": {
+            "datatype": "Boolean", 
+            "default": "", 
+            "required": "false", 
+            "summary": "If true, disables global syslog settings.", 
+            "validation": ""
+          }, 
           "name": {
             "datatype": "String", 
             "default": "", 
             "required": "true", 
             "summary": "Name of the forwarder to send data in standard syslog format.", 
+            "validation": ""
+          }, 
+          "priority": {
+            "datatype": "integer", 
+            "default": "", 
+            "required": "false", 
+            "summary": "Sets syslog priority value.", 
+            "validation": ""
+          }, 
+          "server": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "false", 
+            "summary": "host:port of the server where syslog data should be sent", 
+            "validation": ""
+          }, 
+          "timestampformat": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "false", 
+            "summary": "Format of timestamp to add at start of the events to be forwarded.", 
+            "validation": ""
+          }, 
+          "type": {
+            "datatype": "String", 
+            "default": "", 
+            "required": "false", 
+            "summary": "Protocol to use to send syslog data. Valid values: (tcp | udp ).", 
             "validation": ""
           }
         }, 
@@ -8337,7 +8545,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8349,10 +8557,10 @@ apis =
             "summary": "Insufficient permissions to configure a forwarded server."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -8375,7 +8583,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8387,10 +8595,10 @@ apis =
             "summary": "Forwarded server configuration does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Deletes the configuration for the forwarder specified by {name} that sends data in syslog format.", 
@@ -8410,7 +8618,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8422,10 +8630,10 @@ apis =
             "summary": "Forwarded server does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns configuration information for the forwarder specified by {name} that sends data in standard syslog format.", 
@@ -8438,6 +8646,43 @@ apis =
       }, 
       "POST": {
         "config": "", 
+        "params": {
+          "disabled": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "priority": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "server": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "timestampformat": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
+          "type": {
+            "datatype": "INHERITED", 
+            "default": "", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }
+        }, 
         "request": "", 
         "response": "", 
         "returns": {
@@ -8445,7 +8690,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8460,10 +8705,10 @@ apis =
             "summary": "Forwarded server does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -8485,14 +8730,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -8506,7 +8751,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -8520,7 +8765,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -8534,7 +8779,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8543,10 +8788,10 @@ apis =
             "summary": "Insufficient permissions to view extractions."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List field extractions.", 
@@ -8580,7 +8825,7 @@ apis =
             "datatype": "String", 
             "default": "", 
             "required": "true", 
-            "summary": "If this is an EXTRACT-type field extraction, specify a regular expression with named capture groups that define the desired fields. If this is a REPORT-type field extraction, specify a transforms.conf stanza that defines the field transformation to apply.", 
+            "summary": "If this is an EXTRACT-type field extraction, specify a regular expression with named capture groups that define the desired fields. If this is a REPORT-type field extraction, specify a comma- or space-delimited list of transforms.conf stanza names that define the field transformations to apply.", 
             "validation": "validate(len(trim($value$)) > 0, \"Value of argument 'value' may not be empty\")"
           }
         }, 
@@ -8591,7 +8836,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8603,10 +8848,10 @@ apis =
             "summary": "Insufficient permissions to create extraction."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -8629,7 +8874,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8641,10 +8886,10 @@ apis =
             "summary": "Named extraction does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Delete the named field extraction.", 
@@ -8664,7 +8909,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8676,10 +8921,10 @@ apis =
             "summary": "Named extraction does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List a single field extraction.", 
@@ -8708,7 +8953,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8723,10 +8968,10 @@ apis =
             "summary": "Named extraction does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -8748,14 +8993,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -8769,7 +9014,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -8783,7 +9028,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -8797,7 +9042,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8806,10 +9051,10 @@ apis =
             "summary": "Insufficient permissions to view filed aliases."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List field aliases.", 
@@ -8840,7 +9085,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8852,10 +9097,10 @@ apis =
             "summary": "Insufficient permissions to create field alias."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -8878,7 +9123,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8890,10 +9135,10 @@ apis =
             "summary": "Field alias does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Delete the named field alias.", 
@@ -8913,7 +9158,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8925,10 +9170,10 @@ apis =
             "summary": "Field alias does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List a single field alias.", 
@@ -8948,7 +9193,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -8963,10 +9208,10 @@ apis =
             "summary": "Field alias does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -8988,14 +9233,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -9009,7 +9254,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -9023,7 +9268,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -9037,7 +9282,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -9046,10 +9291,10 @@ apis =
             "summary": "Insufficient permissions to view lookups."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List automatic lookups.", 
@@ -9094,7 +9339,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -9106,10 +9351,10 @@ apis =
             "summary": "Insufficient permissions to create a lookup."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -9132,7 +9377,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -9144,10 +9389,10 @@ apis =
             "summary": "Lookup does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Delete the named automatic lookup.", 
@@ -9167,7 +9412,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -9179,10 +9424,10 @@ apis =
             "summary": "Lookup does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List a single automatic lookup.", 
@@ -9218,7 +9463,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -9233,10 +9478,10 @@ apis =
             "summary": "Lookup does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -9258,14 +9503,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -9279,7 +9524,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -9293,7 +9538,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -9307,7 +9552,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -9316,10 +9561,10 @@ apis =
             "summary": "Insufficient permissions to view sourcetype renames."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List renamed sourcetypes.", 
@@ -9350,7 +9595,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -9362,10 +9607,10 @@ apis =
             "summary": "Insufficient permissions to create a rename for a sourcetype."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -9375,7 +9620,7 @@ apis =
         "urlParams": {}
       }
     }, 
-    "summary": "Provides access to renamed sourcetypes in props.conf."
+    "summary": "Provides access to renamed sourcetypes which are configured in props.conf."
   }, 
   "data/props/sourcetype-rename/{name}": {
     "methods": {
@@ -9388,7 +9633,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -9400,10 +9645,10 @@ apis =
             "summary": "Rename for the sourcetype does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Restore a sourcetype's original name.", 
@@ -9423,7 +9668,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -9435,10 +9680,10 @@ apis =
             "summary": "Rename for sourcetype does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List a single renamed sourcetype.", 
@@ -9467,7 +9712,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -9482,10 +9727,10 @@ apis =
             "summary": "Rename for the sourcetype does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -9507,14 +9752,14 @@ apis =
         "config": "transforms", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -9528,7 +9773,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -9542,7 +9787,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -9556,7 +9801,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -9565,10 +9810,10 @@ apis =
             "summary": "Insufficient permissions to view field transformations."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List field transformations.", 
@@ -9578,10 +9823,10 @@ apis =
         "config": "transforms", 
         "params": {
           "CAN_OPTIMIZE": {
-            "datatype": "", 
+            "datatype": "Bool", 
             "default": "True", 
             "required": "false", 
-            "summary": "", 
+            "summary": "Controls whether Splunk can optimize this extraction out (another way of saying the extraction is disabled).  You might use this when you have field discovery turned off--it ensures that certain fields are *always* discovered.  Splunk only disables an extraction if it can determine that none of the fields identified by the extraction will ever be needed for the successful evaluation of a search.\n\nNOTE: This option should rarely be set to false.", 
             "validation": "validate(is_bool($CAN_OPTIMIZE$), \"Value of argument 'CAN_OPTIMIZE' must be a boolean\")"
           }, 
           "CLEAN_KEYS": {
@@ -9627,10 +9872,10 @@ apis =
             "validation": ""
           }, 
           "disabled": {
-            "datatype": "UNDONE", 
+            "datatype": "Boolean", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "Specifies whether the field transformation is disabled.", 
             "validation": "validate(is_bool($disabled$), \"Value of argument 'disabled' must be a boolean\")"
           }, 
           "name": {
@@ -9648,7 +9893,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -9660,10 +9905,10 @@ apis =
             "summary": "Insufficient permissions to create field transformation."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -9686,7 +9931,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -9698,10 +9943,10 @@ apis =
             "summary": "Named field transformation does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Delete the named field transformation.", 
@@ -9721,7 +9966,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -9733,10 +9978,10 @@ apis =
             "summary": "Named field transformation does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List a single field transformation.", 
@@ -9814,7 +10059,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -9829,10 +10074,10 @@ apis =
             "summary": "Named field transformation does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -9854,14 +10099,14 @@ apis =
         "config": "transforms", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -9875,7 +10120,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -9889,7 +10134,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -9903,7 +10148,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -9912,10 +10157,10 @@ apis =
             "summary": "Insufficient permissions to view lookups."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List lookup definitions.", 
@@ -9932,10 +10177,10 @@ apis =
             "validation": ""
           }, 
           "disabled": {
-            "datatype": "UNDONE", 
+            "datatype": "Boolean", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "Specifies whether the lookup definition is disabled.", 
             "validation": "validate(is_bool($disabled$), \"Value of argument 'disabled' must be a boolean\")"
           }, 
           "external_cmd": {
@@ -10016,7 +10261,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -10028,10 +10273,10 @@ apis =
             "summary": "Insufficient permissions to create lookup."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -10054,7 +10299,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -10066,10 +10311,10 @@ apis =
             "summary": "Named lookup does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Delete the named lookup definition.", 
@@ -10089,7 +10334,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -10101,10 +10346,10 @@ apis =
             "summary": "Named lookup does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List a single lookup definition.", 
@@ -10203,7 +10448,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -10218,10 +10463,10 @@ apis =
             "summary": "Named lookup does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -10243,14 +10488,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -10264,7 +10509,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -10278,7 +10523,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -10292,7 +10537,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -10301,10 +10546,10 @@ apis =
             "summary": "Insufficient permissions to view deployment client status."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns the status of the deployment client in this Splunk instance, including the host/port of its deployment server, and which server classes it is a part of.\n\nA deployment client is a Splunk instance remotely configured by a deployment server. A Splunk instance can be both a deployment server and client at the same time. A Splunk deployment client belongs to one or more server classes.", 
@@ -10324,7 +10569,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -10336,10 +10581,10 @@ apis =
             "summary": "Deployment client does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns the configuration for the named deployment client.  The only valid name here is \"deployment-client\".  This is identical to accessing deployment/client without specifying a name.", 
@@ -10375,7 +10620,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -10390,10 +10635,10 @@ apis =
             "summary": "Deployment client does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -10420,7 +10665,7 @@ apis =
             "summary": "Deployment client restarted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -10432,10 +10677,10 @@ apis =
             "summary": "Deployment client does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Restarts the deployment client, reloading configuration from disk.", 
@@ -10454,14 +10699,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -10475,7 +10720,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -10489,7 +10734,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -10503,19 +10748,19 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
           }, 
           "403": {
-            "summary": "Insufficient permissions to view UNDONE_ret_code."
+            "summary": "Insufficient permissions to view all deployment server configurations."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns the configurations of all deployment servers.\n\nA deployment server is a Splunk instance that acts as a centralized configuration manager.\nDeployment clients poll server periodically to retrieve configurations.", 
@@ -10535,22 +10780,22 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
           }, 
           "403": {
-            "summary": "Insufficient permissions to view UNDONE_ret_code."
+            "summary": "Insufficient permissions to view this deployment server configuration."
           }, 
           "404": {
-            "summary": "UNDONE_ret_code does not exist."
+            "summary": "Requested deployment server does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Get the configuration information for this deployment server.", 
@@ -10586,7 +10831,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -10595,16 +10840,16 @@ apis =
             "summary": "The Splunk license in use has disabled this feature."
           }, 
           "403": {
-            "summary": "Insufficient permissions to edit UNDONE_ret_code."
+            "summary": "Insufficient permissions to edit this deployment server configuration."
           }, 
           "404": {
-            "summary": "UNDONE_ret_code does not exist."
+            "summary": "Requested deployment server does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -10626,14 +10871,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -10647,7 +10892,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -10661,7 +10906,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -10675,7 +10920,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -10684,10 +10929,10 @@ apis =
             "summary": "Insufficient permissions to view deployment server classes."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists all server classes defined for a deployment server.", 
@@ -10697,17 +10942,17 @@ apis =
         "config": "", 
         "params": {
           "blacklist": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "used to blacklist hosts for this serverclass", 
             "validation": ""
           }, 
           "blacklist.": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "used to blacklist hosts for this serverclass", 
             "validation": ""
           }, 
           "blacklist.0": {
@@ -10830,17 +11075,17 @@ apis =
             "validation": ""
           }, 
           "whitelist": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "list of hosts to accept for this serverclass", 
             "validation": ""
           }, 
           "whitelist.": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "list of hosts to accept for this serverclass", 
             "validation": ""
           }, 
           "whitelist.0": {
@@ -10921,7 +11166,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -10933,10 +11178,10 @@ apis =
             "summary": "Insufficient permissions to create a deployment server class."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -10959,7 +11204,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -10971,10 +11216,10 @@ apis =
             "summary": "Deployment server class does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns information about this server class.", 
@@ -11206,7 +11451,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -11221,10 +11466,10 @@ apis =
             "summary": "Deployment server class does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -11246,14 +11491,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -11267,7 +11512,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -11281,7 +11526,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -11295,7 +11540,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -11304,10 +11549,10 @@ apis =
             "summary": "Insufficient permissions to view deployment tenants configuration."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists the multi-tenants configuration for this Splunk instance.\n\nMulti-tenants configuration is a type of deployment server topology where more than one deployment server is running on the same Splunk instance, and each of those deployment servers serves content to its own set of deployment clients.", 
@@ -11327,7 +11572,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -11339,10 +11584,10 @@ apis =
             "summary": "Deployment tenants configuration does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists the configuration for this deployment server in a multi-tenant configuration.", 
@@ -11378,7 +11623,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -11393,10 +11638,10 @@ apis =
             "summary": "Deployment tenants configuration does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -11418,14 +11663,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -11439,7 +11684,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -11453,7 +11698,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -11467,7 +11712,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -11476,13 +11721,13 @@ apis =
             "summary": "Insufficient permissions to view user configurable objects."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "Enumerates all REST endpoints marked for enumeration in restmap.conf. Typically user-configurable objects are displayed in output.\n\nThe specific configuration in restmap.conf is \"showInDirSvc\". By default this enumeration includes search commands, UI views, UI navigation, saved searches and event types. This is useful to see which objects are provided by all apps, or a specific app when the call is namespaced.", 
+        "summary": "Provides an enumeration of the following app scoped objects:\n\n* event types\n* saved searches\n* time configurations\n* views\n* navs\n* manager XML\n* quickstart XML\n* search commands\n* macros\n* tags\n* field extractions\n* lookups\n* workflow actions\n* field aliases\n* sourcetype renames\n\nThis is useful to see which apps provide which objects, or all the objects provided by a specific app. To change the visibility of an object type in this listing, use the showInDirSvc in <code>restmap.conf</code>.", 
         "urlParams": {}
       }
     }, 
@@ -11499,7 +11744,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -11511,10 +11756,10 @@ apis =
             "summary": "User configurable object does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Displays information about a single entity in the directory service enumeration.\n\nThis is rarely used. Typically after using the directory service enumeration, a client follows the specific link for an object in an enumeration.", 
@@ -11533,14 +11778,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -11554,7 +11799,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -11568,7 +11813,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -11582,7 +11827,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -11591,10 +11836,10 @@ apis =
             "summary": "Insufficient permissions to view licenser groups."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists all licenser groups.", 
@@ -11614,7 +11859,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -11626,10 +11871,10 @@ apis =
             "summary": "Licenser groups does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists a specific licenser group.  A licenser group contains one or more licenser stacks that can operate concurrently.  Only one licenser group is active at any given time", 
@@ -11658,7 +11903,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -11673,10 +11918,10 @@ apis =
             "summary": "Licenser group does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -11698,14 +11943,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -11719,7 +11964,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -11733,7 +11978,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -11747,7 +11992,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -11756,10 +12001,10 @@ apis =
             "summary": "Insufficient permissions to view licenses."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists all licenses that have been added.  Only a subset of these licenses may be active however, this is simply listing all licenses in every stack/group, regardless of which group is active", 
@@ -11772,7 +12017,7 @@ apis =
             "datatype": "string", 
             "default": "", 
             "required": "true", 
-            "summary": "Path to license file on server", 
+            "summary": "Path to license file on server. If the payload parameter is specified, the name parameter is ignored.", 
             "validation": ""
           }, 
           "payload": {
@@ -11790,7 +12035,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -11802,10 +12047,10 @@ apis =
             "summary": "Insufficient permissions to add a license."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -11828,7 +12073,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -11840,10 +12085,10 @@ apis =
             "summary": "License does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Delete the license with hash corresponding to {name}.\n\nNOTE: You cannot delete the last license out of an active group. First, deactivate the group (by switching to another group) and then perform the delete.", 
@@ -11863,7 +12108,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -11875,10 +12120,10 @@ apis =
             "summary": "License does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List attributes of specific license.  The {name} portion of URL is actually the hash of the license payload.", 
@@ -11897,14 +12142,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -11918,7 +12163,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -11932,7 +12177,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -11946,7 +12191,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -11955,10 +12200,10 @@ apis =
             "summary": "Insufficient permissions to view licenser messages."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists all messages/alerts/persisted warnings for this node.", 
@@ -11978,7 +12223,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -11990,10 +12235,10 @@ apis =
             "summary": "Licenser message does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List specific message whose msgId corresponds to {name} component.", 
@@ -12012,14 +12257,14 @@ apis =
         "config": "server", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -12033,7 +12278,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -12047,7 +12292,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -12061,7 +12306,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -12070,10 +12315,10 @@ apis =
             "summary": "Insufficient permissions to view licenser pools."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Enumerates all pools.  A pool logically partitions the daily volume entitlements of a stack. You can use a pool to divide license privileges amongst multiple slaves", 
@@ -12097,24 +12342,24 @@ apis =
             "validation": ""
           }, 
           "quota": {
-            "datatype": "Number", 
+            "datatype": "String", 
             "default": "", 
             "required": "true", 
-            "summary": "Defines the byte quota of this pool", 
+            "summary": "Defines the byte quota of this pool.\n\nValid values:\n\nMAX: maximum amount allowed by the license. You can only have one pool with MAX size in a stack.\n\nNumber[MB&#124;GB]: Specify a specific size. For example, 552428800, or simply specify 50MB.", 
             "validation": ""
           }, 
           "slaves": {
             "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "Comma-separated list of slaveids that are members of this pool, or '*' to accept all slaves", 
+            "summary": "Comma-separated list of slaveids that are members of this pool, or '*' to accept all slaves.\n\nYou can also specify a comma-separated list guids to specify slaves that can connect to this pool.", 
             "validation": ""
           }, 
           "stack_id": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "", 
             "required": "true", 
-            "summary": "stackid of stack corresponding to this pool", 
+            "summary": "Valid values: (download-trial &#124; enterprise &#124; forwarder &#124; free)\n\nStack ID of the stack corresponding to this pool", 
             "validation": ""
           }
         }, 
@@ -12125,7 +12370,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -12137,10 +12382,10 @@ apis =
             "summary": "Insufficient permissions to create licenser pools."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -12163,7 +12408,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -12175,10 +12420,10 @@ apis =
             "summary": "Licenser pool does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Delete specified pool.  Deleting pools is not supported for every pool. Certain stacks have fixed pools which cannot be deleted.", 
@@ -12198,7 +12443,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -12210,10 +12455,10 @@ apis =
             "summary": "Licenser pool does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists details of the pool specified by {name}.\n\nA pool logically partitions the daily volume entitlements of a stack. A pool can be used to divide license privileges amongst multiple slaves", 
@@ -12263,7 +12508,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -12278,10 +12523,10 @@ apis =
             "summary": "Licenser pool does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -12303,14 +12548,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -12320,7 +12565,7 @@ apis =
             "datatype": "n/a", 
             "default": "", 
             "required": "false", 
-            "summary": "do not use", 
+            "summary": "Do not use.", 
             "validation": ""
           }, 
           "search": {
@@ -12331,7 +12576,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -12345,7 +12590,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -12355,7 +12600,7 @@ apis =
             "datatype": "string", 
             "default": "", 
             "required": "false", 
-            "summary": "do not use", 
+            "summary": "Do not use.", 
             "validation": ""
           }
         }, 
@@ -12366,7 +12611,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -12375,10 +12620,10 @@ apis =
             "summary": "Insufficient permissions to view license slaves."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List all slaves registered to this license master.  Any slave that attempts to connect to master is reported, regardless of whether it is allocated to a master licenser pool.", 
@@ -12393,10 +12638,10 @@ apis =
         "config": "", 
         "params": {
           "poolid": {
-            "datatype": "do not use", 
+            "datatype": "Do not use.", 
             "default": "", 
             "required": "false", 
-            "summary": "do not use", 
+            "summary": "Do not use.", 
             "validation": ""
           }, 
           "stackid": {
@@ -12414,7 +12659,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -12426,10 +12671,10 @@ apis =
             "summary": "License slave does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List attributes of slave specified by {name}.", 
@@ -12448,14 +12693,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -12469,7 +12714,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -12483,7 +12728,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -12497,7 +12742,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -12506,10 +12751,10 @@ apis =
             "summary": "Insufficient permissions to view license stacks."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Enumerate all license stacks.", 
@@ -12529,7 +12774,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -12541,10 +12786,10 @@ apis =
             "summary": "License stack does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Retrieve details of specific license stacks.  A license stack is comprised of one or more licenses of the same \"type\".  The daily indexing quota of a license stack is additive, so a stack represents the aggregate entitlement for a collection of licenses.", 
@@ -12563,14 +12808,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -12584,7 +12829,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -12598,7 +12843,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -12612,7 +12857,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -12621,10 +12866,10 @@ apis =
             "summary": "Insufficient permissions to view messages."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Enumerate all systemwide messages. This is typically used for splunkd to advertise issues involving license quotas, license expirations, misconfigured indexes and disk space to users in SplunkWeb.", 
@@ -12655,7 +12900,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -12667,10 +12912,10 @@ apis =
             "summary": "Insufficient permissions to create message."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -12693,7 +12938,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -12705,10 +12950,10 @@ apis =
             "summary": "Message does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Deletes a message identified by {name}. After deleting the message, it no longer appears in SplunkWeb.", 
@@ -12728,7 +12973,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -12740,10 +12985,10 @@ apis =
             "summary": "Message does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Get the entry corresponding of a single message identified by {name}.", 
@@ -12775,7 +13020,7 @@ apis =
             "datatype": "String", 
             "default": "", 
             "required": "True", 
-            "summary": "The name of the configuration file to create.", 
+            "summary": "The name of the configuration file to create.\n\n<b>Note</b>: Double underscore before conf.", 
             "validation": ""
           }
         }, 
@@ -12786,7 +13031,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }
         }, 
         "summary": "Creates a new configuration file.", 
@@ -12803,6 +13048,9 @@ apis =
         "returns": {
           "200": {
             "summary": "Listed successfully."
+          }, 
+          "404": {
+            "summary": "Named file does not exist."
           }
         }, 
         "summary": "Returns a list of stanzas in the configuration file specified by {name}.", 
@@ -12819,7 +13067,7 @@ apis =
             "datatype": "String", 
             "default": "", 
             "required": "True", 
-            "summary": "The name of the stanza to create.", 
+            "summary": "The name of the stanza to create.\n\n<b>Note</b>: Double underscore before stanza.", 
             "validation": ""
           }
         }, 
@@ -12833,7 +13081,7 @@ apis =
             "summary": "Stanza already exists."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }
         }, 
         "summary": "Creates a new stanza in the configuratin file specified by {name}.", 
@@ -12859,7 +13107,7 @@ apis =
             "summary": "Stanza does not exist."
           }
         }, 
-        "summary": "Returns the configuration values for the stanza represented by {stanza_name} in the configuration file specified by {stanza_name}.", 
+        "summary": "Returns the configuration values for the stanza represented by {stanza_name} in the configuration file specified by {file_name}.", 
         "urlParams": {
           "file_name": {
             "required": "true", 
@@ -12888,7 +13136,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "404": {
             "summary": "Stanza does not exist."
@@ -12897,7 +13145,7 @@ apis =
             "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
           }
         }, 
-        "summary": "Adds or updates key/value pairs in the current stanza. One or more key/value pairs may be passed at one time to this endpoint.", 
+        "summary": "Adds or updates key/value pairs in the specified stanza. One or more key/value pairs may be passed at one time to this endpoint.", 
         "urlParams": {
           "file_name": {
             "required": "true", 
@@ -12957,7 +13205,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "404": {
             "summary": "Key does not exist in the stanza."
@@ -13038,7 +13286,7 @@ apis =
             "summary": "Data accepted."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "404": {
             "summary": "Receiver does not exist."
@@ -13104,7 +13352,7 @@ apis =
             "summary": "Data accepted."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "404": {
             "summary": "Receiver does not exist."
@@ -13114,7 +13362,7 @@ apis =
         "urlParams": {}
       }
     }, 
-    "summary": "Allows for sending an indefinite stream of events to Splunk."
+    "summary": "Opens a socket for streaming events to Splunk."
   }, 
   "saved/eventtypes": {
     "methods": {
@@ -13122,14 +13370,14 @@ apis =
         "config": "eventtypes", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -13143,7 +13391,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -13157,7 +13405,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -13171,7 +13419,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -13180,13 +13428,13 @@ apis =
             "summary": "Insufficient permissions to view event types."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "Retrieve saved eventtypes.", 
+        "summary": "Retrieve saved event types.", 
         "urlParams": {}
       }, 
       "POST": {
@@ -13196,14 +13444,14 @@ apis =
             "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "Human-readable description of this saved search.", 
+            "summary": "Human-readable description of this event type.", 
             "validation": ""
           }, 
           "disabled": {
             "datatype": "Boolean", 
             "default": "0", 
             "required": "false", 
-            "summary": "If True, enables the event type.", 
+            "summary": "If True, disables the event type.", 
             "validation": ""
           }, 
           "name": {
@@ -13242,7 +13490,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -13254,10 +13502,10 @@ apis =
             "summary": "Insufficient permissions to create an event type."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -13280,7 +13528,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -13292,10 +13540,10 @@ apis =
             "summary": "Event type does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Deletes this event type.", 
@@ -13315,7 +13563,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -13327,10 +13575,10 @@ apis =
             "summary": "Event type does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns information on this event type.", 
@@ -13387,7 +13635,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -13402,10 +13650,10 @@ apis =
             "summary": "Event type does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -13427,7 +13675,7 @@ apis =
         "config": "savedsearches", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
@@ -13437,18 +13685,18 @@ apis =
             "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "Specifies the earliest time for this search. Can be a relative or absolute time.\n\nIf this value is an absolute time, use the <code>dispatch.time_format</code> to format the value.", 
+            "summary": "For scheduled searches display all the scheduled times starting from this time (not just the next run time)", 
             "validation": ""
           }, 
           "latest_time": {
             "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "Specifies the latest time for this saved search. Can be a relative or absolute time.\n\nIf this value is an absolute time, use the <code>dispatch.time_format</code> to format the value.", 
+            "summary": "For scheduled searches display all the scheduled times until this time (not just the next run time)", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -13462,7 +13710,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -13476,7 +13724,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -13490,7 +13738,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -13499,10 +13747,10 @@ apis =
             "summary": "Insufficient permissions to view saved search."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns information on all saved searches.", 
@@ -13515,7 +13763,7 @@ apis =
             "datatype": "Boolean", 
             "default": "0", 
             "required": "false", 
-            "summary": "Enables or disables the email action.", 
+            "summary": "The state of the email action. Read-only attribute. Value ignored on POST. Use actions to specify a list of enabled actions.", 
             "validation": ""
           }, 
           "action.email.auth_password": {
@@ -13529,7 +13777,7 @@ apis =
             "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "The username to use when authenticating with the SMTP server. If this is empty string, no authentication is attempted. Defaults to empty string.\n\nNOTE: Your SMTP server might reject unauthenticated emails.\n\\t", 
+            "summary": "The username to use when authenticating with the SMTP server. If this is empty string, no authentication is attempted. Defaults to empty string.\n\nNOTE: Your SMTP server might reject unauthenticated emails.", 
             "validation": ""
           }, 
           "action.email.bcc": {
@@ -13599,7 +13847,7 @@ apis =
             "datatype": "Number", 
             "default": "", 
             "required": "false", 
-            "summary": "Valid values are Integer[m|s|h|d].\n\nSpecifies the maximum amount of time the execution of an email action takes before the action is aborted. Defaults to 5m.", 
+            "summary": "Valid values are Integer&#91;m&#124;s&#124;h&#124;d&#93;.\n\nSpecifies the maximum amount of time the execution of an email action takes before the action is aborted. Defaults to 5m.", 
             "validation": ""
           }, 
           "action.email.preprocess_results": {
@@ -13662,7 +13910,7 @@ apis =
             "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "Specify a comma-separated list of recipient email addresses. Required.\n\nThis attribute differs from a similar attribute defined in alert_actions.conf.", 
+            "summary": "A comma or semicolon separated list of recipient email addresses. Required if this search is scheduled and the email alert action is enabled.", 
             "validation": ""
           }, 
           "action.email.track_alert": {
@@ -13676,7 +13924,7 @@ apis =
             "datatype": "Number", 
             "default": "", 
             "required": "false", 
-            "summary": "Valid values are Integer[p].\n\nSpecifies the minimum time-to-live in seconds of the search artifacts if this action is triggered. If p follows &lt;Integer&gt:, int is the number of scheduled periods. Defaults to 86400 (24 hours).\n\nIf no actions are triggered, the artifacts have their ttl determined by dispatch.ttl in savedsearches.conf.", 
+            "summary": "Valid values are Integer[p].\n\nSpecifies the minimum time-to-live in seconds of the search artifacts if this action is triggered. If p follows &lt;Integer&gt;, int is the number of scheduled periods. Defaults to 86400 (24 hours).\n\nIf no actions are triggered, the artifacts have their ttl determined by dispatch.ttl in savedsearches.conf.", 
             "validation": ""
           }, 
           "action.email.use_ssl": {
@@ -13697,7 +13945,7 @@ apis =
             "datatype": "Boolean", 
             "default": "0", 
             "required": "false", 
-            "summary": "Indicates whether to enable the lookup population action.\n\nDefaults to false.", 
+            "summary": "The state of the populate lookup action. Read-only attribute. Value ignored on POST. Use actions to specify a list of enabled actions.", 
             "validation": ""
           }, 
           "action.populate_lookup.command": {
@@ -13725,7 +13973,7 @@ apis =
             "datatype": "Number", 
             "default": "", 
             "required": "false", 
-            "summary": "Valid values are: Integer[m|s|h|d]\n\nSets the maximum amount of time the execution of an action takes before the action is aborted. Defaults to 5m.", 
+            "summary": "Valid values are: Integer[m&#124;s&#124;h&#124;d]\n\nSets the maximum amount of time the execution of an action takes before the action is aborted. Defaults to 5m.", 
             "validation": ""
           }, 
           "action.populate_lookup.track_alert": {
@@ -13746,7 +13994,7 @@ apis =
             "datatype": "Boolean", 
             "default": "0", 
             "required": "false", 
-            "summary": "If true, use action.rss.", 
+            "summary": "The state of the rss action. Read-only attribute. Value ignored on POST. Use actions to specify a list of enabled actions.", 
             "validation": ""
           }, 
           "action.rss.command": {
@@ -13774,7 +14022,7 @@ apis =
             "datatype": "Number", 
             "default": "", 
             "required": "false", 
-            "summary": "Valid values are Integer[m|s|h|d].\n\nSets the maximum amount of time the execution of an action takes before the action is aborted. Defaults to 1m.", 
+            "summary": "Valid values are Integer[m&#124;s&#124;h&#124;d].\n\nSets the maximum amount of time the execution of an action takes before the action is aborted. Defaults to 1m.", 
             "validation": ""
           }, 
           "action.rss.track_alert": {
@@ -13795,7 +14043,7 @@ apis =
             "datatype": "Boolean", 
             "default": "0", 
             "required": "false", 
-            "summary": "Enables or disables the script action.", 
+            "summary": "The state of the script action. Read-only attribute. Value ignored on POST. Use actions to specify a list of enabled actions.", 
             "validation": ""
           }, 
           "action.script.command": {
@@ -13823,7 +14071,7 @@ apis =
             "datatype": "Number", 
             "default": "", 
             "required": "false", 
-            "summary": "Valid values are: Integer[m|s|h|d]\n\nSets the maximum amount of time the execution of an action takes before the action is aborted. Defaults to 5m.", 
+            "summary": "Valid values are: Integer[m&#124;s&#124;h&#124;d]\n\nSets the maximum amount of time the execution of an action takes before the action is aborted. Defaults to 5m.", 
             "validation": ""
           }, 
           "action.script.track_alert": {
@@ -13844,7 +14092,7 @@ apis =
             "datatype": "Boolean", 
             "default": "0", 
             "required": "false", 
-            "summary": "Enables or disables the summary index action.\n\nDefaults to 0", 
+            "summary": "The state of the summary index action. Read-only attribute. Value ignored on POST. Use actions to specify a list of enabled actions.\n\nDefaults to 0", 
             "validation": ""
           }, 
           "action.summary_index._name": {
@@ -13872,7 +14120,7 @@ apis =
             "datatype": "Boolean", 
             "default": "", 
             "required": "false", 
-            "summary": "Determines whether to execute the summary indexing action as part of the scheduled search. \n\n<bold>NOTE:</bold> This option is considered only if the summary index action is enabled and is always executed (in other words, if <code>counttype = always</code>).\n\nDefaults to true", 
+            "summary": "Determines whether to execute the summary indexing action as part of the scheduled search. \n\n<b>NOTE:</b> This option is considered only if the summary index action is enabled and is always executed (in other words, if <code>counttype = always</code>).\n\nDefaults to true", 
             "validation": ""
           }, 
           "action.summary_index.maxresults": {
@@ -13886,7 +14134,7 @@ apis =
             "datatype": "Number", 
             "default": "", 
             "required": "false", 
-            "summary": "Valid values are: Integer[m|s|h|d]\n\nSets the maximum amount of time the execution of an action takes before the action is aborted. Defaults to 5m.", 
+            "summary": "Valid values are: Integer[m&#124;s&#124;h&#124;d]\n\nSets the maximum amount of time the execution of an action takes before the action is aborted. Defaults to 5m.", 
             "validation": ""
           }, 
           "action.summary_index.track_alert": {
@@ -13904,10 +14152,10 @@ apis =
             "validation": ""
           }, 
           "actions": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "List of enabled actions", 
             "validation": ""
           }, 
           "alert.digest_mode": {
@@ -13953,10 +14201,10 @@ apis =
             "validation": ""
           }, 
           "alert_comparator": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "One of the following strings: greater than, less than, equal to, rises by, drops by, rises by perc, drops by perc", 
             "validation": ""
           }, 
           "alert_condition": {
@@ -13967,17 +14215,17 @@ apis =
             "validation": ""
           }, 
           "alert_threshold": {
-            "datatype": "UNDONE", 
+            "datatype": "Number", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "The value to compare to before triggering the alert actions. Valid values are: Integer[%]?", 
             "validation": ""
           }, 
           "alert_type": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "What to base the alert on, overriden by alert_condition if it is specified. Valid values are: always, custom, number of events, number of hosts, number of sources ", 
             "validation": ""
           }, 
           "cron_schedule": {
@@ -14050,6 +14298,13 @@ apis =
             "summary": "Specifies how frequently Splunk should run the MapReduce reduce phase on accumulated map values.", 
             "validation": ""
           }, 
+          "dispatch.rt_backfill": {
+            "datatype": "Boolean", 
+            "default": "0", 
+            "required": "false", 
+            "summary": "Whether to back fill the real time window for this search. Parameter valid only if this is a real time search", 
+            "validation": ""
+          }, 
           "dispatch.spawn_process": {
             "datatype": "Boolean", 
             "default": "1", 
@@ -14082,7 +14337,7 @@ apis =
             "datatype": "Boolean", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "Whether this search is to be ran on a schedule", 
             "validation": "validate(is_bool($is_scheduled$), \"Value of argument 'is_scheduled' must be a boolean\")"
           }, 
           "is_visible": {
@@ -14100,17 +14355,17 @@ apis =
             "validation": "validate(isint($max_concurrent$) AND $max_concurrent$>=0, \"Value of argument 'max_concurrent' must be a non-negative integer\")"
           }, 
           "next_scheduled_time": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "Read-only attribute. Value ignored on POST. There are some old clients who still send this value", 
             "validation": ""
           }, 
           "qualifiedSearch": {
             "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "Not used. Splunk computes this value during runtime.", 
+            "summary": "Read-only attribute. Value ignored on POST. Splunk computes this value during runtime.", 
             "validation": ""
           }, 
           "realtime_schedule": {
@@ -14170,7 +14425,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -14182,10 +14437,10 @@ apis =
             "summary": "Insufficient permissions to create saved search."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -14201,22 +14456,6 @@ apis =
     "methods": {
       "DELETE": {
         "config": "savedsearches", 
-        "params": {
-          "earliest_time": {
-            "datatype": "UNDONE", 
-            "default": "", 
-            "required": "false", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }, 
-          "latest_time": {
-            "datatype": "UNDONE", 
-            "default": "", 
-            "required": "false", 
-            "summary": "UNDONE", 
-            "validation": ""
-          }
-        }, 
         "request": "", 
         "response": "", 
         "returns": {
@@ -14224,7 +14463,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -14236,10 +14475,10 @@ apis =
             "summary": "Saved search does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Deletes this saved search.", 
@@ -14254,17 +14493,17 @@ apis =
         "config": "savedsearches", 
         "params": {
           "earliest_time": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "If the search is scheduled display scheduled times starting from this time", 
             "validation": ""
           }, 
           "latest_time": {
-            "datatype": "UNDONE", 
+            "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "UNDONE", 
+            "summary": "If the search is scheduled display scheduled times ending at this time", 
             "validation": ""
           }
         }, 
@@ -14275,7 +14514,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -14287,10 +14526,10 @@ apis =
             "summary": "Saved search does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns information on this saved search.", 
@@ -14843,6 +15082,13 @@ apis =
             "summary": "INHERITED", 
             "validation": ""
           }, 
+          "dispatch.rt_backfill": {
+            "datatype": "INHERITED", 
+            "default": "0", 
+            "required": "false", 
+            "summary": "INHERITED", 
+            "validation": ""
+          }, 
           "dispatch.spawn_process": {
             "datatype": "INHERITED", 
             "default": "1", 
@@ -14963,7 +15209,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -14978,10 +15224,10 @@ apis =
             "summary": "Saved search does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -14999,34 +15245,40 @@ apis =
   }, 
   "saved/searches/{name}/acknowledge": {
     "methods": {
-      "GET": {
+      "POST": {
         "config": "savedsearches", 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
+        "request": "", 
+        "response": "", 
         "returns": {
           "200": {
-            "summary": "UNDONE_cust_ret successfully."
+            "summary": "Suppression was acknowledged successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
           }, 
+          "402": {
+            "summary": "The Splunk license in use has disabled this feature."
+          }, 
           "403": {
-            "summary": "Insufficient permissions to UNDONE_cust_ret."
+            "summary": "Insufficient permissions to acknowledge the suppression."
           }, 
           "404": {
             "summary": "Named save search does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
+          }, 
+          "503": {
+            "summary": "This feature has been disabled in Splunk configuration files."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "Acknowledge the suppression of the alerts from this saved search and resume alerting. Action available only with POST", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -15038,34 +15290,40 @@ apis =
   }, 
   "saved/searches/{name}/dispatch": {
     "methods": {
-      "GET": {
+      "POST": {
         "config": "savedsearches", 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
+        "request": "", 
+        "response": "", 
         "returns": {
           "200": {
-            "summary": "UNDONE_cust_ret successfully."
+            "summary": "Dispatched the saved search successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
           }, 
+          "402": {
+            "summary": "The Splunk license in use has disabled this feature."
+          }, 
           "403": {
-            "summary": "Insufficient permissions to UNDONE_cust_ret."
+            "summary": "Insufficient permissions to dispatch the saved search."
           }, 
           "404": {
             "summary": "Named save search does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
+          }, 
+          "503": {
+            "summary": "This feature has been disabled in Splunk configuration files."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "Dispatch the saved search just like the scheduler would. Action available only through POST. The following optional arguments are accepted:\ndispatch.now:    [time] dispatch the search as if it this was the current time \ndispatch.*:      any dispatch.* field of the search can be overriden\nnow:             [time] deprecated, same as dispatch.now use that instead\ntrigger_actions: [bool] whether to trigger alert actions \nforce_dispatch:  [bool] should a new search be started even if another instance of this search is already running", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -15079,71 +15337,32 @@ apis =
     "methods": {
       "GET": {
         "config": "savedsearches", 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
+        "request": "", 
+        "response": "", 
         "returns": {
           "200": {
-            "summary": "UNDONE_cust_ret successfully."
+            "summary": "Retrieved the dispatch history successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
           }, 
           "403": {
-            "summary": "Insufficient permissions to UNDONE_cust_ret."
+            "summary": "Insufficient permissions to retrieve dispatch history for this saved search."
           }, 
           "404": {
             "summary": "Named save search does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "UNDONE", 
-        "urlParams": {
-          "name": {
-            "required": "true", 
-            "summary": "name"
-          }
-        }
-      }
-    }
-  }, 
-  "saved/searches/{name}/notify": {
-    "methods": {
-      "GET": {
-        "config": "savedsearches", 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
-        "returns": {
-          "200": {
-            "summary": "UNDONE_cust_ret successfully."
-          }, 
-          "400": {
-            "summary": "Request error.  See returned XML for explanation."
-          }, 
-          "401": {
-            "summary": "Authentication failure: must pass valid credentials with request."
-          }, 
-          "403": {
-            "summary": "Insufficient permissions to UNDONE_cust_ret."
-          }, 
-          "404": {
-            "summary": "Named save search does not exist."
-          }, 
-          "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
-          }, 
-          "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
-          }
-        }, 
-        "summary": "UNDONE", 
+        "summary": "Get a list of available search jobs created from this saved search", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -15157,32 +15376,32 @@ apis =
     "methods": {
       "GET": {
         "config": "savedsearches", 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
+        "request": "", 
+        "response": "", 
         "returns": {
           "200": {
-            "summary": "UNDONE_cust_ret successfully."
+            "summary": "Retrieved/updated the suppression state successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
           }, 
           "403": {
-            "summary": "Insufficient permissions to UNDONE_cust_ret."
+            "summary": "Insufficient permissions to retrieve/update the suppression state."
           }, 
           "404": {
             "summary": "Named save search does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "Check the suppression state of alerts from this saved search.", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -15198,14 +15417,14 @@ apis =
         "config": "savedsearches", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -15219,7 +15438,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -15233,7 +15452,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -15247,7 +15466,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -15256,17 +15475,17 @@ apis =
             "summary": "Insufficient permissions to view scheduled view."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists all scheduled view objects", 
         "urlParams": {}
       }
     }, 
-    "summary": "Allows for management of scheduled (for pdf delivery) views. Scheduled views are dummy/noop scheduled saved searches that that email a pdf version of a view"
+    "summary": "Allows for management of scheduled (for pdf delivery) views. Scheduled views are dummy/noop scheduled saved searches that email a pdf version of a view"
   }, 
   "scheduled/views/{name}": {
     "methods": {
@@ -15279,7 +15498,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -15291,10 +15510,10 @@ apis =
             "summary": "Scheduled view does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Delete a scheduled view", 
@@ -15314,7 +15533,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -15326,10 +15545,10 @@ apis =
             "summary": "Scheduled view does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List one scheduled view object", 
@@ -15393,7 +15612,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -15408,10 +15627,10 @@ apis =
             "summary": "Scheudled view does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -15427,75 +15646,42 @@ apis =
       }
     }
   }, 
-  "scheduled/views/{name}/acknowledge": {
-    "methods": {
-      "GET": {
-        "config": "savedsearches", 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
-        "returns": {
-          "200": {
-            "summary": "UNDONE_cust_ret successfully."
-          }, 
-          "400": {
-            "summary": "Request error.  See returned XML for explanation."
-          }, 
-          "401": {
-            "summary": "Authentication failure: must pass valid credentials with request."
-          }, 
-          "403": {
-            "summary": "Insufficient permissions to UNDONE_cust_ret."
-          }, 
-          "404": {
-            "summary": "Named view does not exist."
-          }, 
-          "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
-          }, 
-          "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
-          }
-        }, 
-        "summary": "UNDONE", 
-        "urlParams": {
-          "name": {
-            "required": "true", 
-            "summary": "name"
-          }
-        }
-      }
-    }
-  }, 
   "scheduled/views/{name}/dispatch": {
     "methods": {
-      "GET": {
+      "POST": {
         "config": "savedsearches", 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
+        "request": "", 
+        "response": "", 
         "returns": {
           "200": {
-            "summary": "UNDONE_cust_ret successfully."
+            "summary": "Dispatched the scheduled view successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
           }, 
+          "402": {
+            "summary": "The Splunk license in use has disabled this feature."
+          }, 
           "403": {
-            "summary": "Insufficient permissions to UNDONE_cust_ret."
+            "summary": "Insufficient permissions to dispatch a scheduled view."
           }, 
           "404": {
             "summary": "Named view does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
+          }, 
+          "503": {
+            "summary": "This feature has been disabled in Splunk configuration files."
           }
         }, 
-        "summary": "UNDONE", 
+        "summary": "Dispatch the scheduled search (powering the scheduled view) just like the scheduler would. Action available only through POST. The following optional arguments are accepted:\"dispatch.now:    [time] dispatch the search as if it this was the current time\ndispatch.*:      any dispatch.* field of the search can be overriden\nnow:             [time] deprecated, same as dispatch.now use that instead\ntrigger_actions: [bool] whether to trigger the alert actions\nforce_dispatch:  [bool] should a new search be started even if another instance of this search is already running", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -15509,110 +15695,32 @@ apis =
     "methods": {
       "GET": {
         "config": "savedsearches", 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
+        "request": "", 
+        "response": "", 
         "returns": {
           "200": {
-            "summary": "UNDONE_cust_ret successfully."
+            "summary": "Retrieved scheduled view history successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
           }, 
           "403": {
-            "summary": "Insufficient permissions to UNDONE_cust_ret."
+            "summary": "Insufficient permissions to retrieve scheduled view history."
           }, 
           "404": {
             "summary": "Named view does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
-        "summary": "UNDONE", 
-        "urlParams": {
-          "name": {
-            "required": "true", 
-            "summary": "name"
-          }
-        }
-      }
-    }
-  }, 
-  "scheduled/views/{name}/notify": {
-    "methods": {
-      "GET": {
-        "config": "savedsearches", 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
-        "returns": {
-          "200": {
-            "summary": "UNDONE_cust_ret successfully."
-          }, 
-          "400": {
-            "summary": "Request error.  See returned XML for explanation."
-          }, 
-          "401": {
-            "summary": "Authentication failure: must pass valid credentials with request."
-          }, 
-          "403": {
-            "summary": "Insufficient permissions to UNDONE_cust_ret."
-          }, 
-          "404": {
-            "summary": "Named view does not exist."
-          }, 
-          "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
-          }, 
-          "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
-          }
-        }, 
-        "summary": "UNDONE", 
-        "urlParams": {
-          "name": {
-            "required": "true", 
-            "summary": "name"
-          }
-        }
-      }
-    }
-  }, 
-  "scheduled/views/{name}/suppress": {
-    "methods": {
-      "GET": {
-        "config": "savedsearches", 
-        "request": "UNDONE", 
-        "response": "UNDONE", 
-        "returns": {
-          "200": {
-            "summary": "UNDONE_cust_ret successfully."
-          }, 
-          "400": {
-            "summary": "Request error.  See returned XML for explanation."
-          }, 
-          "401": {
-            "summary": "Authentication failure: must pass valid credentials with request."
-          }, 
-          "403": {
-            "summary": "Insufficient permissions to UNDONE_cust_ret."
-          }, 
-          "404": {
-            "summary": "Named view does not exist."
-          }, 
-          "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
-          }, 
-          "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
-          }
-        }, 
-        "summary": "UNDONE", 
+        "summary": "Get a list of search jobs used to deliver this scheduled view", 
         "urlParams": {
           "name": {
             "required": "true", 
@@ -15628,14 +15736,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -15649,7 +15757,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -15663,7 +15771,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -15677,7 +15785,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -15686,10 +15794,10 @@ apis =
             "summary": "Insufficient permissions to view configuration for distributed search."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists the configuration options for the distributed search system.", 
@@ -15709,7 +15817,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -15721,10 +15829,10 @@ apis =
             "summary": "Configuration for distributed search does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Disables the distributed search feature.  Note that \"distributedSearch\" is the only valid name here.", 
@@ -15744,7 +15852,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -15756,10 +15864,10 @@ apis =
             "summary": "Configuration for distributed search does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Displays configuration options.  Note that \"distributedSearch\" is the only valid name here.", 
@@ -15812,7 +15920,7 @@ apis =
             "datatype": "Boolean", 
             "default": "", 
             "required": "false", 
-            "summary": "If true, disables the distributed search off.\n\nDefaults to false (the distributed search is enabled).", 
+            "summary": "If true, disables the distributed search.\n\nDefaults to false (the distributed search is enabled).", 
             "validation": ""
           }, 
           "heartbeatFrequency": {
@@ -15833,7 +15941,7 @@ apis =
             "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "Specify a port to set theartbeat port where each Splunk server sends and listens for heart beat messages.\n\nThis allows Splunk servers to auto-discover other Splunk servers on the network. Defaults to 8888.", 
+            "summary": "Specify a port to set the heartbeat port where each Splunk server sends and listens for heart beat messages.\n\nThis allows Splunk servers to auto-discover other Splunk servers on the network. Defaults to 8888.", 
             "validation": ""
           }, 
           "receiveTimeout": {
@@ -15907,7 +16015,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -15922,10 +16030,10 @@ apis =
             "summary": "Configuration for distributed search does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -15947,7 +16055,7 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
@@ -15961,7 +16069,7 @@ apis =
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -15975,7 +16083,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -15989,7 +16097,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -16003,7 +16111,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -16012,10 +16120,10 @@ apis =
             "summary": "Insufficient permissions to view search peer."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns a list of configured search peers that this search head is configured to distribute searches to.", 
@@ -16053,7 +16161,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -16065,10 +16173,10 @@ apis =
             "summary": "Insufficient permissions to create search peer."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -16091,7 +16199,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -16103,10 +16211,10 @@ apis =
             "summary": "Search peer does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Removes the distributed search peer specified by {name}.", 
@@ -16135,7 +16243,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -16147,10 +16255,10 @@ apis =
             "summary": "Search peer does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns information about the distributed search peer specified by {name}.", 
@@ -16186,7 +16294,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -16201,10 +16309,10 @@ apis =
             "summary": "Search peer does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -16246,7 +16354,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }
         }, 
         "summary": "Retrieves information about the named field.", 
@@ -16267,6 +16375,9 @@ apis =
         "returns": {
           "200": {
             "summary": "Listed successfully."
+          }, 
+          "404": {
+            "summary": "Named field does not exist."
           }
         }, 
         "summary": "Returns a list of tags that have been associated with the field specified by {field_name}.", 
@@ -16308,7 +16419,7 @@ apis =
             "summary": "Tags updated."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }
         }, 
         "summary": "Update the tags associated with the field specified by {field_name}.\n\nThe <code>field_value</code> parameter specifies the specific value on which to bind tag actions. Multiple tags can be attached by passing multiple add or delete form parameters. The server processes all of the adds first, and then processes the deletes.", 
@@ -16338,9 +16449,9 @@ apis =
         "params": {
           "auto_cancel": {
             "datatype": "Number", 
-            "default": "UNDONE", 
+            "default": "0", 
             "required": "false", 
-            "summary": "If specified, the job automatically cancels after this many seconds of inactivity.", 
+            "summary": "If specified, the job automatically cancels after this many seconds of inactivity.  (0 means never auto-cancel)", 
             "validation": ""
           }, 
           "auto_finalize_ec": {
@@ -16352,14 +16463,14 @@ apis =
           }, 
           "auto_pause": {
             "datatype": "Number", 
-            "default": "UNDONE", 
+            "default": "0", 
             "required": "false", 
-            "summary": "If specified, the job automatically cancels after this many seconds of inactivity.", 
+            "summary": "If specified, the job automatically cancels after this many seconds of inactivity.  (0 means never auto-pause)", 
             "validation": ""
           }, 
           "earliest_time": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "Specify a time string. Sets the earliest (inclusive), respectively, time bounds for the search. \n\nThe time string can be either a UTC time (with fractional seconds), a relative time specifier (to now) or a formatted time string. (Also see comment for the search_mode variable.)", 
             "validation": ""
@@ -16380,21 +16491,21 @@ apis =
           }, 
           "force_bundle_replication": {
             "datatype": "Boolean", 
-            "default": "UNDONE", 
+            "default": "false", 
             "required": "false", 
             "summary": "Specifies whether this search should cause (and wait depending on the value of sync_bundle_replication) for bundle synchronization with all search peers.", 
             "validation": ""
           }, 
           "id": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
-            "summary": "Optional string to specify the search ID.", 
+            "summary": "Optional string to specify the search ID (<code>&lt:sid&gt;</code>).  If unspecified, a random ID is generated.", 
             "validation": ""
           }, 
           "latest_time": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "Specify a time string. Sets the latest (exclusive), respectively, time bounds for the search. \n\nThe time string can be either a UTC time (with fractional seconds), a relative time specifier (to now) or a formatted time string. (Also see comment for the search_mode variable.)", 
             "validation": ""
@@ -16415,7 +16526,7 @@ apis =
           }, 
           "namespace": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "The application namespace in which to restrict searches. \n\nThe namespace corresponds to the identifier recognized in the <code>/services/apps/local</code> endpoint. ", 
             "validation": ""
@@ -16429,7 +16540,7 @@ apis =
           }, 
           "reduce_freq": {
             "datatype": "Number", 
-            "default": "UNDONE", 
+            "default": "0", 
             "required": "false", 
             "summary": "Determines how frequently to run the MapReduce reduce phase on accumulated map values.", 
             "validation": ""
@@ -16457,7 +16568,7 @@ apis =
           }, 
           "rf": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "Adds a required field to the search. There can be multiple <code>rf</code> POST arguments to the search.\n\nConsider using this form of passing the required fields to the search instead of the deprecated <code>required_field_list</code>. If both <code>rf</code> and <code>required_field_list</code> are supplied, the union of the two lists is used.", 
             "validation": ""
@@ -16492,15 +16603,15 @@ apis =
           }, 
           "search": {
             "datatype": "Search", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "true", 
             "summary": "The search language string to execute, taking results from the local and remote servers.\n\nExamples:\n\n  \"search *\"\n\n  \"search * | outputcsv\"", 
             "validation": ""
           }, 
           "search_listener": {
             "datatype": "String", 
-            "default": "UNDONE", 
-            "required": "UNDONE", 
+            "default": "", 
+            "required": "false", 
             "summary": "Registers a search state listener with the search.\n\nUse the format <code>search_state;results_condition;http_method;uri;</code>\n\nFor example: <code>search_listener=onResults;true;POST;/servicesNS/admin/search/saved/search/foobar/notify;</code>\n", 
             "validation": ""
           }, 
@@ -16527,7 +16638,7 @@ apis =
           }, 
           "sync_bundle_replication": {
             "datatype": "Boolean", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "Specifies whether this search should wait for bundle replication to complete.", 
             "validation": ""
@@ -16554,7 +16665,7 @@ apis =
             "summary": "Created successfully."
           }
         }, 
-        "summary": "Starts a new search, returning the search ID.\n\nThe search parameter is a search language string that specifies the search.", 
+        "summary": "Starts a new search, returning the search ID (<code>&lt;sid&gt;</code>).\n\nThe search parameter is a search language string that specifies the search.", 
         "urlParams": {}
       }
     }, 
@@ -16714,7 +16825,7 @@ apis =
           "search_listener": {
             "datatype": "String", 
             "default": "", 
-            "required": "UNDONE", 
+            "required": "false", 
             "summary": "Same as for POST search/jobs.", 
             "validation": ""
           }, 
@@ -16757,7 +16868,8 @@ apis =
         "summary": "Performs a search identical to POST search/jobs, except the search is blocking and does not leave a job behind.", 
         "urlParams": {}
       }
-    }
+    }, 
+    "summary": "Allows for running synchronous searches."
   }, 
   "search/jobs/{search_id}": {
     "methods": {
@@ -16772,7 +16884,7 @@ apis =
             "summary": "Search job does not exist."
           }
         }, 
-        "summary": "Deletes the search job specified by {search_id}.", 
+        "summary": "Deletes the search job specified by {search_id}.\n\n{search_id} is the <code>&lt;sid&gt;</code> field returned from the GET operation for the <code>search/jobs</code> endpoint.", 
         "urlParams": {
           "search_id": {
             "required": "true", 
@@ -16791,7 +16903,7 @@ apis =
             "summary": "Search job does not exist."
           }
         }, 
-        "summary": "Return summary information about the search job specified by {search_id}.\n\nYou can get a search id from the <sid> field returned from the GET operation for the <code>search/jobs</code> endpoint.", 
+        "summary": "Return summary information about the search job specified by {search_id}.\n\nYou can get a search ID from the <code><sid></code> field returned from the GET operation for the <code>search/jobs</code> endpoint.", 
         "urlParams": {
           "search_id": {
             "required": "true", 
@@ -16807,10 +16919,10 @@ apis =
         "params": {
           "action": {
             "datatype": "Enum", 
-            "default": "UNDONE", 
-            "required": "false", 
-            "summary": "Valid values: (pause &#124; unpause &#124; finalize &#124; cancel &#124; touch &#124; setttl &#124; setpriority &#124; enablepreview &#124; disablepreview)\n\nThe control action to execute.\n\n  pause:  Suspends the execution of the current search.\n  unpause:  Resumes the execution of the current search, if paused.\n  finalize:  Stops the search, and provides intermediate results to the /results endpoint.\n  cancel:  Stops the current search and deletes the result cache.\n  touch:   Extends the expiration time of the search to now + ttl\n  setttl:  Change the ttl of the search. Arguments: ttl=&lt;number&gt;\n  setpriority:  Sets the priority of the search process. Arguments: priority=&lt;0-10&gt;\n  enablepreview:  Enable preview generation (may slow search considerably).\n  disablepreview:  Disable preview generation.", 
-            "validation": "UNDONE"
+            "default": "", 
+            "required": "true", 
+            "summary": "Valid values: (pause &#124; unpause &#124; finalize &#124; cancel &#124; touch &#124; setttl &#124; setpriority &#124; enablepreview &#124; disablepreview)\n\nThe control action to execute.\n\npause:  Suspends the execution of the current search.\n\nunpause:  Resumes the execution of the current search, if paused.\n\nfinalize:  Stops the search, and provides intermediate results to the /results endpoint.\n\ncancel:  Stops the current search and deletes the result cache.\n\ntouch:   Extends the expiration time of the search to now + ttl\n\nsetttl:  Change the ttl of the search. Arguments: ttl=&lt;number&gt;\n\nsetpriority:  Sets the priority of the search process. Arguments: priority=&lt;0-10&gt;\n\nenablepreview:  Enable preview generation (may slow search considerably).\n\ndisablepreview:  Disable preview generation.", 
+            "validation": ""
           }
         }, 
         "request": "", 
@@ -16845,91 +16957,91 @@ apis =
             "default": "100", 
             "required": "false", 
             "summary": "The maximum number of results to return. If value is set to <code>0</code>, then all available results are returned. Default value is <code>100</code>.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "earliest_time": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "", 
             "summary": "A time string representing the earliest (inclusive), respectively, time bounds for the results to be returned. If not specified, the range applies to all results found.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "f": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "A field to return for the event set. \n\nYou can pass multiple <code>POST f</code> arguments if multiple field are required. If <code>field_list</code> and <code>f</code> are provided, the union of the lists is used.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "field_list": {
             "datatype": "String", 
             "default": "<code>*</code>", 
             "required": "", 
             "summary": "Deprecated. Consider using <code>f</code>.\n\nA comma-separated list of the fields to return for the event set.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "latest_time": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "A time string representing the latest (exclusive), respectively, time bounds for the results to be returned. If not specified, the range applies to all results found.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "max_lines": {
             "datatype": "Number", 
-            "default": "UNDONE", 
+            "default": "0", 
             "required": "false", 
             "summary": "The maximum lines that any single event's _raw field should contain. \n\nSpecify <code>0</code> to specify no limit.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "offset": {
             "datatype": "Number", 
-            "default": "UNDONE", 
+            "default": "0", 
             "required": "false", 
             "summary": "The first result (inclusive) from which to begin returning data. \n\nThis value is 0-indexed. Default value is 0. \n\nIn 4.1+, negative offsets are allowed and are added to <code>count</code> to compute the absolute offset (for example, <code>offset=-1</code> is the last available offset. Offsets in the results are always absolute and never negative.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "output_mode": {
             "datatype": "Enum", 
             "default": "xml", 
             "required": "false", 
             "summary": "Valid values: (csv &#124; raw &#124; xml &#124; json)\n\nSpecifies what format the output should be returned in.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "output_time_format": {
             "datatype": "String", 
             "default": "<code>time_format</code>", 
             "required": "false", 
             "summary": "Formats a UTC time. Defaults to what is specified in <code>time_format</code>.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "search": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "The post processing search to apply to results. Can be any valid search language string.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "segmentation": {
             "datatype": "String", 
             "default": "raw", 
             "required": "false", 
             "summary": "The type of segmentation to perform on the data. This incudes an option to perform k/v segmentation.\n", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "time_format": {
             "datatype": "String", 
             "default": " %m/%d/%Y:%H:%M:%S", 
             "required": "false", 
             "summary": "Expression to convert a formatted time string from {start,end}_time into UTC seconds. \n\nIt defaults to %m/%d/%Y:%H:%M:%S", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "truncation_mode": {
             "datatype": "String", 
             "default": "abstract", 
             "required": "false", 
             "summary": "Specifies how \"max_lines\" should be achieved.\n\nValid values are {<code>abstract</code>, <code>truncate</code>}. Default value is <code>abstract</code>.", 
-            "validation": "UNDONE"
+            "validation": ""
           }
         }, 
         "request": "", 
@@ -16945,7 +17057,7 @@ apis =
             "summary": "Search job does not exist."
           }
         }, 
-        "summary": " Primary method for a client to fetch a set of UNTRANSFORMED events for the search job specified by {search_id}.\n\n<bold><i>See notes to docs on Spacecake</i></bold>.", 
+        "summary": "Primary method for a client to fetch a set of UNTRANSFORMED events for the search job specified by {search_id}.", 
         "urlParams": {
           "search_id": {
             "required": "true", 
@@ -16964,42 +17076,42 @@ apis =
             "default": "100", 
             "required": "false", 
             "summary": "The maximum number of results to return. If value is set to <code>0</code>, then all available results are returned.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "f": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "A field to return for the event set. \n\nYou can pass multiple <code>POST f</code> arguments if multiple field are required. If <code>field_list</code> and <code>f</code> are provided the union of the lists is used.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "field_list": {
             "datatype": "String", 
             "default": "<code>*</code>", 
             "required": "false", 
             "summary": "Specify a comma-separated list of the fields to return for the event set.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "offset": {
             "datatype": "Number", 
-            "default": "UNDONE", 
+            "default": "0", 
             "required": "false", 
             "summary": "The first result (inclusive) from which to begin returning data. \n\nThis value is 0-indexed. Default value is 0. \n\nIn 4.1+, negative offsets are allowed and are added to <code>count</code> to compute the absolute offset (for example, <code>offset=-1</code> is the last available offset). \n\nOffsets in the results are always absolute and never negative.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "output_mode": {
             "datatype": "Enum", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "Valid values: (csv &#124; raw &#124; xml &#124; json)\n\nSpecifies what format the output should be returned in.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "search": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "The post processing search to apply to results. Can be any valid search language string.", 
-            "validation": "UNDONE"
+            "validation": ""
           }
         }, 
         "request": "", 
@@ -17034,42 +17146,42 @@ apis =
             "default": "100", 
             "required": "false", 
             "summary": "The maximum number of results to return. \n\nIf value is set to <code>0</code>, then all available results are returned.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "f": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "A field to return for the event set. \n\nYou can pass multiple <code>POST f</code> arguments if multiple field are required. If <code>field_list</code> and <code>f</code> are provided the union of the lists is used.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "field_list": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "Specify a comma-separated list of the fields to return for the event set.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "offset": {
             "datatype": "Number", 
-            "default": "UNDONE", 
+            "default": "0", 
             "required": "false", 
             "summary": "The first result (inclusive) from which to begin returning data. \n\nThis value is 0-indexed. Default value is 0. \n\nIn 4.1+, negative offsets are allowed and are added to <code>count</code> to compute the absolute offset (for example, <code>offset=-1</code> is the last available offset). \n\nOffsets in the results are always absolute and never negative.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "output_mode": {
             "datatype": "String", 
             "default": "xml", 
             "required": "false", 
             "summary": "Specifies what format the output should be returned in.\n\nValid values are:\n\n  csv\n  raw\n  xml\n  json\n", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "search": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "The post processing search to apply to results. Can be any valid search language string.", 
-            "validation": "UNDONE"
+            "validation": ""
           }
         }, 
         "request": "", 
@@ -17085,7 +17197,7 @@ apis =
             "summary": "Search job does not exist."
           }
         }, 
-        "summary": "Same as the <code>search/jobs/results</code> endpoint, except if the job is not done, returns preview results (if possilbe).", 
+        "summary": "Same as the <code>search/jobs/results</code> endpoint, except if the job is not done, returns preview results (if possible).", 
         "urlParams": {
           "search_id": {
             "required": "true", 
@@ -17104,7 +17216,7 @@ apis =
             "default": "false", 
             "required": "false", 
             "summary": "If true, returns search.log as an attachment. Otherwise, streams search.log.", 
-            "validation": "UNDONE"
+            "validation": ""
           }
         }, 
         "request": "", 
@@ -17136,66 +17248,66 @@ apis =
         "params": {
           "earliest_time": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "Time string representing the earliest (inclusive), respectively, time bounds for the search. \n\nThe time string can be either a UTC time (with fractional seconds), a relative time specifier (to now) or a formatted time string. (Also see comment for the search_mode variable.)", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "f": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "", 
             "summary": "A field to return for the event set.\n\nYou can pass multiple <code>POST f</code> arguments if multiple field are required. If <code>field_list</code> and <code>f</code> are provided, the union of the lists is used.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "field_list": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "Deprecated. Consider using <code>f</code>.\n\nA comma-separated list of the fields to return for the event set.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "latest_time": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "Time string representing the latest (exclusive), respectively, time bounds for the search. \n\nThe time string can be either a UTC time (with fractional seconds), a relative time specifier (to now) or a formatted time string. (Also see comment for the search_mode variable.) ", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "min_freq": {
             "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "For each key, the fraction of results this key must occur in to be displayed.\n\nExpress the fraction as a number between 0 and 1.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "output_time_format": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "%FT%T.%Q%:z", 
             "required": "false", 
             "summary": "Formats a UTC time. Defaults to what is specified in <code>time_format</code>.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "search": {
             "datatype": "String", 
             "default": "Empty string", 
             "required": "false", 
             "summary": "Specifies a substring that all returned events should contain either in one of their values or tags.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "time_format": {
             "datatype": "String", 
             "default": " %m/%d/%Y:%H:%M:%", 
             "required": "false", 
             "summary": "Expression to convert a formatted time string from {start,end}_time into UTC seconds.\nIt defaults to %m/%d/%Y:%H:%M:%S", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "top_count": {
             "datatype": "Number", 
             "default": "10", 
             "required": "false", 
             "summary": "For each key, specfies how many of the most frequent items to return.", 
-            "validation": "UNDONE"
+            "validation": ""
           }
         }, 
         "request": "", 
@@ -17227,17 +17339,17 @@ apis =
         "params": {
           "output_time_format": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "%FT%T.%Q%:z", 
             "required": "false", 
             "summary": "Formats a UTC time. Defaults to what is specified in <code>time_format</code>.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "time_format": {
             "datatype": "String", 
             "default": " %m/%d/%Y:%H:%M:%S", 
             "required": "false", 
             "summary": "Expression to convert a formatted time string from {start,end}_time into UTC seconds. \n\nIt defaults to %m/%d/%Y:%H:%M:%S", 
-            "validation": "UNDONE"
+            "validation": ""
           }
         }, 
         "request": "", 
@@ -17272,35 +17384,35 @@ apis =
             "default": "false", 
             "required": "false", 
             "summary": "If <code>true</code>, reverse lookups are done to expand the search expression.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "output_mode": {
             "datatype": "String", 
             "default": "xml", 
             "required": "false", 
             "summary": "Specify output formatting. Select from either:\n\n  xml:  XML formatting\n  json: JSON formatting\n", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "parse_only": {
             "datatype": "Boolean", 
             "default": "false", 
             "required": "false", 
             "summary": "If true, disables expansion of search due evaluation of subsearches, time term expansion, lookups, tags, eventtypes, sourcetype alias.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "q": {
             "datatype": "String", 
-            "default": "UNDONE", 
-            "required": "false", 
+            "default": "", 
+            "required": "true", 
             "summary": "The search string to parse.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "reload_macros": {
             "datatype": "Boolean", 
             "default": "true", 
             "required": "false", 
             "summary": "If true, reload macro definitions from macros.conf.\n", 
-            "validation": "UNDONE"
+            "validation": ""
           }
         }, 
         "request": "", 
@@ -17326,7 +17438,7 @@ apis =
             "summary": "Listed successfully."
           }
         }, 
-        "summary": "Returns a liost of all search time tags.", 
+        "summary": "Returns a list of all search time tags.", 
         "urlParams": {}
       }
     }, 
@@ -17376,17 +17488,17 @@ apis =
         "params": {
           "add": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "A field:value pair to tag with {tag_name}.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "delete": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "A field:value pair to remove from {tag_name}.", 
-            "validation": "UNDONE"
+            "validation": ""
           }
         }, 
         "request": "", 
@@ -17399,10 +17511,10 @@ apis =
             "summary": "Field successfuly added to tag."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }
         }, 
-        "summary": "Edits the field:value pairs associated with {tag_name}. \n\nMultiple field:value pairs can be attached by passing multiple add or delete form parameters. The server processes all of the adds first, and then deletes.\n\nIf {tag_name} does not exist, then the tag is created inline. Notification is sent to the client using the HTTP 201 status.", 
+        "summary": "Updates the field:value pairs associated with {tag_name}. \n\nMultiple field:value pairs can be attached by passing multiple add or delete form parameters. The server processes all of the adds first, and then deletes.\n\nIf {tag_name} does not exist, then the tag is created inline. Notification is sent to the client using the HTTP 201 status.", 
         "urlParams": {
           "tag_name": {
             "required": "true", 
@@ -17418,31 +17530,31 @@ apis =
         "params": {
           "now": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "The time to use as current time for relative time identifiers. \n\nCan itself either be a relative time (from the real \"now\" time) or an absolute time in the format specified by <code>time_format</code>.\n", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "output_time_format": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "%FT%T.%Q%:z", 
             "required": "false", 
             "summary": "Used to format a UTC time. Defaults to the value of <code>time_format</code>.", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "time": {
             "datatype": "String", 
-            "default": "UNDONE", 
-            "required": "false", 
+            "default": "", 
+            "required": "true", 
             "summary": "The time argument to parse. \n\nAcceptable inputs are either a relative time identifier or an absolute time. Multiple time arguments can be passed by specifying multiple time parameters.\n", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
           "time_format": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "%FT%T.%Q%:z", 
             "required": "false", 
             "summary": "The format (<code>strftime</code>) of the absolute time format passed in time. \n\nThis field is not used if a relative time identifier is provided. For absolute times, the default value is the ISO-8601 format.\n", 
-            "validation": "UNDONE"
+            "validation": ""
           }
         }, 
         "request": "", 
@@ -17455,7 +17567,7 @@ apis =
             "summary": "No timeparser arguments given."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }
         }, 
         "summary": "Returns a lookup table of time arguments to absolute timestamps.", 
@@ -17468,19 +17580,26 @@ apis =
     "methods": {
       "GET": {
         "params": {
+          "count": {
+            "datatype": "Number", 
+            "default": "", 
+            "required": "true", 
+            "summary": "The number of counts to return for this term.", 
+            "validation": ""
+          }, 
           "output_mode": {
             "datatype": "String", 
-            "default": "UNDONE", 
+            "default": "", 
             "required": "false", 
             "summary": "Format for the output. Select from either:\n\n  xml:  XML format\n  json:  JSON format\n", 
-            "validation": "UNDONE"
+            "validation": ""
           }, 
-          "q": {
+          "prefix": {
             "datatype": "String", 
-            "default": "UNDONE", 
-            "required": "false", 
-            "summary": "The search string to parse.", 
-            "validation": "UNDONE"
+            "default": "", 
+            "required": "true", 
+            "summary": "The term for which to return typeahead results.", 
+            "validation": ""
           }
         }, 
         "request": "", 
@@ -17488,6 +17607,18 @@ apis =
         "returns": {
           "200": {
             "summary": "Listed successfully."
+          }, 
+          "204": {
+            "summary": "No Content. The server successfully processed the request, but is not returning any content."
+          }, 
+          "400": {
+            "summary": "Request error.  See response body for details."
+          }, 
+          "403": {
+            "summary": "Insufficient permissions to view typeahead results."
+          }, 
+          "405": {
+            "summary": "Invalid method (only GET is supported)."
           }
         }, 
         "summary": "Returns a list of words or descriptions for possible auto-complete terms.\n\ncount is a required parameter to specify how many descriptions to list. prefix is a required parameter to specify a string for terms in your index.", 
@@ -17502,14 +17633,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -17523,7 +17654,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -17537,7 +17668,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -17551,7 +17682,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -17560,10 +17691,10 @@ apis =
             "summary": "Insufficient permissions to view server controls."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Lists the actions that can be performed at this endpoint.", 
@@ -17583,7 +17714,7 @@ apis =
             "summary": "Restart requested successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -17595,10 +17726,10 @@ apis =
             "summary": "Insufficient permissions to restart Splunk."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -17607,7 +17738,8 @@ apis =
         "summary": "Restarts the Splunk server.", 
         "urlParams": {}
       }
-    }
+    }, 
+    "summary": "Allows for restarting Splunk."
   }, 
   "server/info": {
     "methods": {
@@ -17615,14 +17747,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -17636,7 +17768,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -17650,7 +17782,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -17664,7 +17796,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -17673,17 +17805,17 @@ apis =
             "summary": "Insufficient permissions to view server configuration info."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Enumerates the following information about the running splunkd: \n\n  build\n  cpu_arch (CPU architecure)\n  guid (GUID for this splunk instance)\n  isFree\n  isTrial\n  licenseKeys (hashes)\n  licenseSignature\n  licenseState\n  master_guid (GUID of the license master)\n  mode\n  os_build\n  os_name\n  os_version\n  serverName\n  version", 
         "urlParams": {}
       }
     }, 
-    "summary": "Provides access to configuration information about the server.\n\nThis includes information such as:\n\n  build\n  cpu_arch (CPU architecure)\n  guid (GUID for this splunk instance)\n  isFree\n  isTrial\n  licenseKeys (hashes)\n  licenseSignature\n  licenseState\n  master_guid (GUID of the license master)\n  mode\n  os_build\n  os_name\n  os_version\n  serverName\n  version"
+    "summary": "Provides access to configuration information about the server."
   }, 
   "server/info/{name}": {
     "methods": {
@@ -17696,7 +17828,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -17708,10 +17840,10 @@ apis =
             "summary": "Server configuration info does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Provides the identical information as /services/server/info. The only valid {name} here is server-info.", 
@@ -17730,14 +17862,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -17751,7 +17883,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -17765,7 +17897,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -17779,7 +17911,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -17788,10 +17920,10 @@ apis =
             "summary": "Insufficient permissions to view logger info."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Enumerates all splunkd logging categories, either specified in code or in $SPLUNK_HOME/etc/log.cfg.", 
@@ -17811,7 +17943,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -17823,10 +17955,10 @@ apis =
             "summary": "Logger info does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Describes a specific splunkd logging category.", 
@@ -17855,7 +17987,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -17870,10 +18002,10 @@ apis =
             "summary": "Logger configuration does not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -17895,14 +18027,14 @@ apis =
         "config": "", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -17916,7 +18048,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -17930,7 +18062,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -17944,7 +18076,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -17953,17 +18085,17 @@ apis =
             "summary": "Insufficient permissions to view server settings."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns the server configuration of an instance of Splunk.", 
         "urlParams": {}
       }
     }, 
-    "summary": "Provides access to server configuratin information for an instance of Splunk."
+    "summary": "Provides access to server configuration information for an instance of Splunk."
   }, 
   "server/settings/{name}": {
     "methods": {
@@ -17976,7 +18108,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -17988,10 +18120,10 @@ apis =
             "summary": "Server settings do not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Returns the server configuration of this instance of Splunk.", 
@@ -18058,7 +18190,7 @@ apis =
             "datatype": "String", 
             "default": "", 
             "required": "false", 
-            "summary": "Pecify an ASCII String to set the name used to identify this Splunk instance for features such as distributed search. Defaults to <hostname>-<user running splunk>.", 
+            "summary": "Specify an ASCII String to set the name used to identify this Splunk instance for features such as distributed search. Defaults to <hostname>-<user running splunk>.", 
             "validation": ""
           }, 
           "sessionTimeout": {
@@ -18090,7 +18222,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -18105,10 +18237,10 @@ apis =
             "summary": "Server settings do not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -18130,14 +18262,14 @@ apis =
         "config": "app", 
         "params": {
           "count": {
-            "datatype": "Int", 
+            "datatype": "Number", 
             "default": "30", 
             "required": "false", 
             "summary": "Maximum number of items to return.", 
             "validation": ""
           }, 
           "offset": {
-            "datatype": "Unsigned Int", 
+            "datatype": "Number", 
             "default": "0", 
             "required": "false", 
             "summary": "Index for first item to return.", 
@@ -18151,7 +18283,7 @@ apis =
             "validation": ""
           }, 
           "sort_dir": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Direction to sort by (asc/desc).", 
@@ -18165,7 +18297,7 @@ apis =
             "validation": ""
           }, 
           "sort_mode": {
-            "datatype": "String", 
+            "datatype": "Enum", 
             "default": "name", 
             "required": "false", 
             "summary": "Collating sequence for the sort (auto, alpha, alpha_case, num).", 
@@ -18179,7 +18311,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -18188,10 +18320,10 @@ apis =
             "summary": "Insufficient permissions to view credentials."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List available credentials", 
@@ -18229,7 +18361,7 @@ apis =
             "summary": "Created successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -18241,10 +18373,10 @@ apis =
             "summary": "Insufficient permissions to create credentials."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -18254,7 +18386,7 @@ apis =
         "urlParams": {}
       }
     }, 
-    "summary": "Allows for management of secure credentials"
+    "summary": "Allows for management of secure credentials. The password is encrypted with a secret key that resides on the same machine. The clear text passwords can be accessed by users that have access to this service. NOTE: only users with admin priviledges can access this endpoint"
   }, 
   "storage/passwords/{name}": {
     "methods": {
@@ -18267,7 +18399,7 @@ apis =
             "summary": "Deleted successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -18279,10 +18411,10 @@ apis =
             "summary": "Credentials do not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "Delete the identified credentials", 
@@ -18302,7 +18434,7 @@ apis =
             "summary": "Listed successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -18314,10 +18446,10 @@ apis =
             "summary": "Credentials do not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }
         }, 
         "summary": "List only the credentials identified by the given id", 
@@ -18346,7 +18478,7 @@ apis =
             "summary": "Updated successfully."
           }, 
           "400": {
-            "summary": "Request error.  See returned XML for explanation."
+            "summary": "Request error.  See response body for details."
           }, 
           "401": {
             "summary": "Authentication failure: must pass valid credentials with request."
@@ -18361,10 +18493,10 @@ apis =
             "summary": "Credentials do not exist."
           }, 
           "409": {
-            "summary": "Request error: this operation is invalid for this item.  See returned XML for explanation."
+            "summary": "Request error: this operation is invalid for this item.  See response body for details."
           }, 
           "500": {
-            "summary": "Internal server error.  See returned XML for explanation."
+            "summary": "Internal server error.  See response body for details."
           }, 
           "503": {
             "summary": "This feature has been disabled in Splunk configuration files."
@@ -18381,4 +18513,3 @@ apis =
     }
   }
 }
-;
