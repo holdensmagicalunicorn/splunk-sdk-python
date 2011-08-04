@@ -486,7 +486,7 @@ class Inputs(Endpoint):
                 
             entry = load(response).feed.get('entry', None)
             if entry is None: continue
-            if not isinstance(entry, list): entry = [entry] # UNDONE
+            if not isinstance(entry, list): entry = [entry]
             for item in entry:
                 name = item.title
                 key = self.itemkey(kind, name)
