@@ -51,10 +51,6 @@ def start(script, stdin=None, stdout=PIPE, stderr=None):
     if isinstance(script, str):
         script = script.split()
     script = ["python"] + script
-    # Note: the following assumes that we only get commands with forward
-    # slashes used as path separators. This is broken if we ever see forward
-    # slashes anywhere else (which we currently dont).
-    script = [item.replace('/', os.sep) for item in script] # fixup path sep
     return Popen(script, stdin=stdin, stdout=stdout, stderr=stderr)
 
 # Rudimentary sanity check for each of the examples
