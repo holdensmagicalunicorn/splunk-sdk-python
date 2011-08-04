@@ -18,6 +18,11 @@ import urllib2, sys
 import splunk.client, utils
 import splunk.results as results
 
+__all__ = [
+    "TimeRange",
+    "AnalyticsRetriever"
+]
+
 ANALYTICS_INDEX_NAME = "sample_analytics"
 ANALYTICS_SOURCETYPE = "sample_analytics"
 APPLICATION_KEY = "application"
@@ -77,6 +82,10 @@ class AnalyticsRetriever:
         for kind,result in reader:
             if kind == results.RESULT:
                 for field, count in result.iteritems():
+                    # Ignore internal ResultsReader properties
+                    if field.startswith("$"):
+                        continue
+
                     properties.append({
                         "name": field,
                         "count": int(count or 0)
@@ -123,6 +132,10 @@ class AnalyticsRetriever:
                 # The rest is in the form of [event/property]:count
                 # pairs, so we decode those
                 for key,count in result.iteritems():
+                    # Ignore internal ResultsReader properties
+                    if key.startswith("$"):
+                        continue
+
                     entry = over_time.get(key, [])
                     entry.append({
                         "count": int(count or 0),
@@ -131,18 +144,6 @@ class AnalyticsRetriever:
                     over_time[key] = entry
 
         return over_time
-
-    def events_summary(self):
-        query = 'search index="%s" application="%s" | timechart span=1w count by event | rename _time as time | eval time=strftime(time, "%%a, %%d %%B") | fields - _*' % (
-            ANALYTICS_INDEX_NAME, self.application_name, 
-        )
-        job = self.splunk.jobs.create(query, exec_mode="blocking")
-
-        summary = {}
-        reader = results.ResultsReader(job.results())
-        for kind,result in reader:
-            if kind == results.RESULT:
-                print result
 
 def main():
     usage = ""

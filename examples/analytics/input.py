@@ -18,6 +18,10 @@ import urllib2, sys
 from datetime import datetime
 import splunk.client, utils
 
+__all__ = [
+    "AnalyticsTracker",
+]
+
 ANALYTICS_INDEX_NAME = "sample_analytics"
 ANALYTICS_SOURCETYPE = "sample_analytics"
 APPLICATION_KEY = "application"
