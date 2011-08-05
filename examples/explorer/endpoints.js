@@ -16442,7 +16442,7 @@ apis = {
             "summary": "Listed successfully."
           }
         }, 
-        "summary": "Returns a list of current searches. \n\nOptional filter arguments can be passed to specify searches. The user id is implied by the authentication to the call. See the response properties for <code>/search/jobs/<search_id></code> for descriptions of the job properties.", 
+        "summary": "Returns a list of current searches. \n\nOptional filter arguments can be passed to specify searches. The user id is implied by the authentication to the call. See the response properties for <code>/search/jobs/{search_id}</code> for descriptions of the job properties.", 
         "urlParams": {}
       }, 
       "POST": {
@@ -18513,3 +18513,4 @@ apis = {
     }
   }
 }
+;
