@@ -101,10 +101,6 @@ class XMLStream:
             raise StopIteration
             
 # A simplified XML 'reader' interface, that also abstracts the pulldom
-# implementation which I would like to replace someday.
-# UNDONE: Settings: nowhite, ...
-# UNDONE: Namespaces .. lname, qname, xname, prefix
-# UNDONE: Unsupported item kinds, eg: PI, DOC, ...
 TAG = "TAG"         # kind, name, attrs
 END = "END"         # kind, name
 VAL = "VAL"         # kind, value
@@ -139,12 +135,11 @@ class XMLReader:
     def expand(self):
         """Expands the current node into a minidom."""
         if not self.kind == TAG: 
-            raise Exception, "Illegal operation" # UNDONE
+            raise Exception, "Illegal operation"
         node = self._item[1]
         self._items.expandNode(node)
         return node
 
-    # UNDONE: Add indexed item property for accessing attrs?
     @property
     def item(self):
         return {
