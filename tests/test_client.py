@@ -24,10 +24,6 @@ from utils import parse
 
 opts = None # Command line options
 
-class PackageTestCase(unittest.TestCase):
-    def test_names(self):
-        names = dir(splunk)
-
 # When an event is submitted to an index it takes a while before the event
 # is registered by the index's totalEventCount.
 def wait_event_count(index, count, secs):
