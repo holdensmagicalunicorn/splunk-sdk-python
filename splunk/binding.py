@@ -59,22 +59,6 @@ class Context:
     def _headers(self):
         return [("Authorization", self.token)]
 
-    def bind(self, path, method = "get"):
-        """Returns a lambda that 'captures' the current context and the
-           given path and method and that can be used to simplify subsequent
-           requests using the context, path & method."""
-        func = {
-            'get': self.get,
-            'delete': self.delete,
-            'post': self.post 
-        }.get(method.lower(), None) 
-        if func is None: 
-            raise ValueError, "Unknown method '%s'" % method
-        path = self.fullpath(path)
-        if path.find('{') == -1:
-            return lambda **kwargs: func(path, **kwargs)
-        return lambda *args, **kwargs: func(path.format(*args), **kwargs)
-
     def connect(self):
         """Open a connection (socket) to the service (host:port)."""
         cn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -244,9 +228,7 @@ class HttpLib(object):
             raise HTTPError(response) 
         return response
 
-#
-# Following is the default HTTP request handler. 
-#
+# Converts an httplib response into a file-like object.
 class ResponseReader:
     def __init__(self, response):
         self._response = response
@@ -257,6 +239,7 @@ class ResponseReader:
     def read(self, size = None):
         return self._response.read(size)
 
+# The default HTTP request handler.
 def handler(key_file=None, cert_file=None, timeout=None):
     """Creates an HTTP request handler parameterized with the given args."""
 

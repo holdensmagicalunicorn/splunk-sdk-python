@@ -17,24 +17,35 @@
    binds to a sampling of endpoints showing how to access collections,
    entities and 'method-like' endpoints."""
 
+import sys
+
 from splunk.binding import connect
 
 from utils import parse
 
 class Service:
     def __init__(self, context):
-        self.apps = context.bind("apps/local")
-        self.indexes = context.bind("data/indexes")
-        self.info = context.bind("server/info")
-        self.settings = context.bind("server/settings")
-        self.export = context.bind("search/jobs/export", "post")
+        self.context = context
+
+    def apps(self):
+        return self.context.get("apps/local")
+
+    def indexes(self):
+        return self.context.get("data/indexes")
+
+    def info(self):
+        return self.context.get("server/info")
+
+    def settings(self):
+        return self.context.get("server/settings")
 
     def search(self, query, **kwargs):
-        return self.export(search=query, **kwargs)
+        return self.context.post("search/jobs/export", search=query, **kwargs)
 
 def main(argv):
     opts = parse(argv, {}, ".splunkrc")
-    service = Service(connect(**opts.kwargs))
+    context = connect(**opts.kwargs)
+    service = Service(context)
     assert service.apps().status == 200
     assert service.indexes().status == 200
     assert service.info().status == 200
@@ -42,5 +53,4 @@ def main(argv):
     assert service.search("search 404").status == 200
 
 if __name__ == "__main__":
-    import sys
     main(sys.argv[1:])
