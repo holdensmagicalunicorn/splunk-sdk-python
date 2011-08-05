@@ -12,8 +12,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# UNDONE: self.namespace should default to actual string and not None
-
 """Low-level 'binding' interface to the Splunk REST API."""
 
 import httplib
@@ -75,12 +73,8 @@ class Context:
         path = self.fullpath(path)
         if path.find('{') == -1:
             return lambda **kwargs: func(path, **kwargs)
-        # UNDONE: Need some better error checking on the path format string,
-        # eg: check that all replacements are positional and that the number 
-        # of given args matches the number of expected replacements.
         return lambda *args, **kwargs: func(path.format(*args), **kwargs)
 
-    # UNDONE: Need to reconcile the following with pluggable HTTP handlers.
     def connect(self):
         """Open a connection (socket) to the service (host:port)."""
         cn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -253,9 +247,6 @@ class HttpLib(object):
 #
 # Following is the default HTTP request handler. 
 #
-
-# Wrap the httplib response object so that it looks like a file-like object.
-# UNDONE: Complete implementation of file-like object, eg: __iter__?
 class ResponseReader:
     def __init__(self, response):
         self._response = response
