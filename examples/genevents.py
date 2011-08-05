@@ -28,7 +28,7 @@ SPLUNK_PORT = 9002
 
 INGEST_TYPE = ["stream", "submit", "tcp"]
 
-CLI_RULES = {
+RULES = {
    'ingest': {
         'flags': ["--ingest"],
         'default': 'stream',
@@ -105,7 +105,7 @@ def main():
         print "must supply an index name"
         sys.exit(1)
 
-    opts = parse(argv, CLI_RULES, ".splunkrc", usage=usage)
+    opts = parse(argv, RULES, ".splunkrc", usage=usage)
     service = connect(**opts.kwargs)
 
     if opts.kwargs['ingest'] not in INGEST_TYPE:
