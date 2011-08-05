@@ -25,13 +25,17 @@ License 2.0. Details can be found in the file LICENSE.
 
 ## This SDK is a Preview Release
 
-1.  This Preview release a pre-beta release.  There will also be a beta release prior to a general release.  It is incomplete and may have bugs.
+1.  This Preview release a pre-beta release.  There will also be a beta release 
+    prior to a general release.  It is incomplete and may have bugs.
 
-2.  The Apache license only applies to the SDK and no other Software provided by Splunk.
+2.  The Apache license only applies to the SDK and no other Software provided 
+    by Splunk.
 
-3.  Splunk in using the Apache license is not providing any warranties, indemnification or accepting any liabilities  with the Preview SDK.
+3.  Splunk in using the Apache license is not providing any warranties, 
+    indemnification or accepting any liabilities  with the Preview SDK.
 
-4.  Splunk is not accepting any Contributions to the Preview release of the SDK.  All Contributions during the Preview SDK will be returned without review.
+4.  Splunk is not accepting any Contributions to the Preview release of the SDK.  
+    All Contributions during the Preview SDK will be returned without review.
 
 ## Getting Started
 
@@ -103,7 +107,8 @@ engine's REST API and by accessing the various `splunkd` extension points such
 as custom search commands, lookup functions, scripted inputs and custom REST
 handlers.
 
-You can find additional information about building applications on Splunk at our developer portal at http://dev.splunk.com.
+You can find additional information about building applications on Splunk at 
+our developer portal at http://dev.splunk.com.
 
 ### Hello Splunk
 
@@ -130,8 +135,8 @@ You can see an example use of the library here:
     print response.body.read()
 
 The second layer is referred to as the _client_ layer and builds on the 
-_binding_ layer to provide a friendlier interface to Splunk that abstracts away
-some of the lower level details of the _binding_ layer.
+_binding_ layer to provide a friendlier interface to Splunk that abstracts 
+away some of the lower level details of the _binding_ layer.
 
     from pprint import pprint
 
@@ -151,7 +156,8 @@ tests is simple and rewarding:
     cd tests
     ./runtests.py
 
-Alternatively, you can read more about our testing "framework" [here](https://github.com/splunk/splunk-sdk-python/tree/master/tests).
+Alternatively, you can read more about our testing "framework" 
+[here](https://github.com/splunk/splunk-sdk-python/tree/master/tests).
 
 ### Layout of the repository
 
@@ -187,19 +193,23 @@ For a gentle introduction to the Splunk product and some of its capabilities:
 
 ## Community
 
-* Email: Stay connected with other developers building on Splunk: https://groups.google.com/forum/#!forum/splunkdev 
+* Email: Stay connected with other developers building on Splunk: 
+    https://groups.google.com/forum/#!forum/splunkdev 
 * Issues: https://github.com/splunk/splunk-sdk-python/issues
-* Answers: Check out this tag on Splunk answers for:  http://splunk-base.splunk.com/tags/python/
+* Answers: Check out this tag on Splunk answers for:  
+    http://splunk-base.splunk.com/tags/python/
 * Blog:  http://blogs.splunk.com/dev/
 * Twitter: [@splunkdev](http://twitter.com/#!/splunkdev)
 
 ### How to contribute
 
-We aren't ready to accept code contributions yet, but will be shortly.  Check back on [dev.splunk.com](http://dev.splunk.com) or this README for more updates soon.
+We aren't ready to accept code contributions yet, but will be shortly.  Check 
+back on [dev.splunk.com](http://dev.splunk.com) or this README for more updates soon.
 
 ### Support
 
-* SDKs in Preview will not be Splunk supported.  Once the Python SDK moves to an Open Beta we will provide more detail on support.  
+* SDKs in Preview will not be Splunk supported.  Once the Python SDK moves to 
+an Open Beta we will provide more detail on support.  
 
 * Issues should be filed here:  https://github.com/splunk/splunk-sdk-python/issues
 
