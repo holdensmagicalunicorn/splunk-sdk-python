@@ -28,10 +28,7 @@
 
 """Client interface to the Splunk REST API."""
 
-# UNDONE: Cases below where we need to pass schema to data.load (eg: Collection)
-# UNDONE: Consider Entity.delete (if entity has 'remove' link?)
-
-# UNDONE: A note on collections ..
+# A note on collections ..
 #   * Entities have a kind, name & key. The kind is a tag that indicates the
 #     "kind" of entity, name is a friendly name for the entity suitable for
 #     display and key is a unique identifier for the Entity within its host
@@ -280,8 +277,6 @@ class Entity(Endpoint):
     def __init__(self, service, path, name=None):
         Endpoint.__init__(self, service, path)
         if name is not None: self.name = name
-        # UNDONE: The following should be derived by reading entity links
-        #self.delete = lambda: self.service.delete(self.path) # remove
         self.disable = lambda: self.post("disable")
         self.enable = lambda: self.post("enable")
         self.reload = lambda: self.post("_reload")
@@ -592,7 +587,7 @@ class Jobs(Collection):
         response = self.get()
         entry = load(response, MATCH_ENTRY_CONTENT)
         if entry is None: return []
-        if not isinstance(entry, list): entry = [entry] # UNDONE
+        if not isinstance(entry, list): entry = [entry]
         return [item.sid for item in entry]
 
 class Message(Entity):
