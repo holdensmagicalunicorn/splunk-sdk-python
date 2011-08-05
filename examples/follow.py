@@ -14,7 +14,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""Follows a realtime search and prints results to stdout."""
+"""Follows (aka tails) a realtime search using the job endpoints and prints
+   results to stdout."""
 
 from pprint import pprint
 import sys
