@@ -16,7 +16,6 @@ The Splunk developer platform enables developers to take advantage of the same
 technology used by the Splunk product to build exciting new applications that
 are enabled by Splunk's unique capabilities.
 
-You can learn more about the Splunk developer platform at http://dev.splunk.com
 
 ## License
 
@@ -111,7 +110,7 @@ as custom search commands, lookup functions, scripted inputs and custom REST
 handlers.
 
 You can find additional information about building applications on Splunk at 
-our developer portal at http://dev.splunk.com.
+our developer portal at COMING SOON. 
 
 ### Hello Splunk
 
@@ -184,7 +183,7 @@ Alternatively, you can read more about our testing "framework"
 You can find anything having to do with developing on Splunk at the Splunk
 developer portal:
 
-* http://dev.splunk.com
+* COMING SOON 
 
 Splunk REST API reference documentation: 
 
@@ -192,7 +191,7 @@ Splunk REST API reference documentation:
 
 For a gentle introduction to the Splunk product and some of its capabilities:
 
-* http://dev.splunk.com
+* COMING SOON 
 
 ## Community
 
@@ -207,7 +206,7 @@ For a gentle introduction to the Splunk product and some of its capabilities:
 ### How to contribute
 
 We aren't ready to accept code contributions yet, but will be shortly.  Check 
-back on [dev.splunk.com](http://dev.splunk.com) or this README for more updates soon.
+this README for more updates soon.
 
 ### Support
 
