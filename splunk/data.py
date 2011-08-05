@@ -12,14 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# UNDONE: Schema: target datatype
-# UNDONE: Schema: target default value
-# UNDONE: Figure out what to do with examples like: <a>foo<b>bar</b></a>, seems
-#  like we should at least detect and error on less 'well-formed' sdata inputs
-
 """A generic ATOM response loader."""
-
-# UNDONE: Warn/error on mixed content
 
 import sys
 from xml.etree.ElementTree import XML
