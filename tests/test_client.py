@@ -17,7 +17,7 @@ import sys
 from time import sleep
 import unittest
 
-import splunk
+import splunk.client
 from splunk.binding import HTTPError
 import splunk.results as results
 from utils import parse

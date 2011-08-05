@@ -12,16 +12,16 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from pprint import pprint
-
 import difflib
 import os
+from pprint import pprint
 from subprocess import PIPE, Popen
 import time
 import unittest 
 import sys
 
-import splunk
+import splunk.client
+
 from utils import parse
 
 opts = None # Command line options

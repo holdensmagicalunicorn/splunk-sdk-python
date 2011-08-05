@@ -16,6 +16,8 @@
 
 from distutils.core import setup
 
+import splunk
+
 setup(
     author="Splunk, Inc.",
 
@@ -31,7 +33,7 @@ setup(
 
     url="http://github.com/splunk/splunk-sdk-python",
 
-    version="0.0.1",
+    version=splunk.__version__,
 
     classifiers = [
         "Programming Language :: Python",

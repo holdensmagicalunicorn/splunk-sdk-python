@@ -77,43 +77,31 @@ def urllib2_handler(url, message, **kwargs):
         'body': StringIO(response.read())
     }
 
-class PackageTestCase(unittest.TestCase):
+def read_module_baseline(filename):
+    fd = open(filename, "r")
+    baseline = fd.read().replace("\n", "")
+    fd.close()
+    return baseline
+
+def check_module(modulename, filename):
+    __import__(modulename)
+    module = sys.modules[modulename]
+    names = str(dir(module))
+    baseline = read_module_baseline(filename)
+    return names == baseline
+
+class ModuleTestCase(unittest.TestCase):
+    # Verify that the library modules contain what we expect (more or less)
     def test_names(self):
-        import splunk
-        names = str(dir(splunk))
-        fd = open("package.methods/splunk", "r")
-        checknames = fd.read().replace("\n","")
-        fd.close()
-        self.assertTrue(names == checknames)
-
-        import splunk.binding
-        names = str(dir(splunk.binding))
-        fd = open("package.methods/splunk.binding", "r")
-        checknames = fd.read().replace("\n","")
-        fd.close()
-        self.assertTrue(names == checknames)
-
-        import splunk.client
-        names = str(dir(splunk.client))
-        fd = open("package.methods/splunk.client", "r")
-        checknames = fd.read().replace("\n","")
-        fd.close()
-        self.assertTrue(names == checknames)
-
-        import splunk.data
-        names = str(dir(splunk.data))
-        fd = open("package.methods/splunk.data", "r")
-        checknames = fd.read().replace("\n","")
-        fd.close()
-        self.assertTrue(names == checknames)
-
-        import splunk.results
-        names = str(dir(splunk.results))
-        fd = open("package.methods/splunk.results", "r")
-        checknames = fd.read().replace("\n","")
-        fd.close()
-        self.assertTrue(names == checknames)
-
+        modules = [
+            "splunk",
+            "splunk.binding",
+            "splunk.client",
+            "splunk.data",
+            "splunk.results"
+        ]
+        for module in modules:
+            self.assertTrue(check_module(module, module + ".baseline"))
 
 def isatom(body):
     """Answers if the given response body looks like ATOM."""

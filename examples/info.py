@@ -18,7 +18,7 @@
 
 import sys
 
-import splunk
+import splunk.client
 
 from utils import parse
 

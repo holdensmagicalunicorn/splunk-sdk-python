@@ -24,7 +24,7 @@ import sys, datetime
 import urllib
 from time import sleep
 
-import splunk
+import splunk.client
 from utils import parse, error
 
 # Placeholder for a specific implementation of `urllib2`,

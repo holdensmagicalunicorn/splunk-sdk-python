@@ -21,7 +21,7 @@ from pprint import pprint
 import sys
 from time import sleep
 
-import splunk
+from splunk.binding import HTTPError
 import splunk.client as client
 
 from utils import *
@@ -70,7 +70,7 @@ def main(argv):
 
     try:
         service.parse(search, parse_only=True)
-    except splunk.binding.HTTPError as e:
+    except HTTPError as e:
         cmdopts.error("query '%s' is invalid:\n\t%s" % (search, e.message), 2)
         return
 

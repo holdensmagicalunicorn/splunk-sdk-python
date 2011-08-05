@@ -30,7 +30,7 @@ except ImportError:
     pass
 import sys
 
-import splunk
+import splunk.client
 
 import utils
 
@@ -60,8 +60,8 @@ class Session(InteractiveInterpreter):
 
     # Run the interactive interpreter
     def run(self):
-        print "\nWelcome to Splunk SDK's python interactive shell\n"
-        print "%s connected to %s:%s - service object instantiated" % (
+        print "Welcome to Splunk SDK's Python interactive shell"
+        print "%s connected to %s:%s" % (
             self.service.username, 
             self.service.host, 
             self.service.port)

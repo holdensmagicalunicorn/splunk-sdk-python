@@ -17,7 +17,9 @@
 from cStringIO import StringIO
 import xml.dom.pulldom as pulldom
 
-__all__ = []
+__all__ = [
+    "ResultsReader"
+]
 
 # Splices a list of strings and file-like objects into a single stream
 class ListStream:

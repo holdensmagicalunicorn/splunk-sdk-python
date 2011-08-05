@@ -12,7 +12,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""The Splunk framework and tools."""
+"""Python library for Splunk."""
 
-import binding
-import client
+__version_info__ = (0, 0, 1)
+__version__ = ".".join(map(str, __version_info__))
+

@@ -19,7 +19,7 @@
 
 import sys
 
-import splunk
+import splunk.client
 
 from utils import error, parse
 

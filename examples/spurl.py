@@ -19,7 +19,7 @@
 import sys
 from xml.etree import ElementTree
 
-import splunk
+import splunk.binding
 
 import utils
 

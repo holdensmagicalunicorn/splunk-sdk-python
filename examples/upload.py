@@ -19,7 +19,7 @@
 from os import path
 import sys
 
-import splunk
+import splunk.client
 
 from utils import *
 
