@@ -10,15 +10,12 @@ documentation at http://www.splunk.com/base/Documentation/latest/SearchReference
 
 ## Example Commands
 
-    [Count the number of processes each user has in a unix "top" event]
+*   Count the number of processes each user has in a unix "top" event: 
     [examples/custom_search/bin/usercount.py](https://github.com/splunk/splunk-sdk-python/blob/master/examples/custom_search/bin/usercount.py)
-
-    [Count the top hashtags in a set of tweets]
+*   Count the top hashtags in a set of tweets:
     [examples/twitted/twitted/bin/tophashtags.py](https://github.com/splunk/splunk-sdk-python/blob/master/examples/twitted/twitted/bin/tophashtags.py)
-
-    [Add a hashtags multivalue field to each tweet]
+*   Add a hashtags multivalue field to each tweet:
     [examples/twitted/twitted/bin/hashtags.py](https://github.com/splunk/splunk-sdk-python/blob/master/examples/twitted/twitted/bin/hashtags.py)
-
 
 ## Defining a Custom Search Command
 
@@ -34,11 +31,11 @@ As noted above, a custom search command is just a Python script that reads data
 in and writes data out. However, it might be useful to make a distinction 
 between two subtypes of custom search commands:
 
-#   A streaming custom search command is one that is streamed data in. You can 
+*   A streaming custom search command is one that is streamed data in. You can 
     think of it as applying a "function"/"transformation" to each event and then 
     writing out the result of that operation. It is a kind of "mapper". An 
     example of such a command might be a command that adds a field to each event.
-#   A non-streaming custom search command expects to have all the data before 
+*   A non-streaming custom search command expects to have all the data before 
     it operates on it. As such, it is usually "reducing" the data into the 
     output by applying some sort of summary transformation on it. An example of 
     a non-streaming command is the 'stats' command, which will collect all the 
@@ -52,8 +49,8 @@ can enable or disable preview functionality in the configuration.
 Configuration of custom search commands is done in the local/commands.conf file 
 of your custom app. You can take a look at a few examples in the SDK:
 
-    [examples/custom_search/local/commands.conf](https://github.com/splunk/splunk-sdk-python/blob/master/examples/custom_search/local/commands.conf)
-    [examples/twitted/twitted/local/commands.conf](https://github.com/splunk/splunk-sdk-python/blob/master/examples/twitted/twitted/local/commands.conf)
+*   [examples/custom_search/local/commands.conf](https://github.com/splunk/splunk-sdk-python/blob/master/examples/custom_search/local/commands.conf)
+*   [examples/twitted/twitted/local/commands.conf](https://github.com/splunk/splunk-sdk-python/blob/master/examples/twitted/twitted/local/commands.conf)
 
 The authoritative documentation for commands.conf can be found here: 
 http://www.splunk.com/base/Documentation/latest/Admin/commandsconf
