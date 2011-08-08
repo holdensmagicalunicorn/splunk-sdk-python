@@ -163,7 +163,6 @@ def main():
     #print retriever.events_over_time(time_range = TimeRange.MONTH)
     #print retriever.applications()
     #print retriever.events_over_time()
-    #print retriever.events_summary()
 
 if __name__ == "__main__":
     main()

@@ -66,7 +66,7 @@ class AnalyticsTracker:
 
         return encoded
 
-    def track(self, event_name, time = datetime.now().isoformat() ,distinct_id = None, **props):
+    def track(self, event_name, time = datetime.now().isoformat(), distinct_id = None, **props):
         event = '%s %s="%s" %s="%s" ' % (
             time,
             APPLICATION_KEY, self.application_name, 
