@@ -164,7 +164,7 @@ class BindingTestCase(unittest.TestCase): # Base class
         except HTTPError as e:
             error_msg = "Unexpected error code: %d" % e.status
             if (isinstance(allowed_error_codes, list)):
-                self.assertTrue(e.status in allowed_error_Codes, error_msg)
+                self.assertTrue(e.status in allowed_error_codes, error_msg)
             else:
                 self.assertTrue(e.status == allowed_error_codes, error_msg)
         except Exception as e:
@@ -266,7 +266,7 @@ class UsersTestCase(BindingTestCase):
 
             # Test user does not have privs to create another user
             self.assertHttp(
-                404, 
+                [403, 404], 
                 usercx.post, 
                 PATH_USERS, 
                 name="flimzo", 
@@ -274,7 +274,7 @@ class UsersTestCase(BindingTestCase):
                 roles="user")
 
             # User cannot delete themselves ..
-            self.assertHttp(404, usercx.delete, userpath)
+            self.assertHttp([403, 404], usercx.delete, userpath)
     
         finally:
             self.delete(userpath)
