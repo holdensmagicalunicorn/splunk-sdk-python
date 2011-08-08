@@ -141,7 +141,7 @@ class ServiceTestCase(unittest.TestCase):
 
         # Scan indexes and make sure the entities look familiar
         attrs = [
-            'maxRunningProcessGroups', 'thawedPath', 'quarantineFutureSecs',
+            'thawedPath', 'quarantineFutureSecs',
             'isInternal', 'maxHotBuckets', 'disabled', 'homePath',
             'compressRawdata', 'maxWarmDBCount', 'frozenTimePeriodInSecs',
             'memPoolMB', 'maxHotSpanSecs', 'minTime', 'blockSignatureDatabase',
