@@ -178,6 +178,12 @@ Alternatively, you can read more about our testing "framework"
 <dd>Generic utility code shared by the examples and unit tests.</dd>
 </dl>
 
+### Branches
+
+The `master` branch always represents a stable and released version of the SDK.
+You can read more about our branching model on our 
+[Wiki](https://github.com/splunk/splunk-sdk-python/wiki/Branching-Model).
+
 ## Resources
 
 You can find anything having to do with developing on Splunk at the Splunk
