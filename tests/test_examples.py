@@ -182,6 +182,9 @@ class ExamplesTestCase(unittest.TestCase):
         result = run("spcmd.py --help")
         self.assertEquals(result, 0)
 
+        result = run("spcmd.py -e\"get('authentication/users')\"")
+        self.assertEquals(result, 0)
+
     def test_spurl(self):
         result = run("spurl.py")
         self.assertEquals(result, 0)

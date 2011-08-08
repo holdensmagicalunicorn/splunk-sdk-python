@@ -37,12 +37,10 @@ import utils
 class Session(InteractiveInterpreter):
     def __init__(self, **kwargs):
         self.service = splunk.client.connect(**kwargs)
-        self.bind = self.service.bind
         self.delete = self.service.delete
         self.get = self.service.get
         self.post = self.service.post
         locals = {
-            'bind': self.bind,
             'service': self.service,
             'connect': splunk.client.connect,
             'delete': self.delete,
