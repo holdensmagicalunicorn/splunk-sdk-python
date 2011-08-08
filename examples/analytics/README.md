@@ -16,7 +16,7 @@ of the data, together with the lack of schema and no need to update past events.
 The main component of the Analytics example are two pieces of reusable code
 meant to manage input and output of data into Splunk.
 
-### `AnalyticsTracker`
+### AnalyticsTracker
 
 The `input.py` file defines the "input" side of the Analytics service. If you 
 wanted to log some analytics data in your app, you would the `AnalyticsTracker`
@@ -67,7 +67,7 @@ The reason that we use the `analytics_prop__` prefix is to make sure there is
 no ambiguity between known fields such as `application` and `event` and user
 supplied `key=value=` properties.
 
-### `AnalyticsRetriever`
+### AnalyticsRetriever
 
 Similarly to `AnalyticsTracker`, the `output.py` file defines the "output" side
 of the Analytics service. If you want to extract the events you logged in using
@@ -130,7 +130,7 @@ Getting a graph of event information over time for a specific event:
 print retriever.events_over_time(event_name="login")
 ```
 
-### `server.py`
+### server.py
 
 The `server.py` file provides a sample "web app" built on top of the 
 Analytics service. It lists applications, and for each application 
