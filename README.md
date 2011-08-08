@@ -178,6 +178,11 @@ Alternatively, you can read more about our testing "framework"
 <dd>Generic utility code shared by the examples and unit tests.</dd>
 </dl>
 
+### Changelog
+
+You can look at the changelog for each version 
+[here](https://github.com/splunk/splunk-sdk-python/blob/master/CHANGELOG.md)
+
 ### Branches
 
 The `master` branch always represents a stable and released version of the SDK.
