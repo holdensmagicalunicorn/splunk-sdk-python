@@ -1,4 +1,4 @@
-### The ABCs of Calling the Splunk REST API
+# The ABCs of Calling the Splunk REST API
 
 This example shows three different approaches to making calls against the
 Splunk REST API.

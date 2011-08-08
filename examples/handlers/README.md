@@ -1,4 +1,4 @@
-### Pluggable HTTP Request Handlers
+# Pluggable HTTP Request Handlers
 
 The Splunk SDK library supports pluggable HTTP request handlers that enable
 the library to be used with alternate HTTP request implementations.

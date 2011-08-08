@@ -1,4 +1,4 @@
-### Twitted 
+# Twitted 
 
 This is a simple Splunk application that indexes the output of the Twitter
 "spritzer" and provides a collection of saved searches for inspecting the

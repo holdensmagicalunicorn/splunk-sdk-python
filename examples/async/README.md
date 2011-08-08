@@ -1,9 +1,11 @@
+# 'Async' use of the Python SDK
+
 This example is meant to serve two purposes. The first is an example of how
 to use the pluggable HTTP capabilities of the SDK binding layer, and the
 other is how one could use a coroutine-based library to achieve high
 concurrency with the SDK.
 
-#### Pluggable HTTP
+## Pluggable HTTP
 
 The example provides an implementation of the Splunk HTTP class using
 `urllib2` rather than the usual `httplib`. The reason is that most
@@ -12,11 +14,11 @@ of `urllib2`. The implementation here is simplified: it does not handle
 proxies, certificates and other advanced features. Instead, it just shows
 how one could write a custom HTTP handling class for their usage of the SDK.
 
-#### Concurrency
+## Concurrency
 
 You can run the example in two modes: synchronous and asynchronous.
 
-##### Synchronous Mode
+### Synchronous Mode
 
 To run the example in synchronous mode, use the following command:
 
@@ -27,7 +29,7 @@ synchronous nature of the builtin Python implementation of `urllib2`,
 we will wait until each search is finished before moving on to the next
 one.
 
-##### Asynchronous Mode
+### Asynchronous Mode
 
 To run the example in asynchronous mode, use the following command:
 
