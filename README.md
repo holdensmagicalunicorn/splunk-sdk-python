@@ -194,12 +194,15 @@ You can read more about our branching model on our
 You can find anything having to do with developing on Splunk at the Splunk
 developer portal:
 
-*    Splunk REST API reference documentation: 
-     http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI
+*   **COMING SOON**
+
+You can also find full reference documentation of the REST API:
+
+*   http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI
 
 For a gentle introduction to the Splunk product and some of its capabilities:
 
-* COMING SOON 
+*   **COMING SOON **
 
 ## Community
 
