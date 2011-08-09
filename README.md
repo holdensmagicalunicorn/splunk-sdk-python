@@ -202,7 +202,7 @@ You can also find full reference documentation of the REST API:
 
 For a gentle introduction to the Splunk product and some of its capabilities:
 
-*   **COMING SOON **
+*   **COMING SOON**
 
 ## Community
 
