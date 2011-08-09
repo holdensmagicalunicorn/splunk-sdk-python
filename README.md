@@ -43,7 +43,7 @@ already have a copy you can download one from http://www.splunk.com/download.
 
 You can get a copy of the SDK sources by cloning into the repository with git:
 
-    git clone git@github.com:splunk/splunk-sdk-python.git
+    git clone https://github.com/splunk/splunk-sdk-python.git
 
 #### Installing
 
